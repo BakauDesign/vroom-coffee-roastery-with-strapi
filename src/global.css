@@ -3,6 +3,207 @@
 :root {
 }
 
+@font-face {
+  font-family: 'Playfair Display';
+  font-weight: 400;
+  src: url("/public/fonts/Playfair_Display/PlayfairDisplay-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: 'Playfair Display';
+  font-weight: 500;
+  src: url("/public/fonts/Playfair_Display/PlayfairDisplay-Medium.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-weight: 400;
+  src: url("/public/fonts/Lora/Lora-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-weight: 500;
+  src: url("/public/fonts/Lora/Lora-Medium.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-weight: 600;
+  src: url("/public/fonts/Lora/Lora-SemiBold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-weight: 700;
+  src: url("/public/fonts/Lora/Lora-Bold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: 'Work Sans';
+  font-weight: 400;
+  src: url("/public/fonts/Work_Sans/WorkSans-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: 'Work Sans';
+  font-weight: 500;
+  src: url("/public/fonts/Work_Sans/WorkSans-Medium.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: 'Work Sans';
+  font-weight: 600;
+  src: url("/public/fonts/Work_Sans/WorkSans-SemiBold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: 'Work Sans';
+  font-weight: 700;
+  src: url("/public/fonts/Work_Sans/WorkSans-Bold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-weight: 400;
+  src: url("/public/fonts/Open_Sans/OpenSans-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-weight: 500;
+  src: url("/public/fonts/Open_Sans/OpenSans-Medium.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-weight: 600;
+  src: url("/public/fonts/Open_Sans/OpenSans-SemiBold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-weight: 700;
+  src: url("/public/fonts/Open_Sans/OpenSans-Bold.woff2") format("woff2");
+}
+
+@theme {
+  --primary-950: #281B0B;
+  --primary-900: #473114;
+  --primary-800: #67471D;
+  --primary-700: #875D26;
+  --primary-600: #A7732F;
+  --primary-500: #C78938;
+  --primary-400: #D09C58;
+  --primary-300: #D9AF78;
+  --primary-200: #E2C297;
+  --primary-100: #EBD5B7;
+  --primary-50: #F4E8D7;
+  --primary-base: #FDFAF7;
+
+  --neutral-custom-950: #131211;
+  --neutral-custom-900: #1E1C1A;
+  --neutral-custom-800: #292624;
+  --neutral-custom-700: #3E3A37;
+  --neutral-custom-600: #544E4A;
+  --neutral-custom-500: #999999;
+  --neutral-custom-400: #BDB7B3;
+  --neutral-custom-300: #D7D3D1;
+  --neutral-custom-200: #E8E6E4;
+  --neutral-custom-100: #F3F2F1;
+  --neutral-custom-50: #F8F7F7;
+  --neutral-custom-base: #FFFFFF;
+
+  --font-playfair-display: 'Playfair Display', 'serif';
+  --font-lora: 'Lora', 'serif';
+  --font-work-sans: 'Work Sans', 'sans-serif';
+  --font-open-sans: 'Open Sans', 'sans-serif';
+
+  --text-display-large: 68px;
+  --text-display-large--line-height: 82px;
+  --text-display-large--letter-spacing: -1.1px;
+
+  --text-display-medium: 42px;
+  --text-display-medium--line-height: 50px;
+  --text-display-medium--letter-spacing: -0.67px;
+
+  --text-display-small: 36px;
+  --text-display-small--line-height: 43px;
+  --text-display-small--letter-spacing: -0.58px;
+
+  --text-h1-large: 68px;
+  --text-h1-large--line-height: 82px;
+  --text-h1-large--letter-spacing: -1.1px;
+
+  --text-h1-medium: 42px;
+  --text-h1-medium--line-height: 50px;
+  --text-h1-medium--letter-spacing: -0.67px;
+
+  --text-h1-small: 32px;
+  --text-h1-small--line-height: 38px;
+  --text-h1-small--letter-spacing: -0.51px;
+
+  --text-h2-large: 42px;
+  --text-h2-large--line-height: 50px;
+  --text-h2-large--letter-spacing: -0.67px;
+
+  --text-h2-medium: 26px;
+  --text-h2-medium--line-height: 31px;
+  --text-h2-medium--letter-spacing: -0.42px;
+
+  --text-h2-small: 20px;
+  --text-h2-small--line-height: 24px;
+  --text-h2-small--letter-spacing: -0.32px;
+
+  --text-h3-large: 28px;
+  --text-h3-large--line-height: 32px;
+  --text-h3-large--letter-spacing: -0.45px;
+
+  --text-h3-medium: 22px;
+  --text-h3-medium--line-height: 26px;
+  --text-h3-medium--letter-spacing: -0.32px;
+
+  --text-h3-small: 18px;
+  --text-h3-small--line-height: 22px;
+  --text-h3-small--letter-spacing: -0.29px;
+
+  --text-label-large: 18px;
+  --text-label-large--line-height: 20px;
+  --text-label-large--letter-spacing: 0.42px;
+
+  --text-label-medium: 16px;
+  --text-label-medium--line-height: 18px;
+  --text-label-medium--letter-spacing: 0.38px;
+
+  --text-label-small: 14px;
+  --text-label-small--line-height: 16px;
+  --text-label-small--letter-spacing: 0.34px;
+
+  --text-body-large: 18px;
+  --text-body-large--line-height: 27px;
+  --text-body-large--letter-spacing: 0.21px;
+
+  --text-body-medium: 16px;
+  --text-body-medium--line-height: 24px;
+  --text-body-medium--letter-spacing: 0.19px;
+
+  --text-body-small: 14px;
+  --text-body-small--line-height: 21px;
+  --text-body-small--letter-spacing: 0.17px;
+
+  --text-small-text-large: 12px;
+  --text-small-text-large--line-height: 16px;
+  --text-small-text-large--letter-spacing: 0.14px;
+
+  --text-small-text-medium: 11px;
+  --text-small-text-medium--line-height: 15px;
+  --text-small-text-medium--letter-spacing: 0.13px;
+
+  --text-small-text-small: 10px;
+  --text-small-text-small--line-height: 14px;
+  --text-small-text-small--letter-spacing: 0.12px;
+}
+
 html {
   line-height: 1;
   -webkit-text-size-adjust: 100%;
