@@ -6,85 +6,85 @@
 @font-face {
   font-family: 'Playfair Display';
   font-weight: 400;
-  src: url("/public/fonts/Playfair_Display/PlayfairDisplay-Regular.woff2") format("woff2");
+  src: url("/fonts/Playfair_Display/PlayfairDisplay-Regular.woff2") format("woff2");
 }
 
 @font-face {
   font-family: 'Playfair Display';
   font-weight: 500;
-  src: url("/public/fonts/Playfair_Display/PlayfairDisplay-Medium.woff2") format("woff2");
+  src: url("/fonts/Playfair_Display/PlayfairDisplay-Medium.woff2") format("woff2");
 }
 
 @font-face {
   font-family: 'Lora';
   font-weight: 400;
-  src: url("/public/fonts/Lora/Lora-Regular.woff2") format("woff2");
+  src: url("/fonts/Lora/Lora-Regular.woff2") format("woff2");
 }
 
 @font-face {
   font-family: 'Lora';
   font-weight: 500;
-  src: url("/public/fonts/Lora/Lora-Medium.woff2") format("woff2");
+  src: url("/fonts/Lora/Lora-Medium.woff2") format("woff2");
 }
 
 @font-face {
   font-family: 'Lora';
   font-weight: 600;
-  src: url("/public/fonts/Lora/Lora-SemiBold.woff2") format("woff2");
+  src: url("/fonts/Lora/Lora-SemiBold.woff2") format("woff2");
 }
 
 @font-face {
   font-family: 'Lora';
   font-weight: 700;
-  src: url("/public/fonts/Lora/Lora-Bold.woff2") format("woff2");
+  src: url("/fonts/Lora/Lora-Bold.woff2") format("woff2");
 }
 
 @font-face {
   font-family: 'Work Sans';
   font-weight: 400;
-  src: url("/public/fonts/Work_Sans/WorkSans-Regular.woff2") format("woff2");
+  src: url("/fonts/Work_Sans/WorkSans-Regular.woff2") format("woff2");
 }
 
 @font-face {
   font-family: 'Work Sans';
   font-weight: 500;
-  src: url("/public/fonts/Work_Sans/WorkSans-Medium.woff2") format("woff2");
+  src: url("/fonts/Work_Sans/WorkSans-Medium.woff2") format("woff2");
 }
 
 @font-face {
   font-family: 'Work Sans';
   font-weight: 600;
-  src: url("/public/fonts/Work_Sans/WorkSans-SemiBold.woff2") format("woff2");
+  src: url("/fonts/Work_Sans/WorkSans-SemiBold.woff2") format("woff2");
 }
 
 @font-face {
   font-family: 'Work Sans';
   font-weight: 700;
-  src: url("/public/fonts/Work_Sans/WorkSans-Bold.woff2") format("woff2");
+  src: url("/fonts/Work_Sans/WorkSans-Bold.woff2") format("woff2");
 }
 
 @font-face {
   font-family: 'Open Sans';
   font-weight: 400;
-  src: url("/public/fonts/Open_Sans/OpenSans-Regular.woff2") format("woff2");
+  src: url("/fonts/Open_Sans/OpenSans-Regular.woff2") format("woff2");
 }
 
 @font-face {
   font-family: 'Open Sans';
   font-weight: 500;
-  src: url("/public/fonts/Open_Sans/OpenSans-Medium.woff2") format("woff2");
+  src: url("/fonts/Open_Sans/OpenSans-Medium.woff2") format("woff2");
 }
 
 @font-face {
   font-family: 'Open Sans';
   font-weight: 600;
-  src: url("/public/fonts/Open_Sans/OpenSans-SemiBold.woff2") format("woff2");
+  src: url("/fonts/Open_Sans/OpenSans-SemiBold.woff2") format("woff2");
 }
 
 @font-face {
   font-family: 'Open Sans';
   font-weight: 700;
-  src: url("/public/fonts/Open_Sans/OpenSans-Bold.woff2") format("woff2");
+  src: url("/fonts/Open_Sans/OpenSans-Bold.woff2") format("woff2");
 }
 
 @theme {
