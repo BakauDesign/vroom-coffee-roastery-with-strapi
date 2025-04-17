@@ -88,31 +88,31 @@
 }
 
 @theme {
-  --primary-950: #281B0B;
-  --primary-900: #473114;
-  --primary-800: #67471D;
-  --primary-700: #875D26;
-  --primary-600: #A7732F;
-  --primary-500: #C78938;
-  --primary-400: #D09C58;
-  --primary-300: #D9AF78;
-  --primary-200: #E2C297;
-  --primary-100: #EBD5B7;
-  --primary-50: #F4E8D7;
-  --primary-base: #FDFAF7;
+  --color-primary-950: #281B0B;
+  --color-primary-900: #473114;
+  --color-primary-800: #67471D;
+  --color-primary-700: #875D26;
+  --color-primary-600: #A7732F;
+  --color-primary-500: #C78938;
+  --color-primary-400: #D09C58;
+  --color-primary-300: #D9AF78;
+  --color-primary-200: #E2C297;
+  --color-primary-100: #EBD5B7;
+  --color-primary-50: #F4E8D7;
+  --color-primary-base: #FDFAF7;
 
-  --neutral-custom-950: #131211;
-  --neutral-custom-900: #1E1C1A;
-  --neutral-custom-800: #292624;
-  --neutral-custom-700: #3E3A37;
-  --neutral-custom-600: #544E4A;
-  --neutral-custom-500: #999999;
-  --neutral-custom-400: #BDB7B3;
-  --neutral-custom-300: #D7D3D1;
-  --neutral-custom-200: #E8E6E4;
-  --neutral-custom-100: #F3F2F1;
-  --neutral-custom-50: #F8F7F7;
-  --neutral-custom-base: #FFFFFF;
+  --color-neutral-custom-950: #131211;
+  --color-neutral-custom-900: #1E1C1A;
+  --color-neutral-custom-800: #292624;
+  --color-neutral-custom-700: #3E3A37;
+  --color-neutral-custom-600: #544E4A;
+  --color-neutral-custom-500: #999999;
+  --color-neutral-custom-400: #BDB7B3;
+  --color-neutral-custom-300: #D7D3D1;
+  --color-neutral-custom-200: #E8E6E4;
+  --color-neutral-custom-100: #F3F2F1;
+  --color-neutral-custom-50: #F8F7F7;
+  --color-neutral-custom-base: #FFFFFF;
 
   --font-playfair-display: 'Playfair Display', 'serif';
   --font-lora: 'Lora', 'serif';
