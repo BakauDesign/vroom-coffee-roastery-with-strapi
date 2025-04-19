@@ -1,6 +1,6 @@
 import { component$, Slot, useSignal } from '@builder.io/qwik';
 
-// import type { QRL } from '@builder.io/qwik';
+import type { QRL } from '@builder.io/qwik';
 
 import { Link, type LinkProps } from '@builder.io/qwik-city';
 
@@ -10,11 +10,13 @@ interface MenuItemProps extends LinkProps {
     state?: boolean;
     asDropdown?: boolean;
     asDropdownItem?: boolean;
+    onClick$?: QRL<() => void>;
 }
 export const MenuItem = component$<MenuItemProps>(({
     state,
     asDropdown = false,
     asDropdownItem = false,
+    onClick$,
     ...props
 }) => {
     const isOpened = useSignal(false);
@@ -31,7 +33,7 @@ export const MenuItem = component$<MenuItemProps>(({
                         if (asDropdown) {
                             isOpened.value = !isOpened.value
                         } else {
-                            props.onClick$ && props.onClick$;
+                            onClick$ && onClick$();
                         }
                     }}>
                     <Slot name='label' />
@@ -57,7 +59,7 @@ export const MenuItem = component$<MenuItemProps>(({
     return (
         <Link 
             {...props}
-            onClick$={props.onClick$}
+            onClick$={() => onClick$ && onClick$()}
             class={`
                 w-fit min-w-[60px] py-2 px-3 h-[34px] text-label-small sm:text-label-medium font-work-sans rounded-full
                 ${(asDropdownItem && !asDropdown) 
