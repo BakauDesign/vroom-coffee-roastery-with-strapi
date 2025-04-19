@@ -1,0 +1,76 @@
+import { component$, Slot, useSignal } from '@builder.io/qwik';
+
+// import type { QRL } from '@builder.io/qwik';
+
+import { Link, type LinkProps } from '@builder.io/qwik-city';
+
+import ChevronDown from "~/assets/Icons/chevron-down.svg";
+
+interface MenuItemProps extends LinkProps {
+    state?: boolean;
+    asDropdown?: boolean;
+    asDropdownItem?: boolean;
+}
+export const MenuItem = component$<MenuItemProps>(({
+    state,
+    asDropdown = false,
+    asDropdownItem = false,
+    ...props
+}) => {
+    const isOpened = useSignal(false);
+
+    if (asDropdown) {
+        return (
+            <div>
+                <div class={`
+                    w-fit min-w-[60px] py-2 px-3 h-[34px] text-label-small sm:text-label-medium font-medium font-work-sans rounded-full text-primary-700
+                    relative flex items-center gap-x-2
+                    ${state ? 'bg-primary-base' : 'bg-primary-50'}
+                `}
+                    onClick$={() => {
+                        if (asDropdown) {
+                            isOpened.value = !isOpened.value
+                        } else {
+                            props.onClick$ && props.onClick$;
+                        }
+                    }}>
+                    <Slot name='label' />
+
+                    <img src={ChevronDown} alt="chevron down" class={`${isOpened.value && "rotate-180"} transition-all`} />
+                </div>
+                
+                <div class={`
+                    bg-primary-base border-[1.5px] border-solid border-primary-50 rounded-[12px]
+                    flex flex-col gap-y-4 absolute lg:top-20 overflow-hidden transition-all pt-4 px-3 pb-3 h-fit
+                    
+                    ${isOpened.value 
+                        ? "opacity-100 pointer-events-auto scale-100"
+                        : "opacity-0 pointer-events-none scale-95"
+                    }
+                `}>
+                    <Slot name='menu-item' />
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <Link 
+            {...props}
+            onClick$={props.onClick$}
+            class={`
+                w-fit min-w-[60px] py-2 px-3 h-[34px] text-label-small sm:text-label-medium font-work-sans rounded-full
+                ${(asDropdownItem && !asDropdown) 
+                    ? 'bg-primary-base text-neutral-custom-700 hover:font-medium'
+                    : "text-primary-700 font-medium"
+                }
+
+                ${!asDropdown && state ? 'bg-primary-base' : 'bg-primary-50'}
+                
+
+            `}
+        >
+            <Slot />
+        </Link>
+    );
+});
