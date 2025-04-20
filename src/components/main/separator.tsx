@@ -7,8 +7,10 @@ export const Separator = component$(() => {
     return (
         <>
             <div class="w-full flex overflow-hidden *:w-full *:h-[3px]">
-                <img src={Separator400} alt="Separator 400" class="sm:hidden" />
-                <img src={Separator1000} alt="Separator 1000" class="hidden sm:block" />
+                <picture>
+                    <source srcset={Separator1000} media="(min-width: 1024px)" type='image/png' />
+                    <img src={Separator400} alt="Separator 400" />
+                </picture>
             </div>
         </>
     );
