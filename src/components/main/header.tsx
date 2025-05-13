@@ -30,8 +30,8 @@ export const Header = component$(() => {
                     <MenuItem href="/contact-us" state={pathname === "/contact-us"}>Contact Us</MenuItem>
                 </nav>
 
-                <nav class="flex md:hidden cursor-pointer">
-                    <MenuItem state onClick$={() => isOpen.value = true}>Menu</MenuItem>
+                <nav class="flex md:hidden cursor-pointer" onClick$={() => isOpen.value = true}>
+                    <MenuItem state>Menu</MenuItem>
                 </nav>
             </section>
 
@@ -50,8 +50,8 @@ export const Header = component$(() => {
                 ${isOpen.value ? "translate-x-[0] lg:translate-x-[100vw]" : "translate-x-[100vw] lg:translate-x-[100vw]"}
             `}>
                 <div class="flex gap-x-8 items-center justify-between">
-                    <nav class="flex md:hidden cursor-pointer py-2 px-3 bg-primary-50 rounded-full">
-                        <MenuItem state onClick$={() => isOpen.value = false}>Close</MenuItem>
+                    <nav class="flex md:hidden cursor-pointer py-2 px-3 bg-primary-50 rounded-full" onClick$={() => isOpen.value = false}>
+                        <MenuItem state>Close</MenuItem>
                     </nav>
 
                     <img alt="Logo" class="h-[60px] w-full min-w-[120px] max-w-[140px] flex items-center justify-center bg-primary-50 rounded-[4px]" />
@@ -59,15 +59,15 @@ export const Header = component$(() => {
 
                 <div class="h-full flex flex-col gap-y-6 items-center justify-center">
                     <nav class="py-4 px-6 flex flex-col items-center gap-y-6 bg-primary-50 rounded-[36px]">
-                        <MenuItem href="/" state={pathname === "/"}>Home</MenuItem>
-                        <MenuItem href="/about-us" state={pathname === "/about-us"}>About Us</MenuItem>
+                        <MenuItem href="/" state={pathname === "/"} onClick$={() => isOpen.value = false}>Home</MenuItem>
+                        <MenuItem href="/about-us" state={pathname === "/about-us"} onClick$={() => isOpen.value = false}>About Us</MenuItem>
 
                         <MenuItem state={pathname.startsWith("/products")} asDropdown>
                             <label for="Products" q:slot='label'>Products</label>
 
-                            <MenuItem href="/products/roasted-coffee-beans" q:slot="menu-item" asDropdownItem>Roasted Coffee Beans</MenuItem>
-                            <MenuItem href="/products/green-coffee-beans" q:slot="menu-item" asDropdownItem>Green Coffee Beans</MenuItem>
-                            <MenuItem href="/products/coffee-tools" q:slot="menu-item" asDropdownItem>Coffee Tools</MenuItem>
+                            <MenuItem href="/products/roasted-coffee-beans" q:slot="menu-item" asDropdownItem onClick$={() => isOpen.value = false}>Roasted Coffee Beans</MenuItem>
+                            <MenuItem href="/products/green-coffee-beans" q:slot="menu-item" asDropdownItem onClick$={() => isOpen.value = false}>Green Coffee Beans</MenuItem>
+                            <MenuItem href="/products/coffee-tools" q:slot="menu-item" asDropdownItem onClick$={() => isOpen.value = false}>Coffee Tools</MenuItem>
                         </MenuItem>
 
                         <MenuItem href="/contact-us" state={pathname === "/contact-us"}>Contact Us</MenuItem>

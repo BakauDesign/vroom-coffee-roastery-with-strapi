@@ -26,7 +26,7 @@ export const MenuItem = component$<MenuItemProps>(({
             <div>
                 <div class={`
                     w-fit min-w-[60px] py-2 px-3 h-[34px] text-label-small sm:text-label-medium font-medium font-work-sans rounded-full text-primary-700
-                    relative flex items-center gap-x-2
+                    relative flex items-center gap-x-2 select-none
                     ${state ? 'bg-primary-base' : 'bg-primary-50'}
                 `}
                     onClick$={() => {
@@ -42,7 +42,7 @@ export const MenuItem = component$<MenuItemProps>(({
                 </div>
                 
                 <div class={`
-                    bg-primary-base border-[1.5px] border-solid border-primary-50 rounded-[12px]
+                    bg-primary-base border-[1.5px] border-solid border-primary-50 rounded-[12px] select-none
                     flex flex-col gap-y-4 absolute lg:top-20 overflow-hidden transition-all pt-4 px-3 pb-3 h-fit
                     
                     ${isOpened.value 
