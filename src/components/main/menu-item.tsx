@@ -30,15 +30,12 @@ export const MenuItem = component$<MenuItemProps>(({
                     ${state ? 'bg-primary-base' : 'bg-primary-50'}
                 `}
                     onClick$={() => {
-                        if (asDropdown) {
-                            isOpened.value = !isOpened.value
-                        } else {
-                            onClick$ && onClick$();
-                        }
+                        isOpened.value = !isOpened.value
+                        onClick$ && onClick$();
                     }}>
                     <Slot name='label' />
 
-                    <img src={ChevronDown} alt="chevron down" class={`${isOpened.value && "rotate-180"} transition-all`} />
+                    <img src={ChevronDown} alt="chevron down" height={24} width={24} class={`${isOpened.value && "rotate-180"} transition-all`} />
                 </div>
                 
                 <div class={`
@@ -63,12 +60,12 @@ export const MenuItem = component$<MenuItemProps>(({
             onClick$={() => onClick$ && onClick$()}
             class={`
                 w-fit min-w-[60px] py-2 px-3 h-[34px] text-label-small sm:text-label-medium font-work-sans rounded-full
-                ${(asDropdownItem && !asDropdown) 
+                ${(asDropdownItem) 
                     ? 'bg-primary-base text-neutral-custom-700 hover:font-medium'
                     : "text-primary-700 font-medium"
                 }
 
-                ${!asDropdown && state ? 'bg-primary-base' : 'bg-primary-50'}
+                ${state ? 'bg-primary-base' : 'bg-primary-50'}
                 
 
             `}
