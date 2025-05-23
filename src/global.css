@@ -87,6 +87,31 @@
   src: url("/fonts/Open_Sans/OpenSans-Bold.woff2") format("woff2");
 }
 
+
+@font-face {
+  font-family: 'Inter';
+  font-weight: 400;
+  src: url("/fonts/Inter/Inter-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-weight: 500;
+  src: url("/fonts/Inter/Inter-Medium.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-weight: 600;
+  src: url("/fonts/Inter/Inter-SemiBold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-weight: 700;
+  src: url("/fonts/Inter/Inter-Bold.woff2") format("woff2");
+}
+
 @theme {
   --color-primary-950: #281B0B;
   --color-primary-900: #473114;
@@ -118,7 +143,9 @@
   --font-lora: 'Lora', 'serif';
   --font-work-sans: 'Work Sans', 'sans-serif';
   --font-open-sans: 'Open Sans', 'sans-serif';
+  --font-inter: 'Inter', 'sans-serif';
 
+  /* Main */
   --text-display-large: 68px;
   --text-display-large--line-height: 82px;
   --text-display-large--letter-spacing: -1.1px;
@@ -202,7 +229,178 @@
   --text-small-text-small: 10px;
   --text-small-text-small--line-height: 14px;
   --text-small-text-small--letter-spacing: 0.12px;
+
+  /* CMS */
+  --text-cms-h1-large: 52px;
+  --text-cms-h1-large--line-height: 68px;
+  --text-cms-h1-large--letter-spacing: -1.04px;
+
+  --text-cms-h1-medium: 46px;
+  --text-cms-h1-medium--line-height: 60px;
+  --text-cms-h1-medium--letter-spacing: -0.92px;
+
+  --text-cms-h1-small: 41px;
+  --text-cms-h1-small--line-height: 54px;
+  --text-cms-h1-small--letter-spacing: -0.82px;
+
+  --text-cms-h2-large: 36px;
+  --text-cms-h2-large--line-height: 47px;
+  --text-cms-h2-large--letter-spacing: -0.72px;
+
+  --text-cms-h2-medium: 32px;
+  --text-cms-h2-medium--line-height: 42px;
+  --text-cms-h2-medium--letter-spacing: -0.64px;
+
+  --text-cms-h2-small: 29px;
+  --text-cms-h2-small--line-height: 38px;
+  --text-cms-h2-small--letter-spacing: -0.58px;
+
+  --text-cms-h3-large: 26px;
+  --text-cms-h3-large--line-height: 34px;
+  --text-cms-h3-large--letter-spacing: -0.52px;
+
+  --text-cms-h3-medium: 23px;
+  --text-cms-h3-medium--line-height: 30px;
+  --text-cms-h3-medium--letter-spacing: -0.46px;
+
+  --text-cms-h3-small: 20px;
+  --text-cms-h3-small--line-height: 36px;
+  --text-cms-h3-small--letter-spacing: -0.4px;
+
+  --text-cms-label-large: 18px;
+  --text-cms-label-large--line-height: 25px;
+  --text-cms-label-large--letter-spacing: 0.36px;
+
+  --text-cms-label-medium: 16px;
+  --text-cms-label-medium--line-height: 22px;
+  --text-cms-label-medium--letter-spacing: 0.32px;
+
+  --text-cms-label-small: 14px;
+  --text-cms-label-small--line-height: 19px;
+  --text-cms-label-small--letter-spacing: 0.28px;
+
+  --text-cms-label-extra-small: 13px;
+  --text-cms-label-extra-small--line-height: 18px;
+  --text-cms-label-extra-small--letter-spacing: 0.26px;
+
+  --text-cms-body-large: 18px;
+  --text-cms-body-large--line-height: 26px;
+  --text-cms-body-large--letter-spacing: 0.18px;
+
+  --text-cms-body-medium: 16px;
+  --text-cms-body-medium--line-height: 23px;
+  --text-cms-body-medium--letter-spacing: 0.16px;
+
+  --text-cms-body-small: 14px;
+  --text-cms-body-small--line-height: 20px;
+  --text-cms-body-small--letter-spacing: 0.14px;
+
+  --text-cms-body-extra-small: 14px;
+  --text-cms-body-extra-small--line-height: 19px;
+  --text-cms-body-extra-small--letter-spacing: 0.13px;
 }
+
+@layer components {  
+  .container {
+    @apply w-full min-w-full flex flex-col gap-y-[150px] py-12 px-4 sm:py-[60px] sm:px-9 lg:py-[100px] lg:px-[60px] overflow-hidden relative;
+    @apply bg-primary-base rounded-l-[36px] rounded-br-[0px] rounded-bl-[0px] rounded-tr-[36px] md:rounded-tl-[36px] md:rounded-tr-[36px] border-[3px] border-solid border-primary-100;
+  }
+
+  .contact-card {
+    @apply p-6 flex flex-col gap-y-8 rounded-[12px] bg-primary-base border-[1.5px] border-solid border-primary-100 cursor-pointer;
+  }
+
+  .contact-card .icons {
+    @apply flex justify-between *:object-cover;
+  }
+
+  .contact-card .icons .main-icon {
+    @apply h-[60px] w-[60px];
+  }
+
+  .contact-card .icons .small-icon {
+    @apply h-[24px] w-[24px];
+  }
+
+  .contact-card .content {
+    @apply flex flex-col gap-y-6;
+  }
+  
+  .contact-card .content .title-and-description {
+    @apply flex flex-col gap-y-3;
+  }
+  
+  .contact-card .content .title-and-description h1 {
+    @apply font-lora font-medium text-primary-700 text-h3-small sm:text-h3-medium;
+  }
+
+  .contact-card .content .title-and-description p, .contact-card .content a {
+    @apply font-work-sans text-primary-700 text-label-small sm:text-label-medium;
+  }
+
+  .contact-card .content .title-and-description p {
+    @apply text-neutral-custom-700;
+  }
+
+  .contact-card .content a {
+    @apply text-neutral-custom-800;
+  }
+
+  /* Hero section */
+  .general-section, .hero-section {
+    @apply w-full grid;
+  }
+
+  .hero-section {
+    @apply pt-[148px] pb-12 px-4 sm:px-6 lg:px-12 gap-y-12 gap-x-[60px] items-center bg-primary-base;
+  }
+
+  .hero-section .hero-image, .general-section .general-image {
+    @apply h-full grid gap-4 sm:gap-6 *:rounded-[12px] *:overflow-hidden *:object-cover *:h-full *:w-full;
+  }
+
+  .hero-section .content, .general-section .content {
+    @apply flex flex-col gap-y-6;
+  }
+
+  .hero-section .content .headline-and-supporting-headline,
+  .general-section .content .headline-and-supporting-headline {
+    @apply flex flex-col gap-y-4;
+  }
+
+  .hero-section .content .headline-and-supporting-headline h1 {
+    @apply font-playfair-display text-display-small sm:text-display-medium xl:text-display-large font-medium text-primary-800;
+  }
+
+  .hero-section .content .headline-and-supporting-headline p {
+    @apply font-work-sans text-body-small sm:text-body-medium text-neutral-custom-800;
+  }
+
+  .general-section .content .headline-and-supporting-headline h1 {
+    @apply font-lora text-h2-medium font-medium sm:text-h2-large text-neutral-custom-950;
+  }
+
+  .general-section .content .headline-and-supporting-headline p {
+    @apply font-work-sans text-body-small sm:text-body-medium text-neutral-custom-700;
+  }
+
+  .hero-section .content .actions,
+  .general-section .content .actions {
+    @apply flex flex-col sm:flex-row gap-4;
+  }
+
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
 
 html {
   line-height: 1;
