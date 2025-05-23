@@ -1,9 +1,10 @@
 import { 
     component$,
     useSignal,
-    useTask$,
-    QRL
+    useTask$
 } from '@builder.io/qwik';
+
+import type { QRL } from '@builder.io/qwik';
 
 import Magnifier from "~/assets/Icons/Magnifer.svg";
 
