@@ -5,8 +5,11 @@ import {
     useContextProvider,
     useContext,
     useSignal,
-    type Component,
-    Signal
+} from '@builder.io/qwik';
+
+import type {
+    Signal,
+    Component
 } from '@builder.io/qwik';
 
 import ChevronDown from "~/assets/Icons/chevron-down.svg";
@@ -65,7 +68,7 @@ Faq.Title = component$(() => {
         onClick$={() => isOpened.value = !isOpened.value}>
             <Slot />
 
-            <img src={ChevronDown} alt="chevron-down" class={`${isOpened.value ? "rotate-180" : "rotate-0"}`} />
+            <img src={ChevronDown} alt="chevron-down" height={24} width={24} class={`${isOpened.value ? "rotate-180" : "rotate-0"}`} />
         </label>
     );
 });
