@@ -8,13 +8,14 @@ interface ButtonProps extends HTMLAttributes<HTMLButtonElement> {
 	size?: 'small' | 'medium' | 'large';
 	disabled?: boolean;
     fillContainer?: boolean;
-	// onClick$?: QRL<(event: MouseEvent, element: HTMLButtonElement) => void>;
+	type?: 'button' | 'submit' | 'reset';
 }
 
 export const Button = component$<ButtonProps>(({
     variant,
 	size = 'small',
     disabled = false,
+    type = 'button',
     fillContainer = false,
 	...props
 }) => {
@@ -23,6 +24,7 @@ export const Button = component$<ButtonProps>(({
             {...props}
             onClick$={props.onClick$}
             disabled={disabled}
+            type={type}
             class={`
                 py-1.5 cursor-pointer
                 ${size === "small" && "px-[18px] h-[44px]"} 
