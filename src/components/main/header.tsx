@@ -12,7 +12,7 @@ export const Header = component$(() => {
 
     return (
         <header class="w-full h-[100px] py-4 px-4 sm:px-6 lg:px-[60px] flex gap-x-12 items-center bg-primary-base border-[3px] border-solid border-neutral-custom-200 fixed z-20">
-            <img alt="Logo" class="h-[60px] min-w-[120px] sm:w-[150px] lg:w-[200px] flex items-center justify-center bg-primary-50 rounded-[4px]" />
+            <img alt="Logo" height={200} width={200} class="h-[60px] min-w-[120px] sm:w-[150px] lg:w-[200px] flex items-center justify-center bg-primary-50 rounded-[4px]" />
 
             <section class="w-full flex items-center justify-end xl:justify-center *:gap-x-6 *:py-2 *:px-3 *:bg-primary-50 *:rounded-full">
                 <nav class="hidden md:flex">
@@ -54,7 +54,7 @@ export const Header = component$(() => {
                         <MenuItem state>Close</MenuItem>
                     </nav>
 
-                    <img alt="Logo" class="h-[60px] w-full min-w-[120px] max-w-[140px] flex items-center justify-center bg-primary-50 rounded-[4px]" />
+                    <img alt="Logo" height={150} width={150} class="h-[60px] w-full min-w-[120px] max-w-[140px] flex items-center justify-center bg-primary-50 rounded-[4px]" />
                 </div>
 
                 <div class="h-full flex flex-col gap-y-6 items-center justify-center">
