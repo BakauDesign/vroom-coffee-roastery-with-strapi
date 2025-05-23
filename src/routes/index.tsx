@@ -1,14 +1,197 @@
-import { component$ } from "@builder.io/qwik";
+import { component$, isDev } from "@builder.io/qwik";
 import type { DocumentHead, RequestHandler } from "@builder.io/qwik-city";
+import { routeLoader$ } from '@builder.io/qwik-city';
+
+import { Button } from "~/components/main/button";
+import { Gradient } from "~/components/main/gradient";
+import { Separator } from "~/components/main/separator";
+import { Testimony } from "~/components/main/testimony";
 
 export const onGet: RequestHandler = async ({ redirect }) => {
-	throw redirect(302, "/coming-soon");
+	if (!isDev) {
+		throw redirect(302, "/coming-soon");		
+	}
 };
 
+export const useTestimonial = routeLoader$(async () => {
+	return [
+		{
+			id: 1,
+			name: "Andi Wijaya",
+			avatar: "https://i.pravatar.cc/150?img=1",
+			location: "Jakarta",
+			review: "Produknya sangat berkualitas, pengiriman cepat!",
+			purchasedProducts: [
+				{ id: 101, name: "Kopi Arabika Gayo" },
+				{ id: 102, name: "French Press" }
+			]
+		},
+		{
+			id: 2,
+			name: "Budi Santoso",
+			avatar: "https://i.pravatar.cc/150?img=5",
+			location: "Bandung",
+			review: "Pelayanannya ramah, packing aman sampai tujuan.",
+			purchasedProducts: [
+				{ id: 103, name: "Kopi Robusta Lampung" },
+				{ id: 104, name: "Manual Grinder" }
+			]
+		},
+		{
+			id: 3,
+			name: "Citra Dewi",
+			avatar: "https://i.pravatar.cc/150?img=11",
+			location: "Surabaya",
+			review: "Aromanya sangat harum, rasa kopinya smooth banget!",
+			purchasedProducts: [
+				{ id: 105, name: "Kopi Liberika" },
+				{ id: 106, name: "Aeropress" },
+				{ id: 107, name: "Paper Filter" }
+			]
+		},
+		{
+			id: 4,
+			name: "Dian Permata",
+			avatar: "https://i.pravatar.cc/150?img=8",
+			location: "Yogyakarta",
+			review: "Ini kopi terenak yang pernah saya beli online!",
+			purchasedProducts: [
+				{ id: 108, name: "Kopi Java Ijen" }
+			]
+		},
+		{
+			id: 5,
+			name: "Eko Prasetyo",
+			avatar: "https://i.pravatar.cc/150?img=15",
+			location: "Bali",
+			review: "Worth the price! Akan beli lagi next time.",
+			purchasedProducts: [
+				{ id: 109, name: "Cold Brew Kit" },
+				{ id: 110, name: "Biji Kopi Blend" }
+			]
+		}
+	];
+});
+
 export default component$(() => {
+	const testimonial = useTestimonial();
+
 	return (
-		<>
-		
+		<>			
+			<figure class="hero-section lg:grid-cols-2">
+				<figcaption class="content">
+					<article class="headline-and-supporting-headline">
+						<h1>
+							'Dari Biji Pilihan <br />hingga Cita Rasa Tak <br />Tertandingi'
+						</h1>
+
+						<p>
+							Temukan seni roasting kopi spesialti di setiap tegukan. Vroom Coffee  Roastery menghadirkan biji kopi terbaik dari petani lokal, disangrai  dengan presisi untuk pengalaman kopi yang autentik.
+						</p>
+					</article>
+					
+					<section class="actions">
+						<Button
+							variant="primary"
+						>
+							Jelajahi Produk Kami
+						</Button>
+					</section>
+				</figcaption>
+
+				<section class="hero-image grid-cols-1 max-h-[500px]">
+					<img src="https://i.pinimg.com/736x/a1/cd/44/a1cd44f6617beebb9794877ef59082a1.jpg" alt="Hero image" height={500} width={500} />
+				</section>
+			</figure>
+
+			<Separator />
+
+			<div class="container">
+				<Gradient position="top" />
+				<Gradient position="bottom" />
+
+				<figure class="general-section gap-[60px] lg:grid-cols-2 items-center">
+					<section class="general-image max-h-[400px]">
+						<img src="https://i.pinimg.com/736x/a1/cd/44/a1cd44f6617beebb9794877ef59082a1.jpg" alt="Hero image" height={500} width={500} />
+					</section>
+
+					<figcaption class="content">
+						<article class="headline-and-supporting-headline">
+							<h1>
+								Lebih dari Sekadar Kopi - Itu adalah Cerita
+							</h1>
+
+							<p>
+								Sejak 2015, Vroom Coffee Roastery berkomitmen untuk mengolah biji kopi  dengan passion dan keahlian. Setiap batch roasting kami adalah perpaduan sains, seni, dan dedikasi untuk menghadirkan rasa yang konsisten dan  memukau.
+							</p>
+						</article>
+						
+						<section class="actions">
+							<Button
+								variant="primary"
+							>
+								Kenali Kami Lebih Dalam
+							</Button>
+						</section>
+					</figcaption>
+				</figure>
+
+				<section class="general-section">
+					<section class="content">
+						<article class="headline-and-supporting-headline flex-col lg:justify-between lg:flex-row lg:items-center gap-y-4">
+							<h1>
+								Rekomendasi <br />Spesial dari Roaster Kami
+							</h1>
+
+							<p class="text-right lg:max-w-[500px] max-md:self-end">
+								Temukan karakter unik setiap asal-usul biji kopi, dari Aceh Gayo yang fruity hingga Java Bold yang earthy - semua disangrai sempurna untuk dieksplorasi.
+							</p>
+						</article>
+					</section>
+				</section>
+
+				<section class="general-section gap-12">
+					<section class="content">
+						<article class="headline-and-supporting-headline flex-col gap-y-4 horizontal">
+							<h1>
+								Testimoni Pelanggan
+							</h1>
+
+							<p class="max-md:self-end">
+								Dibuat dengan Cinta, Dihargai oleh Pelanggan
+							</p>
+						</article>
+					</section>
+
+					<section class="flex gap-x-9 overflow-scroll *:min-w-[328px] *:sm:min-w-[400px]">
+						{testimonial.value.map((data) => {
+							return (
+								<Testimony data={data} key={data.id} />
+							);
+						})}
+					</section>
+				</section>
+
+				<section class="general-section gap-12">
+					<section class="content">
+						<article class="headline-and-supporting-headline lg:flex-row lg:items-center lg:justify-between lg:gap-x-8">
+							<h1>
+								Ikuti <br />Perjalanan <br />Kami
+							</h1>
+
+							<p class="text-right sm:max-w-[360px] max-md:self-end">
+								Mulai perjalanan kopi spesialti Anda hari ini - karena setiap biji layak mendapat sangrai terbaik.
+							</p>
+						</article>
+					</section>
+
+					<section class="general-image *:max-w-[1000px] justify-items-center">
+						<img src="https://i.pinimg.com/736x/a1/cd/44/a1cd44f6617beebb9794877ef59082a1.jpg" alt="Hero image" height={900} width={1000} />
+					</section>
+				</section>
+			</div>
+
+			<Separator />
 		</>
 	);
 });

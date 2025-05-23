@@ -8,7 +8,6 @@ export const onGet: RequestHandler = async ({ redirect }) => {
         throw redirect(302, "/coming-soon");		
     }
 };
-
 export default component$(() => {
     return (
         <>

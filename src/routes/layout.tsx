@@ -1,19 +1,7 @@
-import { component$, Slot } from "@builder.io/qwik";
-import { routeLoader$ } from "@builder.io/qwik-city";
-// import type { RequestHandler } from "@builder.io/qwik-city";
-
-// export const onGet: RequestHandler = async ({ cacheControl, redirect, url }) => {
-// 	const pathname = url.pathname.replace(/\/+$/, '');
-
-// 	if (pathname !== "/coming-soon") {
-// 		throw redirect(302, "/coming-soon");
-// 	}
-
-// 	cacheControl({
-// 		staleWhileRevalidate: 60 * 60 * 24 * 7,
-// 		maxAge: 5,
-// 	});
-// };
+import { component$, Slot, isDev } from "@builder.io/qwik";
+import { routeLoader$, useLocation } from "@builder.io/qwik-city";
+import { Footer } from "~/components/main/footer";
+import { Header } from "~/components/main/header";
 
 export const useServerTimeLoader = routeLoader$(() => {
   return {
@@ -22,11 +10,17 @@ export const useServerTimeLoader = routeLoader$(() => {
 });
 
 export default component$(() => {
+	const loc = useLocation();
+
+	if (loc.url.pathname.startsWith('/cms')) {
+		return <Slot />;
+	}
+
 	return (
-		<>
-			<main class="bg-[#FDFAF7]">
-				<Slot />
-			</main>
-		</>
+		<main class="w-full bg-neutral-custom-base flex flex-col items-center gap-y-20">
+			{isDev && <Header />}
+			<Slot />
+			{isDev && <Footer />}
+		</main>
 	);
 });
