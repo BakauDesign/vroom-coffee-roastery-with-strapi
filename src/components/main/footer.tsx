@@ -8,7 +8,7 @@ export const Footer = component$(() => {
             <div class="flex flex-col lg:flex-row lg:justify-between gap-[60px]">
 
                 <figure class="flex flex-col gap-y-6 max-w-[400px]">
-                    <img alt="Logo" class="h-[100px] max-w-[120px] flex items-center justify-center bg-primary-50 rounded-[4px]" />
+                    <img alt="Logo" class="h-[100px] max-w-[120px] flex items-center justify-center bg-primary-50 rounded-[4px]" height={150} width={150} />
 
                     <figcaption class="flex flex-col gap-y-3 text-neutral-custom-900">
                         <h1 class="font-medium text-label-small sm:text-label-medium">
