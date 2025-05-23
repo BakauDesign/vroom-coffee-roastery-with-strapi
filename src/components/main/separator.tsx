@@ -9,7 +9,7 @@ export const Separator = component$(() => {
             <div class="w-full flex overflow-hidden *:w-full *:h-[3px]">
                 <picture>
                     <source srcset={Separator1000} media="(min-width: 1024px)" type='image/png' />
-                    <img src={Separator400} alt="Separator 400" />
+                    <img src={Separator400} alt="Separator 400" height={3} width={2000} />
                 </picture>
             </div>
         </>
