@@ -4,17 +4,21 @@ import {
     useTask$
 } from '@builder.io/qwik';
 
-import type { QRL } from '@builder.io/qwik';
+import type { ClassList, QRL, Signal } from '@builder.io/qwik';
 
 import Magnifier from "~/assets/Icons/Magnifer.svg";
 
-interface SearchBarProps {
+import { cn } from '~/lib/utils';
+
+export interface SearchBarProps {
+    class?: ClassList | Signal<ClassList>;
     delay?: number;
     placeholder?: string;
     onValueChange$?: QRL<(value: string) => void>;
 }
 
-export const SearchBar = component$<SearchBarProps>(({ 
+export const SearchBar = component$<SearchBarProps>(({
+    class: className,
     delay = 300, 
     placeholder = 'Search...',
     onValueChange$
@@ -35,7 +39,8 @@ export const SearchBar = component$<SearchBarProps>(({
 
     return (
         <div class={`
-            h-[48px] pl-4 flex gap-x-6 items-center overflow-hidden rounded-[6px] bg-primary-base border-solid border-[1.5px] border-neutral-custom-200 ${debouncedValue.value.length && "border-primary-300"}
+            ${cn(className)}
+            h-[48px] pl-4 flex gap-x-6 items-center overflow-hidden rounded-[6px] bg-primary-base border-solid border-[1.5px] border-neutral-custom-300 ${debouncedValue.value.length && "border-primary-300"}
         `}>
             <img src={Magnifier} alt="Magnifier" height={24} width={24} />
 
