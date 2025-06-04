@@ -1,19 +1,31 @@
-import { component$, isDev } from "@builder.io/qwik";
-import type { RequestHandler } from "@builder.io/qwik-city";
+import { 
+    component$, 
+    // isDev 
+} from "@builder.io/qwik";
+// import type { RequestHandler } from "@builder.io/qwik-city";
 
 import { Button } from "~/components/main/button";
 import { Gradient } from "~/components/main/gradient";
 import { Separator } from "~/components/main/separator";
 
-import Keberlanjutan from "~/assets/Icons/Keberlanjutan.png";
-import Transparansi from "~/assets/Icons/Transparansi.png";
-import Inovasi from "~/assets/Icons/Inovasi.png";
+import HeroImage_1 from "~/assets/main/about-us/Hero image 1.avif";
+import HeroImage_2 from "~/assets/main/about-us/Hero image 2.avif";
+import HeroImage_3 from "~/assets/main/about-us/Hero image 3.avif";
+import HeroImage_4 from "~/assets/main/about-us/Hero image 4.avif";
 
-export const onGet: RequestHandler = async ({ redirect }) => {
-    if (!isDev) {
-        throw redirect(302, "/coming-soon");		
-    }
-};
+import ProcessImage_1 from "~/assets/main/about-us/Process image 1.avif";
+import ProcessImage_2 from "~/assets/main/about-us/Process image 2.avif";
+import ProcessImage_3 from "~/assets/main/about-us/Process image 3.avif";
+
+import SustainabilityFirst from "~/assets/main/about-us/icons/Sustainability First.avif";
+import ConsistencyIsKey from "~/assets/main/about-us/icons/Consistency is Key.avif";
+import CommunityDriven from "~/assets/main/about-us/icons/Community Driven.avif";
+
+// export const onGet: RequestHandler = async ({ redirect }) => {
+//     if (!isDev) {
+//         throw redirect(302, "/coming-soon");		
+//     }
+// };
 
 export default component$(() => {
     return (
@@ -31,11 +43,11 @@ export default component$(() => {
                     </article>
                 </figcaption>
 
-                <section class="hero-image grid-cols-2 lg:grid-cols-4 max-h-[500px]">
-                    <img src="https://i.pinimg.com/736x/a1/cd/44/a1cd44f6617beebb9794877ef59082a1.jpg" alt="Hero image" height={800} width={800} />
-                    <img src="https://i.pinimg.com/736x/a1/cd/44/a1cd44f6617beebb9794877ef59082a1.jpg" alt="Hero image" height={800} width={800} />
-                    <img src="https://i.pinimg.com/736x/a1/cd/44/a1cd44f6617beebb9794877ef59082a1.jpg" alt="Hero image" height={800} width={800} />
-                    <img src="https://i.pinimg.com/736x/a1/cd/44/a1cd44f6617beebb9794877ef59082a1.jpg" alt="Hero image" height={800} width={800} />
+                <section class="hero-image grid-cols-2 lg:grid-cols-4 max-h-[500px] *:aspect-square *:object-cover">
+                    <img src={HeroImage_1} alt="Hero image" height={800} width={800} />
+                    <img src={HeroImage_2} alt="Hero image" height={800} width={800} />
+                    <img src={HeroImage_3} alt="Hero image" height={800} width={800} />
+                    <img src={HeroImage_4} alt="Hero image" height={800} width={800} />
                 </section>
             </figure>
 
@@ -61,7 +73,7 @@ export default component$(() => {
                     <ul class="flex flex-col gap-y-8 *:grid *:grid-cols-1 *:sm:grid-cols-2 *:sm:items-center *:gap-6 *:*:flex *:*:flex-col *:*:gap-y-4">
                         <li>
                             <img 
-                                src="https://i.pinimg.com/736x/a1/cd/44/a1cd44f6617beebb9794877ef59082a1.jpg" 
+                                src={ProcessImage_1}
                                 alt="Hero image" 
                                 height={500}
                                 width={500}
@@ -93,7 +105,7 @@ export default component$(() => {
                             </article>
 
                             <img 
-                                src="https://i.pinimg.com/736x/a1/cd/44/a1cd44f6617beebb9794877ef59082a1.jpg" 
+                                src={ProcessImage_2}
                                 alt="Hero image"
                                 height={500}
                                 width={500}
@@ -105,7 +117,7 @@ export default component$(() => {
 
                         <li>
                             <img 
-                                src="https://i.pinimg.com/736x/a1/cd/44/a1cd44f6617beebb9794877ef59082a1.jpg" 
+                                src={ProcessImage_3}
                                 alt="Hero image"
                                 height={500}
                                 width={500}
@@ -138,9 +150,9 @@ export default component$(() => {
                         </article>
                     </section>
 
-                    <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-2 gap-4 *:p-6 *:bg-primary-base *:border-[3px] *:border-solid *:border-primary-50 *:rounded-[12px] *:flex *:flex-col *:gap-y-6 *:*:flex *:*:flex-col *:*:gap-y-4">
+                    <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-2 gap-4 *:items-center *:text-center *:p-6 *:bg-primary-base *:border-[3px] *:border-solid *:border-primary-50 *:rounded-[12px] *:flex *:flex-col *:gap-y-6 *:*:flex *:*:flex-col *:*:gap-y-4">
                         <li>
-                            <img src={Keberlanjutan} alt="Keberlanjutan" class="h-[60px] w-[60px] bg-primary-50" height={60} width={60} />
+                            <img src={SustainabilityFirst} alt="Keberlanjutan" class="h-[60px] w-[60px] bg-primary-50 rounded-[6px]" height={60} width={60} />
 
                             <article>
                                 <h1 class="font-lora font-semibold text-h3-medium sm:text-h3-large text-primary-700">
@@ -154,7 +166,7 @@ export default component$(() => {
                         </li>
 
                         <li>
-                            <img src={Transparansi} alt="Transparansi" class="h-[60px] w-[60px]" height={60} width={60}  />
+                            <img src={ConsistencyIsKey} alt="Transparansi" class="h-[60px] w-[60px] rounded-[6px]" height={60} width={60}  />
 
                             <article>
                                 <h1 class="font-lora font-semibold text-h3-medium sm:text-h3-large text-primary-700">
@@ -168,7 +180,7 @@ export default component$(() => {
                         </li>
 
                         <li>
-                            <img src={Inovasi} alt="Inovasi" class="h-[60px] w-[60px]" height={60} width={60}  />
+                            <img src={CommunityDriven} alt="Inovasi" class="h-[60px] w-[60px] rounded-[6px]" height={60} width={60}  />
 
                             <article>
                                 <h1 class="font-lora font-semibold text-h3-medium sm:text-h3-large text-primary-700">
