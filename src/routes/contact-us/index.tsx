@@ -62,7 +62,7 @@ export default component$(() => {
     const faq = useFaq();
     return (
         <>
-            <figure class="hero-section grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-[60px]">
+            <figure class="hero-section grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-[60px] bg-primary-base border-[1.5px] border-neutral-custom-100">
                 <figcaption class="content">
                     <article class="headline-and-supporting-headline grid grid-cols-1  gap-4">
                         <h1>

@@ -30,7 +30,7 @@ import CommunityDriven from "~/assets/main/about-us/icons/Community Driven.avif"
 export default component$(() => {
     return (
         <>
-            <figure class="hero-section ">
+            <figure class="hero-section  bg-primary-base border-[1.5px] border-neutral-custom-100">
                 <figcaption class="content">
                     <article class="headline-and-supporting-headline grid grid-cols-1 lg:grid-cols-2 items-center gap-4 lg:gap-6">
                         <h1>
