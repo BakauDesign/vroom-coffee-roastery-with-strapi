@@ -1,21 +1,32 @@
-import { component$, isDev } from "@builder.io/qwik";
-import type { RequestHandler } from "@builder.io/qwik-city";
+import {
+    component$,
+    // isDev
+} from "@builder.io/qwik";
+// import type { RequestHandler } from "@builder.io/qwik-city";
 import { routeLoader$ } from '@builder.io/qwik-city';
 
-// import { Button } from "~/components/main/button";
 import { Gradient } from "~/components/main/gradient";
 import { Separator } from "~/components/main/separator";
 
-// import Keberlanjutan from "~/assets/Icons/Keberlanjutan.png";
-// import Transparansi from "~/assets/Icons/Transparansi.png";
-// import Inovasi from "~/assets/Icons/Inovasi.png";
 import { Faq } from "~/components/main/faq";
 
-export const onGet: RequestHandler = async ({ redirect }) => {
-    if (!isDev) {
-        throw redirect(302, "/coming-soon");		
-    }
-};
+import HeroImage_1 from "~/assets/main/contact-us/Hero image 1.avif";
+import HeroImage_2 from "~/assets/main/contact-us/Hero image 2.avif";
+import Satelite from "~/assets/main/contact-us/Satelite.avif";
+
+import Whatsapp from "~/assets/main/contact-us/icons/Whatsapp.avif";
+import Email from "~/assets/main/contact-us/icons/Email.avif";
+import Phone from "~/assets/main/contact-us/icons/Phone.avif";
+import Clock from "~/assets/main/contact-us/icons/Clock.avif";
+import Maps from "~/assets/main/contact-us/icons/Maps.avif";
+
+import { ChevronUp } from "~/assets/Icons/ChevronUp";
+
+// export const onGet: RequestHandler = async ({ redirect }) => {
+//     if (!isDev) {
+//         throw redirect(302, "/coming-soon");		
+//     }
+// };
 
 export const useFaq = routeLoader$(async () => {
     return [
@@ -64,9 +75,9 @@ export default component$(() => {
                     </article>
                 </figcaption>
 
-                <section class="hero-image grid-cols-2 max-h-[500px]">
-                    <img src="https://i.pinimg.com/736x/a1/cd/44/a1cd44f6617beebb9794877ef59082a1.jpg" alt="Hero image" height={500} width={500} />
-                    <img src="https://i.pinimg.com/736x/a1/cd/44/a1cd44f6617beebb9794877ef59082a1.jpg" alt="Hero image" height={500} width={500} />
+                <section class="hero-image grid-cols-2 max-h-[500px] *:aspect-square *:object-cover">
+                    <img src={HeroImage_1} alt="Hero image 1" height={500} width={500} />
+                    <img src={HeroImage_2} alt="Hero image 2" height={500} width={500} />
                 </section>
             </figure>
 
@@ -92,20 +103,14 @@ export default component$(() => {
                         <li class="contact-card">
                             <section class="icons">
                                 <img 
-                                    src="https://i.pinimg.com/736x/a1/cd/44/a1cd44f6617beebb9794877ef59082a1.jpg" 
+                                    src={Whatsapp} 
                                     alt="Hero image" 
                                     class="main-icon"
                                     height={60}
                                     width={60}
                                 />
 
-                                <img 
-                                    src="https://i.pinimg.com/736x/a1/cd/44/a1cd44f6617beebb9794877ef59082a1.jpg" 
-                                    alt="Hero image" 
-                                    class="small-icon"
-                                    height={24}
-                                    width={24}
-                                />
+                                <ChevronUp class="text-primary-700" />
                             </section>
                             
                             
@@ -127,20 +132,14 @@ export default component$(() => {
                         <li class="contact-card">
                             <section class="icons">
                                 <img 
-                                    src="https://i.pinimg.com/736x/a1/cd/44/a1cd44f6617beebb9794877ef59082a1.jpg" 
+                                    src={Email} 
                                     alt="Hero image" 
                                     class="main-icon"
                                     height={60}
                                     width={60}
                                 />
 
-                                <img 
-                                    src="https://i.pinimg.com/736x/a1/cd/44/a1cd44f6617beebb9794877ef59082a1.jpg" 
-                                    alt="Hero image" 
-                                    class="small-icon"
-                                    height={24}
-                                    width={24}
-                                />
+                                <ChevronUp class="text-primary-700" />
                             </section>
                             
                             
@@ -162,20 +161,14 @@ export default component$(() => {
                         <li class="contact-card">
                             <section class="icons">
                                 <img 
-                                    src="https://i.pinimg.com/736x/a1/cd/44/a1cd44f6617beebb9794877ef59082a1.jpg" 
+                                    src={Phone} 
                                     alt="Hero image" 
                                     class="main-icon"
                                     height={60}
                                     width={60}
                                 />
 
-                                <img 
-                                    src="https://i.pinimg.com/736x/a1/cd/44/a1cd44f6617beebb9794877ef59082a1.jpg" 
-                                    alt="Hero image" 
-                                    class="small-icon"
-                                    height={24}
-                                    width={24}
-                                />
+                                <ChevronUp class="text-primary-700" />
                             </section>
                             
                             
@@ -213,7 +206,7 @@ export default component$(() => {
 
                     <section class="relative flex flex-col gap-12 w-full justify-self-center">
                         <img 
-                            src="https://i.pinimg.com/736x/a1/cd/44/a1cd44f6617beebb9794877ef59082a1.jpg" 
+                            src={Satelite} 
                             alt=""
                             class="w-full object-cover rounded-[6px]"
                             height={1000}
@@ -223,7 +216,7 @@ export default component$(() => {
                         <ul class="flex flex-col gap-8 items-center font-work-sans *:pt-5 *:px-4 *:pb-4 *:flex *:gap-x-4 *:bg-primary-base *:border-[1.5px] *:border-solid *:border-primary-100 *:rounded-[12px] *:max-w-[360px] *:min-[500px]:absolute">
                             <li class="rotate-[4deg] bottom-0 left-0">
                                 <img 
-                                    src="https://i.pinimg.com/736x/a1/cd/44/a1cd44f6617beebb9794877ef59082a1.jpg" 
+                                    src={Clock} 
                                     alt=""
                                     class="h-[48px] w-[48px] object-cover"
                                     height={48}
@@ -243,7 +236,7 @@ export default component$(() => {
 
                             <li class="rotate-[-4deg] bottom-48 right-0">
                                 <img 
-                                    src="https://i.pinimg.com/736x/a1/cd/44/a1cd44f6617beebb9794877ef59082a1.jpg" 
+                                    src={Maps} 
                                     alt=""
                                     class="h-[48px] w-[48px] object-cover"
                                     height={48}
