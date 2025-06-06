@@ -3,6 +3,8 @@ import { component$, Slot } from '@builder.io/qwik';
 // import type { QRL } from '@builder.io/qwik';
 import type { HTMLAttributes } from '@builder.io/qwik';
 
+import { cn } from '~/lib/utils';
+
 interface ButtonProps extends HTMLAttributes<HTMLButtonElement> {
     variant: 'primary' | 'secondary' | 'tertiary';
 	size?: 'small' | 'medium' | 'large';
@@ -12,6 +14,7 @@ interface ButtonProps extends HTMLAttributes<HTMLButtonElement> {
 }
 
 export const Button = component$<ButtonProps>(({
+    class: className,
     variant,
 	size = 'small',
     disabled = false,
@@ -26,6 +29,7 @@ export const Button = component$<ButtonProps>(({
             disabled={disabled}
             type={type}
             class={`
+                ${cn(className)}
                 py-1.5 cursor-pointer
                 ${size === "small" && "px-[18px] h-[44px]"} 
                 ${size === "medium" && "px-5 h-[48px]"} 
