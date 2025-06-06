@@ -146,7 +146,7 @@ const NameDescriptionBlock: Component<NameDescriptionBlockProps> = component$((
     { name, description }) => {
     return (
         <article class="flex flex-col gap-y-4 overflow-hidden">
-            <h1 class="font-lora font-medium text-neutral-custom-800 text-h3-medium sm:text-h3-large">
+            <h1 class="whitespace-nowrap text-clip line-clamp-1 font-lora font-medium text-neutral-custom-800 text-h3-medium sm:text-h3-large">
                 { name }
             </h1>
 
