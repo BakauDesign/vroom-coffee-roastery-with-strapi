@@ -84,14 +84,14 @@ export default component$(() => {
                 
                 <img
                     class="h-[300px] w-[300px] object-cover aspect-square"
-                    src="/media/25253917747321e3a120cea41140ecc7.jpg"
-                    alt="/media/25253917747321e3a120cea41140ecc7.jpg"
+                    src="media/25253917747321e3a120cea41140ecc7.jpg"
+                    alt="media/25253917747321e3a120cea41140ecc7.jpg"
                 />
 
                 <img
                     class="h-[300px] w-[300px] object-cover aspect-square"
-                    src="/media/25253917747321e3a120cea41140ecc7.jpg"
-                    alt="/media/25253917747321e3a120cea41140ecc7.jpg"
+                    src="media/25253917747321e3a120cea41140ecc7.jpg"
+                    alt="media/25253917747321e3a120cea41140ecc7.jpg"
                 />
 
                 {/* <img
