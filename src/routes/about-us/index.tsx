@@ -20,6 +20,8 @@ import ProcessImage_3 from "~/assets/main/about-us/Process image 3.avif";
 import SustainabilityFirst from "~/assets/main/about-us/icons/Sustainability First.avif";
 import ConsistencyIsKey from "~/assets/main/about-us/icons/Consistency is Key.avif";
 import CommunityDriven from "~/assets/main/about-us/icons/Community Driven.avif";
+import { routeLoader$ } from "@builder.io/qwik-city";
+// import { getMedia } from "~/lib/media";
 
 // export const onGet: RequestHandler = async ({ redirect }) => {
 //     if (!isDev) {
@@ -27,7 +29,30 @@ import CommunityDriven from "~/assets/main/about-us/icons/Community Driven.avif"
 //     }
 // };
 
+
+// export const useBucketLoader = routeLoader$(async ({ platform }) => {
+//     if (!platform?.env?.BUCKET) {
+//         console.error("R2 Bucket binding BUCKET not found on platform.env");
+//         return null;
+//     }
+
+//     // const object = await platform.env.BUCKET.get("vroom-coffee-roastery/25253917747321e3a120cea41140ecc7.jpg");
+//     const object = await platform.env.BUCKET.get("25253917747321e3a120cea41140ecc7.jpg");
+
+//     if (!object) {
+//         console.warn("Object not found");
+//     } else {
+//         console.info("Object found:", object);
+//     }
+// });
+
+export const useMediaUrl = routeLoader$(({ platform }) => {
+    return platform.env.PUBLIC_MEDIA_URL;
+});
+
 export default component$(() => {
+    // const mediaUrl = useMediaUrl();
+    
     return (
         <>
             <figure class="hero-section  bg-primary-base border-[1.5px] border-neutral-custom-100">
@@ -56,6 +81,27 @@ export default component$(() => {
             <div class="container">
                 <Gradient position="top" />
                 <Gradient position="bottom" />
+                
+                <img
+                    class="h-[300px] w-[300px] object-cover aspect-square"
+                    src="/media/25253917747321e3a120cea41140ecc7.jpg"
+                    alt="/media/25253917747321e3a120cea41140ecc7.jpg"
+                />
+
+                <img
+                    class="h-[300px] w-[300px] object-cover aspect-square"
+                    src="/media/25253917747321e3a120cea41140ecc7.jpg"
+                    alt="/media/25253917747321e3a120cea41140ecc7.jpg"
+                />
+
+                {/* <img
+                    class="h-[300px] w-[300px] object-cover aspect-square"
+                    src={getMedia(mediaUrl.value, "25253917747321e3a120cea41140ecc7.jpg")}
+                    alt="get Media from lib"
+                /> */}
+
+                {/* <img src="/api/r2-image/25253917747321e3a120cea41140ecc7.jpg" alt="Preview api/r2-image" /> */}
+
 
                 <section class="general-section gap-y-[60px] items-center">
                     <section class="content">
