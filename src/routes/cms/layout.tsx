@@ -5,6 +5,7 @@ import { createUser, deleteToken, getTokenUserId, getUser, verifyToken } from "~
 import { routeAction$ } from '@builder.io/qwik-city';
 import { Sidebar } from "~/components/cms/sidebar";
 import { getDB } from "~/lib/db";
+import type { Users } from "~/interfaces";
 
 export const useAuthenticateUser = routeLoader$(
     async (event) => {
@@ -29,7 +30,7 @@ export const useUserLoader = routeLoader$(
 
         if (!userInfo && tokenUserId) {
             const db = await getDB(platform.env);
-            const user = await db.user
+            const user: Omit<Users, "id" | "username" | "password"> | null = await db.user
                 .findUnique({ 
                     where: {
                         id: tokenUserId
