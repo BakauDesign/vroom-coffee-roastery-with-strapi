@@ -137,12 +137,12 @@ export const Sidebar = component$<SidebarProps>(({ onClickLogout$, user }) => {
                             </Dropdown.Label>
                         
                             <Dropdown.Items>
-                            <Dropdown.Item href="/cms/settings/shipping">
-                                    Buat Pesanan
+                                <Dropdown.Item href="/cms/settings/shipping">
+                                    Pengiriman
                                 </Dropdown.Item>
 
                                 <Dropdown.Item href="/cms/settings/user">
-                                    Daftar Pesanan
+                                    Manajemen User
                                 </Dropdown.Item>
                             </Dropdown.Items>
                         </Dropdown.Root>
