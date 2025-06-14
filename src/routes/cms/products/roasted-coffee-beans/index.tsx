@@ -1,53 +1,60 @@
-import { component$, useSignal } from "@builder.io/qwik";
+import { 
+    component$,
+    // useSignal
+} from "@builder.io/qwik";
 
-import { Link, routeLoader$, useNavigate } from '@builder.io/qwik-city';
+import { 
+    Link,
+    // routeLoader$,
+    // useNavigate
+} from '@builder.io/qwik-city';
 
 import { Breadcrumb } from "~/components/cms/breadcrumb";
-import { Button } from "~/components/main/button";
+// import { Button } from "~/components/main/button";
 import { Separator } from "~/components/cms/separator";
 import { Table } from "~/components/cms/table";
 import { Toggle } from "~/components/cms/toggle";
 import { Popover } from "~/components/cms/popover";
 
-import { SearchBarFilterBlock as SearchBarFilter } from "~/components/blocks/cms/search-bar-filter-block";
-import { HeaderBlock as Header } from "~/components/blocks/cms/header-block";
-import { Pagination } from "~/components/blocks/cms/pagination-block";
+// import { SearchBarFilterBlock as SearchBarFilter } from "~/components/blocks/cms/search-bar-filter-block";
+// import { HeaderBlock as Header } from "~/components/blocks/cms/header-block";
+// import { Pagination } from "~/components/blocks/cms/pagination-block";
 
-import { useRoastedProducts } from "~/hooks/useRoastedProducts";
-import { roastedFilterOption as filterOption } from "~/lib/filter-option";
+// import { useRoastedProducts } from "~/hooks/useRoastedProducts";
+// import { roastedFilterOption as filterOption } from "~/lib/filter-option";
 
 import MenuDotsIcon from "~/assets/Icons/Menu Dots.svg";
 import PenIcon from "~/assets/Icons/Pen.svg";
 import TrashIcon from "~/assets/Icons/Trash Bin Trash.svg";
-import { formatRupiah } from "~/lib/utils";
-import { roastedCoffeeBeans } from "~/assets/data/products";
+// import { formatRupiah } from "~/lib/utils";
+// import { roastedCoffeeBeans } from "~/assets/data/products";
 
-export const useFilter = routeLoader$(async () => {
-    return filterOption;        
-});
+// export const useFilter = routeLoader$(async () => {
+//     return filterOption;        
+// });
 
-export const useProducts = routeLoader$(async () => {
-    return roastedCoffeeBeans;
-});
+// export const useProducts = routeLoader$(async () => {
+//     return roastedCoffeeBeans;
+// });
 
 export default component$(() => {
-    const navigate = useNavigate();
-    const { brewingMethod: brewingMethodFilter } = useFilter().value;
+    // const navigate = useNavigate();
+    // const { brewingMethod: brewingMethodFilter } = useFilter().value;
     
-    const products = useProducts();
+    // const products = useProducts();
 
-    const perPage = useSignal(10);
+    // const perPage = useSignal(10);
 
-    const {
-        brewingMethod,
-        searchKeyword,
-        currentPage,
-        totalPages
-    } = useRoastedProducts({
-        totalItems: products.value.length,
-        initialPerPage: perPage.value,
-        products: products.value
-    });
+    // const {
+    //     brewingMethod,
+    //     searchKeyword,
+    //     currentPage,
+    //     totalPages
+    // } = useRoastedProducts({
+    //     totalItems: products.value.length,
+    //     initialPerPage: perPage.value,
+    //     products: products.value
+    // });
 
     return (
         <>
@@ -63,7 +70,7 @@ export default component$(() => {
                             Roasted Coffee Beans
                         </Breadcrumb.Item>
                     </Breadcrumb.Root>
-
+{/* 
                     <Header.Root>
                         <Header.Content>
                             <Header.Illustration 
@@ -90,10 +97,10 @@ export default component$(() => {
                                 Tambah Produk Baru
                             </Button>
                         </Header.Actions>
-                    </Header.Root>
+                    </Header.Root> */}
 
                     <Separator />
-
+{/* 
                     <SearchBarFilter.Root>
                         <SearchBarFilter.SearchBar
                             placeholder="Cari Produk..."
@@ -106,7 +113,7 @@ export default component$(() => {
                             values={brewingMethodFilter}
                             onClick$={(value) => brewingMethod.value = value}
                         />
-                    </SearchBarFilter.Root>
+                    </SearchBarFilter.Root> */}
 
                     {/* <Table.Root class="h-[500px] w-full rounded-[12px] bg-neutral-custom-base border-[1.5px] border-neutral-custom-50 border-separate border-spacing-0 overflow-hidden"> */}
                     <div class="min-h-[500px] overflow-y-auto no-scrollbar rounded-[12px] border border-neutral-custom-50">
@@ -144,7 +151,7 @@ export default component$(() => {
                                             />
                                         </Table.Cell>
 
-                                        <Table.Cell class="min-w-[200px]">{formatRupiah(95000)}</Table.Cell>
+                                        {/* <Table.Cell class="min-w-[200px]">{formatRupiah(95000)}</Table.Cell> */}
 
                                         <Table.Cell class="w-fill min-w-[200px]">
                                             <Popover.Root>
@@ -176,7 +183,7 @@ export default component$(() => {
                         </Table.Body>
                     </Table.Root>
                     </div>
-
+{/* 
                     <Pagination
                         currentPage={currentPage.value}
                         totalPages={totalPages}
@@ -186,7 +193,7 @@ export default component$(() => {
                             perPage.value = val;
                             currentPage.value = 1;
                         }}
-                    />
+                    /> */}
                 </section>
                 </section>
             </section>
