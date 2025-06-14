@@ -1,89 +1,59 @@
-import { component$, $, useSignal } from "@builder.io/qwik";
-// import { Dropdown } from "~/components/cms/dropdown";
-import { Sidebar } from "~/components/cms/sidebar";
-// import { DropdownStatus } from "~/components/cms/dropdown-status";
+import { component$, useSignal } from "@builder.io/qwik";
 
-
-import { routeLoader$ } from '@builder.io/qwik-city';
+import { Link, routeLoader$, useNavigate } from '@builder.io/qwik-city';
 
 import { Breadcrumb } from "~/components/cms/breadcrumb";
 import { Button } from "~/components/main/button";
-import { HeaderBlock as Header } from "~/components/blocks/cms/header-block";
 import { Separator } from "~/components/cms/separator";
-import { SearchBarFilterBlock as SearchBarFilter } from "~/components/blocks/cms/search-bar-filter-block";
 import { Table } from "~/components/cms/table";
 import { Toggle } from "~/components/cms/toggle";
+import { Popover } from "~/components/cms/popover";
 
-export const useUserProfile = routeLoader$(async () => {
-    return {
-        avatar: "https://i.pinimg.com/736x/36/70/ca/3670ca173dce942570e4c340d9323a3a.jpg",
-        name: "Aulia Azahra",
-        role: "Admin"
-    };
-});
+import { SearchBarFilterBlock as SearchBarFilter } from "~/components/blocks/cms/search-bar-filter-block";
+import { HeaderBlock as Header } from "~/components/blocks/cms/header-block";
+import { Pagination } from "~/components/blocks/cms/pagination-block";
+
+import { useRoastedProducts } from "~/hooks/useRoastedProducts";
+import { roastedFilterOption as filterOption } from "~/lib/filter-option";
+
+import MenuDotsIcon from "~/assets/Icons/Menu Dots.svg";
+import PenIcon from "~/assets/Icons/Pen.svg";
+import TrashIcon from "~/assets/Icons/Trash Bin Trash.svg";
+import { formatRupiah } from "~/lib/utils";
+import { roastedCoffeeBeans } from "~/assets/data/products";
 
 export const useFilter = routeLoader$(async () => {
-    return {
-        brewingMethod: [
-            {
-                id: 1,
-                label: "Pour Over"
-            },
-            {
-                id: 2,
-                label: "French Press"
-            },
-            {
-                id: 3,
-                label: "Aeropress"
-            },
-            {
-                id: 4,
-                label: "Espresso"
-            },
-            {
-                id: 5,
-                label: "Moka Pot"
-            },
-            {
-                id: 6,
-                label: "Cold Brew"
-            },
-            {
-                id: 7,
-                label: "Siphon"
-            },
-            {
-                id: 8,
-                label: "Semua Metode"
-            }
-        ]
-    }
-        
+    return filterOption;        
+});
+
+export const useProducts = routeLoader$(async () => {
+    return roastedCoffeeBeans;
 });
 
 export default component$(() => {
-    const user = useUserProfile();
-    const filter = useFilter();
-    const brewingMethods = filter.value.brewingMethod;
+    const navigate = useNavigate();
+    const { brewingMethod: brewingMethodFilter } = useFilter().value;
+    
+    const products = useProducts();
 
-    const brewingMethod = useSignal("Pour Over");
-    const searchKeyword = useSignal("");
+    const perPage = useSignal(10);
+
+    const {
+        brewingMethod,
+        searchKeyword,
+        currentPage,
+        totalPages
+    } = useRoastedProducts({
+        totalItems: products.value.length,
+        initialPerPage: perPage.value,
+        products: products.value
+    });
 
     return (
         <>
             <section class="shrink-0 h-full min-h-full w-full flex flex-col gap-6 lg:flex-row relative">
-
-                <Sidebar props={{
-                    user: {
-                        avatar: user.value.avatar,
-                        name: user.value.name,
-                        role: user.value.role,
-                        onClickLogout$: $(() => console.info("LOGOUT"))
-                    }
-                }} />
-
-                <section class="h-full w-full overflow-y-scroll overflow-x-hidden no-scrollbar bg-neutral-custom-base pt-[124px] px-4 sm:px-6 lg:px-9 pb-6 sm:pb-9 lg:pb-12 lg:pt-12 flex flex-col gap-9">
+                <section class="h-full w-full *:h-full *:w-full overflow-hidden *:overflow-y-scroll *:overflow-x-hidden bg-neutral-custom-base pt-[124px] px-4 sm:px-6 lg:px-9 pb-6 sm:pb-9 lg:pb-12 lg:pt-12 *:flex *:flex-col *:gap-9">
+                <section class="no-scrollbar">
                     <Breadcrumb.Root>
                         <Breadcrumb.Item href="/cms/products/roasted-coffee-beans">
                             Products
@@ -115,6 +85,7 @@ export default component$(() => {
                             <Button
                                 variant="primary"
                                 size="large"
+                                onClick$={() => navigate("/cms/products/roasted-coffee-beans/create")}
                             >
                                 Tambah Produk Baru
                             </Button>
@@ -132,7 +103,7 @@ export default component$(() => {
                         <SearchBarFilter.Filter
                             label="Metode Brewing"
                             currentValue={brewingMethod.value}
-                            values={brewingMethods}
+                            values={brewingMethodFilter}
                             onClick$={(value) => brewingMethod.value = value}
                         />
                     </SearchBarFilter.Root>
@@ -152,153 +123,71 @@ export default component$(() => {
                         </Table.Head>
 
                         <Table.Body class="h-full w-full *:first:*:h-[166px] *:*:h-[150px] *:first:*:pt-5 *:last:*:pb-5">
-                            <Table.Row>
-                                <Table.Cell class="min-w-[250px]">Aceh Gayo Medium Roast</Table.Cell>
+                            {['a', 'b', 'c', 'd', 'e'].map((value, index) => {
+                                return (
+                                    <Table.Row key={value+index}>
+                                        <Table.Cell class="min-w-[250px]">Aceh Gayo Medium Roast</Table.Cell>
 
-                                <Table.Cell class="min-w-[100px]">
-                                    <Toggle value={true} />
-                                </Table.Cell>
+                                        <Table.Cell class="min-w-[100px]">
+                                            <Toggle value={true} />
+                                        </Table.Cell>
 
-                                <Table.Cell class="min-w-[150px]">25</Table.Cell>
+                                        <Table.Cell class="min-w-[150px]">25</Table.Cell>
 
-                                <Table.Cell class="min-w-[200px]">
-                                    <img 
-                                        src="https://i.pinimg.com/736x/4f/16/92/4f16925087a29cd5c3878f3f8761b36b.jpg"
-                                        alt="Product Photo"
-                                        class="w-full h-full object-cover rounded-[4px]"
-                                        height={200}
-                                        width={200}
-                                    />
-                                </Table.Cell>
+                                        <Table.Cell class="min-w-[200px]">
+                                            <img 
+                                                src="https://i.pinimg.com/736x/b4/04/db/b404db0a532b8aee532d078c330901c2.jpg"
+                                                alt="Product Photo"
+                                                class="w-full h-full object-cover rounded-[4px]"
+                                                height={200}
+                                                width={200}
+                                            />
+                                        </Table.Cell>
 
-                                <Table.Cell class="min-w-[200px]">Rp95.000</Table.Cell>
+                                        <Table.Cell class="min-w-[200px]">{formatRupiah(95000)}</Table.Cell>
 
-                                <Table.Cell class="w-fill min-w-[200px]">Aksi</Table.Cell>
-                            </Table.Row>                        
+                                        <Table.Cell class="w-fill min-w-[200px]">
+                                            <Popover.Root>
+                                                <Popover.Trigger>
+                                                    <img
+                                                        src={MenuDotsIcon}
+                                                        alt="Menu Dots Icon"
+                                                        height={24}
+                                                        width={24}
+                                                    />
+                                                </Popover.Trigger>
 
-                            <Table.Row>
-                                <Table.Cell class="w-[250px]">Aceh Gayo Medium Roast</Table.Cell>
+                                                <Popover.Content class="flex flex-col gap-y-4 text-cms-label-small *:cursor-pointer *:flex *:gap-2 *:items-center">
+                                                    <Link href={`/cms/products/roasted-coffee-beans/${index}/edit`}>
+                                                        <img src={PenIcon} alt="Pen Icon" height={16} width={16} />
+                                                        <p>Edit produk</p>
+                                                    </Link>
 
-                                <Table.Cell class="w-[100px]">
-                                    <Toggle />
-                                </Table.Cell>
-
-                                <Table.Cell class="w-[150px]">25</Table.Cell>
-
-                                <Table.Cell class="w-[200px]">
-                                    <img 
-                                        src="https://i.pinimg.com/736x/4f/16/92/4f16925087a29cd5c3878f3f8761b36b.jpg"
-                                        alt="Product Photo"
-                                        class="w-full h-full object-cover rounded-[4px]"
-                                        height={200}
-                                        width={200}
-                                    />
-                                </Table.Cell>
-
-                                <Table.Cell class="w-[200px]">Rp95.000</Table.Cell>
-
-                                <Table.Cell class="w-fill min-w-[200px]">Aksi</Table.Cell>
-                            </Table.Row>
-
-                            <Table.Row>
-                                <Table.Cell class="w-[250px]">Aceh Gayo Medium Roast</Table.Cell>
-
-                                <Table.Cell class="w-[100px]">
-                                    <Toggle />
-                                </Table.Cell>
-
-                                <Table.Cell class="w-[150px]">25</Table.Cell>
-
-                                <Table.Cell class="w-[200px]">
-                                    <img 
-                                        src="https://i.pinimg.com/736x/4f/16/92/4f16925087a29cd5c3878f3f8761b36b.jpg"
-                                        alt="Product Photo"
-                                        class="w-full h-full object-cover rounded-[4px]"
-                                        height={200}
-                                        width={200}
-                                    />
-                                </Table.Cell>
-
-                                <Table.Cell class="w-[200px]">Rp95.000</Table.Cell>
-
-                                <Table.Cell class="w-fill min-w-[200px]">Aksi</Table.Cell>
-                            </Table.Row>
-
-                            <Table.Row>
-                                <Table.Cell class="w-[250px]">Aceh Gayo Medium Roast</Table.Cell>
-
-                                <Table.Cell class="w-[100px]">
-                                    <Toggle />
-                                </Table.Cell>
-
-                                <Table.Cell class="w-[150px]">25</Table.Cell>
-
-                                <Table.Cell class="w-[200px]">
-                                    <img 
-                                        src="https://i.pinimg.com/736x/4f/16/92/4f16925087a29cd5c3878f3f8761b36b.jpg"
-                                        alt="Product Photo"
-                                        class="w-full h-full object-cover rounded-[4px]"
-                                        height={200}
-                                        width={200}
-                                    />
-                                </Table.Cell>
-
-                                <Table.Cell class="w-[200px]">Rp95.000</Table.Cell>
-
-                                <Table.Cell class="w-fill min-w-[200px]">Aksi</Table.Cell>
-                            </Table.Row>
-
-                            <Table.Row>
-                                <Table.Cell class="w-[250px]">Aceh Gayo Medium Roast</Table.Cell>
-
-                                <Table.Cell class="w-[100px]">
-                                    <Toggle />
-                                </Table.Cell>
-
-                                <Table.Cell class="w-[150px]">25</Table.Cell>
-
-                                <Table.Cell class="w-[200px]">
-                                    <img 
-                                        src="https://i.pinimg.com/736x/4f/16/92/4f16925087a29cd5c3878f3f8761b36b.jpg"
-                                        alt="Product Photo"
-                                        class="w-full h-full object-cover rounded-[4px]"
-                                        height={200}
-                                        width={200}
-                                    />
-                                </Table.Cell>
-
-                                <Table.Cell class="w-[200px]">Rp95.000</Table.Cell>
-
-                                <Table.Cell class="w-fill min-w-[200px]">Aksi</Table.Cell>
-                            </Table.Row>
-
-                            <Table.Row>
-                                <Table.Cell class="w-[250px]">Aceh Gayo Medium Roast</Table.Cell>
-
-                                <Table.Cell class="w-[100px]">
-                                    <Toggle />
-                                </Table.Cell>
-
-                                <Table.Cell class="w-[150px]">25</Table.Cell>
-
-                                <Table.Cell class="w-[200px]">
-                                    <img 
-                                        src="https://i.pinimg.com/736x/4f/16/92/4f16925087a29cd5c3878f3f8761b36b.jpg"
-                                        alt="Product Photo"
-                                        class="w-full h-full object-cover rounded-[4px]"
-                                        height={200}
-                                        width={200}
-                                    />
-                                </Table.Cell>
-
-                                <Table.Cell class="w-[200px]">Rp95.000</Table.Cell>
-
-                                <Table.Cell class="w-fill min-w-[200px]">Aksi</Table.Cell>
-                            </Table.Row>
+                                                    <div>
+                                                        <img src={TrashIcon} alt="Trash Icon" height={16} width={16} />
+                                                        <p>Hapus produk</p>
+                                                    </div>
+                                                </Popover.Content>
+                                            </Popover.Root>
+                                        </Table.Cell>
+                                    </Table.Row>     
+                                )
+                            })}                   
                         </Table.Body>
                     </Table.Root>
                     </div>
-                    
+
+                    <Pagination
+                        currentPage={currentPage.value}
+                        totalPages={totalPages}
+                        perPage={10}
+                        onPageChange$={(page) => currentPage.value = page}
+                        onPerPageChange$={(val) => {
+                            perPage.value = val;
+                            currentPage.value = 1;
+                        }}
+                    />
+                </section>
                 </section>
             </section>
         </>
