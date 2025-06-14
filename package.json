@@ -1,58 +1,67 @@
 {
-	"name": "my-qwik-basic-starter",
-	"description": "Demo app with sample routes",
-	"engines": {
-		"node": "^18.17.0 || ^20.3.0 || >=21.0.0"
-	},
-	"engines-annotation": "Mostly required by sharp which needs a Node-API v9 compatible runtime",
-	"private": true,
-	"trustedDependencies": [
-		"sharp"
-	],
-	"trustedDependencies-annotation": "Needed for bun to allow running install scripts",
-	"type": "module",
-	"scripts": {
-		"build": "qwik build",
-		"build.client": "vite build",
-		"build.preview": "vite build --ssr src/entry.preview.tsx",
-		"build.server": "vite build -c adapters/cloudflare-pages/vite.config.ts",
-		"build.types": "tsc --incremental --noEmit",
-		"deploy": "npm run build && wrangler pages deploy",
-		"dev": "vite --mode ssr",
-		"dev.debug": "node --inspect-brk ./node_modules/vite/bin/vite.js --mode ssr --force",
-		"fmt": "prettier --write .",
-		"fmt.check": "prettier --check .",
-		"lint": "eslint \"src/**/*.ts*\"",
-		"preview": "npm run build && wrangler pages dev",
-		"serve": "wrangler pages dev ./dist --compatibility-flags=nodejs_als",
-		"start": "vite --open --mode ssr",
-		"qwik": "qwik",
-		"cf-typegen": "wrangler types"
-	},
-	"devDependencies": {
-		"@builder.io/qwik": "^1.12.0",
-		"@builder.io/qwik-city": "^1.12.0",
-		"@cloudflare/workers-types": "^4.20250410.0",
-		"@modular-forms/qwik": "^0.29.1",
-		"@types/eslint": "8.56.10",
-		"@types/node": "20.14.11",
-		"@typescript-eslint/eslint-plugin": "7.16.1",
-		"@typescript-eslint/parser": "7.16.1",
-		"eslint": "8.57.0",
-		"eslint-plugin-qwik": "^1.12.0",
-		"prettier": "3.3.3",
-		"typescript": "5.4.5",
-		"undici": "*",
-		"vite": "5.3.5",
-		"vite-tsconfig-paths": "^4.2.1",
-		"wrangler": "^3.0.0"
-	},
-	"dependencies": {
-		"@tailwindcss/vite": "^4.1.3",
-		"class-variance-authority": "^0.7.1",
-		"clsx": "^2.1.1",
-		"tailwind-merge": "^3.3.0",
-		"tailwindcss": "^4.1.3",
-		"valibot": "^1.1.0"
-	}
+  "name": "vroom-coffee-roastery",
+  "description": "Demo app with sample routes",
+  "engines": {
+    "node": "^18.17.0 || ^20.3.0 || >=21.0.0"
+  },
+  "engines-annotation": "Mostly required by sharp which needs a Node-API v9 compatible runtime",
+  "private": true,
+  "trustedDependencies": [
+    "sharp"
+  ],
+  "trustedDependencies-annotation": "Needed for bun to allow running install scripts",
+  "type": "module",
+  "scripts": {
+    "build": "qwik build",
+    "build.client": "vite build",
+    "build.preview": "vite build --ssr src/entry.preview.tsx",
+    "build.server": "vite build -c adapters/cloudflare-pages/vite.config.ts",
+    "build.types": "tsc --incremental --noEmit",
+    "cf-typegen": "wrangler types",
+    "deploy": "npm run build && wrangler pages deploy",
+    "dev": "vite --mode ssr",
+    "dev.debug": "node --inspect-brk ./node_modules/vite/bin/vite.js --mode ssr --force",
+    "fmt": "prettier --write .",
+    "fmt.check": "prettier --check .",
+    "lint": "eslint \"src/**/*.ts*\"",
+    "preview": "npm run build && wrangler pages dev",
+    "preview.remote": "npm run build && wrangler pages dev --remote",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:migrate:prod": "prisma migrate deploy",
+    "serve": "wrangler pages dev ./dist --compatibility-flags=nodejs_als",
+    "start": "vite --open --mode ssr",
+    "qwik": "qwik"
+  },
+  "devDependencies": {
+    "@builder.io/qwik": "^1.12.0",
+    "@builder.io/qwik-city": "^1.12.0",
+    "@cloudflare/workers-types": "^4.20250410.0",
+    "@modular-forms/qwik": "^0.29.1",
+    "@types/node": "^22.15.29",
+    "@typescript-eslint/eslint-plugin": "7.16.1",
+    "@typescript-eslint/parser": "7.16.1",
+    "eslint": "8.57.0",
+    "eslint-plugin-qwik": "^1.12.0",
+    "prettier": "3.3.3",
+    "prisma": "^6.8.2",
+    "typescript": "5.4.5",
+    "undici": "*",
+    "vite": "5.3.5",
+    "vite-tsconfig-paths": "^4.2.1",
+    "wrangler": "^3.0.0"
+  },
+  "dependencies": {
+    "@prisma/adapter-d1": "^6.9.0",
+    "@prisma/client": "^6.8.2",
+    "@tailwindcss/vite": "^4.1.3",
+    "@tsndr/cloudflare-worker-jwt": "^3.2.0",
+    "@types/eslint": "^9.6.1",
+    "bcryptjs": "^3.0.2",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.3.0",
+    "tailwindcss": "^4.1.3",
+    "valibot": "^1.1.0"
+  }
 }
