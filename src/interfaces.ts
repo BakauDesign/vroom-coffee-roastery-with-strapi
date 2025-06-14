@@ -1,3 +1,12 @@
+export interface Users {
+    id: number;
+    name: string;
+    username: string;
+    role: string;
+    avatar: string;
+    password: string;
+}
+
 export interface Products {
     id: number;
     name: string;
@@ -10,8 +19,6 @@ export interface Products {
     stock: number;
     weight: number;
     type: string;
-
-    reviewId: number;
 }
 
 export interface RoastedBeansProduct extends Products {
@@ -80,6 +87,7 @@ export interface ToolsProduct extends Products {
 
 export interface Reviews {
     id: number;
+    productId: number;
     name: string;
     location: string;
     rating: number;
