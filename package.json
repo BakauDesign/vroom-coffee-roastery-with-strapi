@@ -2,7 +2,7 @@
   "name": "vroom-coffee-roastery",
   "description": "Demo app with sample routes",
   "engines": {
-    "node": "^18.17.0 || ^20.3.0 || >=21.0.0"
+    "node": "^18.18.0 || ^20.3.0 || >=21.0.0"
   },
   "engines-annotation": "Mostly required by sharp which needs a Node-API v9 compatible runtime",
   "private": true,
