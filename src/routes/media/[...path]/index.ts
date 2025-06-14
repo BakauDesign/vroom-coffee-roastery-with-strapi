@@ -29,9 +29,6 @@ export const onGet: RequestHandler = async ({ params, send, platform, headers })
 
         if (file.etag) {
             headers.set('ETag', file.etag);
-        }
-
-        if (file.uploaded) {
             headers.set('Last-Modified', file.uploaded.toUTCString());
         }
 
@@ -46,7 +43,7 @@ export const onPost: RequestHandler = async ({ request, send, platform }) => {
         const formData = await request.formData();
         const file = formData.get('file') as File;
 
-        if (!file || !(file instanceof File)) {
+        if (!(file instanceof File)) {
             send(400, { message: "No file provided or invalid file type." });
             return;
         }
@@ -82,7 +79,7 @@ export const onPut: RequestHandler = async ({ request, params, send, platform })
         const formData = await request.formData();
         const file = formData.get('file') as File;
 
-        if (!file || !(file instanceof File)) {
+        if (!(file instanceof File)) {
             send(400, { message: "No file provided or invalid file type." });
             return;
         }
