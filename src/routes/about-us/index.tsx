@@ -20,7 +20,6 @@ import ProcessImage_3 from "~/assets/main/about-us/Process image 3.avif";
 import SustainabilityFirst from "~/assets/main/about-us/icons/Sustainability First.avif";
 import ConsistencyIsKey from "~/assets/main/about-us/icons/Consistency is Key.avif";
 import CommunityDriven from "~/assets/main/about-us/icons/Community Driven.avif";
-import { routeLoader$ } from "@builder.io/qwik-city";
 // import { getMedia } from "~/lib/media";
 
 // export const onGet: RequestHandler = async ({ redirect }) => {
@@ -45,10 +44,6 @@ import { routeLoader$ } from "@builder.io/qwik-city";
 //         console.info("Object found:", object);
 //     }
 // });
-
-export const useMediaUrl = routeLoader$(({ platform }) => {
-    return platform.env.PUBLIC_MEDIA_URL;
-});
 
 export default component$(() => {
     // const mediaUrl = useMediaUrl();
