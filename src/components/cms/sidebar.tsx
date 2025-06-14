@@ -3,30 +3,31 @@ import { component$, useSignal } from '@builder.io/qwik';
 import { Dropdown } from './dropdown';
 
 import { Separator } from './separator';
-import { UserProfile, type UserProfileProps } from './user-profile';
+import { UserProfile } from './user-profile';
+import type { UserProfileProps } from './user-profile';
 
 import SidebarIcon from "~/assets/Icons/Sidebar Minimalistic.svg";
 import WidgetIcon from "~/assets/Icons/Widget 7.svg";
 import CartIcon from "~/assets/Icons/Cart 6.svg";
 import CartLargeIcon from "~/assets/Icons/Cart Large.svg";
 import SettingsIcon from "~/assets/Icons/Settings.svg";
+import type { Users } from '~/interfaces';
 
-interface SidebarProps {
-    user: UserProfileProps;
-    onClickLogout$?: () => void;
+interface SidebarProps extends Omit<UserProfileProps, "user"> {
+    user: Omit<Users, "id" | "username" | "password"> | null;
 }
 
-export const Sidebar = component$<{props: SidebarProps}>(({ props }) => {
+export const Sidebar = component$<SidebarProps>(({ onClickLogout$, user }) => {
     const isOpened = useSignal(false);
 
     return (
         <aside class={`
-            shrink-0 lg:h-full flex flex-col overflow-y-scroll overflow-x-hidden no-scrollbar lg:rounded-tr-[12px] lg:rounded-br-[12px] lg:bg-neutral-custom-base *:px-6 font-inter transition-all duration-300 ease-in-out
+            shrink-0 lg:h-full flex flex-col overflow-y-scroll overflow-x-hidden no-scrollbar lg:rounded-tr-[12px] lg:rounded-br-[12px] lg:bg-neutral-custom-base font-inter transition-all duration-300 ease-in-out
             ${isOpened.value ? "w-full lg:w-[360px]" : "w-full lg:w-[100px]"} absolute lg:static bg-neutral-custom-base
             top-0 z-[99]
         `}>
             <section class={`
-                    min-h-[100px] pt-6 pb-4 flex items-center justify-between gap-6 ${isOpened.value ? "flex-row lg:flex-row" : "lg:flex-col"}
+                    min-h-[100px] pt-6 pb-4 px-6 flex items-center justify-between gap-6 ${isOpened.value ? "flex-row lg:flex-row" : "lg:flex-col"}
                 `}>
                 <figure class="flex items-center gap-x-4">
                     <img 
@@ -55,7 +56,7 @@ export const Sidebar = component$<{props: SidebarProps}>(({ props }) => {
             <Separator />
 
             <section class={`
-                    flex-1 flex flex-col shrink-0 max-w-[360px] bg-neutral-custom-base transition-all duration-300 overflow-y-scroll overflow-x-hidden
+                    *:px-6 flex-1 flex flex-col shrink-0 max-w-[360px] bg-neutral-custom-base transition-all duration-300 overflow-y-scroll overflow-x-hidden
                     fixed lg:static top-[120px] bottom-0 ${isOpened.value ? "translate-x-0" : "translate-x-[-360px] lg:translate-x-0"}
                 `}>
                 <section class="flex flex-1 py-12 flex-col gap-y-6">
@@ -150,7 +151,11 @@ export const Sidebar = component$<{props: SidebarProps}>(({ props }) => {
 
                 <Separator />
 
-                <UserProfile props={props.user} showDetail={isOpened.value} />
+                <UserProfile
+                    user={user}
+                    onClickLogout$={onClickLogout$} 
+                    showDetail={isOpened.value}
+                />
             </section>
         </aside>
     );
