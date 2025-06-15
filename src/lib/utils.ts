@@ -30,3 +30,19 @@ export function toSlug(text: string): string {
         .replace(/\s+/g, '-')
         .replace(/--+/g, '-');
 }
+
+export function formatDateTime(isoString: string) {
+    const date = new Date(isoString);
+
+    const formattedDate = new Intl.DateTimeFormat('id-ID', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+        timeZone: 'Asia/Jakarta'
+    }).format(date);
+
+    return formattedDate.replace(':', '.');
+}
