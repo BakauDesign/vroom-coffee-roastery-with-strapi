@@ -1,10 +1,9 @@
-import { component$ } from '@builder.io/qwik';
+import { component$, useSignal } from '@builder.io/qwik';
 import type { QRL } from '@builder.io/qwik';
 
 interface PaginationProps {
     currentPage: number;
     totalPages: number;
-    perPage: number;
     perPageOptions?: number[];
     onPageChange$: QRL<(page: number) => void>;
     onPerPageChange$?: QRL<(value: number) => void>;
@@ -13,16 +12,17 @@ interface PaginationProps {
 export const Pagination = component$<PaginationProps>(({
     currentPage,
     totalPages,
-    perPage,
     perPageOptions = [10, 25, 50],
     onPageChange$,
     onPerPageChange$,
 }) => {
-  const getPageClass = (page: number) =>
-    `font-inter px-3 py-1.5 border rounded ${
-      page === currentPage
-        ? 'bg-primary-base border-primary-100 font-semibold text-primary-500'
-        : 'border-neutral-custom-100 bg-neutral-custom-base hover:bg-neutral-custom-50 text-neutral-custom-600'
+    const perPage = useSignal(10);
+
+    const getPageClass = (page: number) =>
+        `font-inter px-3 py-1.5 border rounded ${
+        page === currentPage
+            ? 'bg-primary-base border-primary-100 font-semibold text-primary-500'
+            : 'border-neutral-custom-100 bg-neutral-custom-base hover:bg-neutral-custom-50 text-neutral-custom-600'
     }`;
 
     return (
@@ -37,11 +37,14 @@ export const Pagination = component$<PaginationProps>(({
                         <button
                             key={option}
                             class={`px-3 py-1.5 border-[1.5px] rounded ${
-                                perPage === option
+                                perPage.value === option
                                 ? 'bg-primary-base border-primary-100'
                                 : 'border-neutral-custom-100 bg-neutral-custom-base hover:bg-neutral-custom-50'
                             }`}
-                            onClick$={() => onPerPageChange$?.(option)}
+                            onClick$={() => {
+                                perPage.value = option;
+                                onPerPageChange$?.(option);
+                            }}
                         >
                             {option}
                         </button>
