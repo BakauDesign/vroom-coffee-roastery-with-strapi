@@ -4,20 +4,20 @@ import {
     useTask$
 } from '@builder.io/qwik';
 
-import type { QRL } from '@builder.io/qwik';
+import type { InputHTMLAttributes, QRL } from '@builder.io/qwik';
 
 import Magnifier from "~/assets/Icons/Magnifer.svg";
 
-export interface SearchBarProps {
+export interface SearchBarProps extends InputHTMLAttributes<HTMLInputElement> {
     delay?: number;
-    placeholder?: string;
-    onValueChange$?: QRL<(value: string) => void>;
+    onValueChange?: QRL<(value: string) => void>;
 }
 
 export const SearchBar = component$<SearchBarProps>(({ 
     delay = 300, 
     placeholder = 'Search...',
-    onValueChange$
+    onValueChange,
+    ...props
 }) => {
     const inputValue = useSignal('');
     const debouncedValue = useSignal('');
@@ -27,7 +27,7 @@ export const SearchBar = component$<SearchBarProps>(({
         
         const timer = setTimeout(() => {
             debouncedValue.value = inputValue.value;
-            onValueChange$ && onValueChange$(inputValue.value);
+            onValueChange && onValueChange(inputValue.value);
         }, delay);
 
         cleanup(() => clearTimeout(timer));
@@ -43,6 +43,7 @@ export const SearchBar = component$<SearchBarProps>(({
                 type="text"
                 bind:value={inputValue}
                 placeholder={placeholder}
+                {...props}
                 class="h-full w-full py-1 pr-4 font-inter text-cms-label-small sm:text-cms-label-medium text-neutral-custom-700 placeholder:text-neutral-custom-400 outline-none"
             />
         </div>
