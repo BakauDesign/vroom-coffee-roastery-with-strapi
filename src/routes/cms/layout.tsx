@@ -69,7 +69,7 @@ export default component$(() => {
 
     return (
         <main class="h-screen w-screen overflow-y-scroll p-4 sm:p-6 bg-primary-base flex flex-col items-center gap-y-20">
-            <section class="shrink-0 h-fit min-h-full w-full flex flex-col gap-6 lg:flex-row relative">
+            <section class="shrink-0 h-full min-h-full w-full flex flex-col gap-6 lg:flex-row relative">
                 <Sidebar
                     onClickLogout$={() => logout.submit()}
                     user={user.value}
