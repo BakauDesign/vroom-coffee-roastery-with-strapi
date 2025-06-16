@@ -6,16 +6,23 @@ import {
     useContextProvider
 } from '@builder.io/qwik';
 
-import type { QRL, Component } from '@builder.io/qwik';
+import type { QRL, Component, InputHTMLAttributes, HTMLAttributes } from '@builder.io/qwik';
 
-export interface ChipsProps {
-    disabled?: boolean;
-    onClick$?: QRL<(value?: any) => void>;
-    currentValue?: any;
+export interface ChipsProps extends
+    HTMLAttributes<HTMLInputElement>
+    {
+        id?: string;
+        name?: string;
+        value?: number | string;
+        disabled?: boolean;
+        onClick$?: QRL<(value?: any) => void>;
+        currentValue?: any;
 }
 
-export interface ItemProps extends Omit<ChipsProps, "currentValue"> {
-    value?: any
+export interface ItemProps
+    extends InputHTMLAttributes<HTMLInputElement>
+    {
+        selected?: boolean;
 }
  
 export interface ChipsComponent extends Component {
@@ -25,6 +32,7 @@ export interface ChipsComponent extends Component {
     Option: Component;
     Items: Component;
     Item: Component<ItemProps>;
+    Handler: Component<InputHTMLAttributes<HTMLInputElement>>;
 }
 
 const ChipsContext = createContextId<ChipsProps>('chips.context');
@@ -79,21 +87,34 @@ Chips.Items = component$(() => {
     );
 });
 
-Chips.Item = component$((props) => {
-    const { disabled, onClick$, currentValue } = useContext(ChipsContext);
+Chips.Item = component$(({ selected, ...props}) => {
+    const { name, disabled, onClick$, currentValue } = useContext(ChipsContext);
 
     return (
-        <div
-            onClick$={() => (onClick$ && !(disabled || props.disabled)) && onClick$(props.value)}
-            
-            class={`
-                h-[40px] py-1.5 px-3 flex items-center font-medium transition-all rounded-[4px]
-                ${(currentValue === props.value && !(disabled || props.disabled)) && "bg-primary-50 text-primary-800 border-primary-50"}
-                ${(!(currentValue === props.value) && !(disabled || props.disabled)) && "bg-neutral-custom-base text-neutral-custom-700 border-neutral-custom-100"}
-                ${(disabled || props.disabled) ? "bg-neutral-custom-50 text-neutral-custom-400 border-none cursor-not-allowed" : "cursor-pointer border-[1.5px] select-none"}
-            `}
-        >
-            <Slot />
-        </div>
+        <>
+            <label
+                for={props?.value?.toString()}
+                onClick$={() => (onClick$ && !(disabled || props.disabled)) && onClick$(props.value)}
+                
+                class={`
+                    h-[40px] py-1.5 px-3 flex items-center font-medium transition-all rounded-[4px]
+                    ${(currentValue === props.value && !(disabled || props.disabled)) && "bg-primary-50 text-primary-800 border-primary-50"}
+                    ${(!(currentValue === props.value) && !(disabled || props.disabled)) && "bg-neutral-custom-base text-neutral-custom-700 border-neutral-custom-100"}
+                    ${(disabled || props.disabled) ? "bg-neutral-custom-50 text-neutral-custom-400 border-none cursor-not-allowed" : "cursor-pointer border-[1.5px] select-none"}
+                `}
+            >
+                { props?.value?.toString() }
+            </label>
+
+            <input
+                {...props}
+                class="hidden"
+                checked={selected}
+                type='radio'
+                id={props?.value?.toString()}
+                name={name}
+                value={props.value}
+            />
+        </>
     );
 });
