@@ -1,4 +1,4 @@
-import { 
+import {
     component$,
     createContextId,
     Slot,
@@ -88,13 +88,13 @@ Chips.Items = component$(() => {
 });
 
 Chips.Item = component$(({ selected, ...props}) => {
-    const { name, disabled, onClick$, currentValue } = useContext(ChipsContext);
+    const { name, disabled, currentValue, ...rootProps } = useContext(ChipsContext);
 
     return (
         <>
             <label
                 for={props?.value?.toString()}
-                onClick$={() => (onClick$ && !(disabled || props.disabled)) && onClick$(props.value)}
+                onClick$={rootProps.onClick$?.bind(props.value)}
                 
                 class={`
                     h-[40px] py-1.5 px-3 flex items-center font-medium transition-all rounded-[4px]
