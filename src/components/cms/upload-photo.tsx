@@ -9,7 +9,7 @@
 
     import type {
         Component,
-        InputHTMLAttributes
+        InputHTMLAttributes,
     } from '@builder.io/qwik';
     
     import UploadMinimalisticDark from "~/assets/Icons/Upload Minimalistic Dark.svg";
