@@ -20,8 +20,9 @@ export interface ChipsProps extends
 }
 
 export interface ItemProps
-    extends InputHTMLAttributes<HTMLInputElement>
+    extends Omit<InputHTMLAttributes<HTMLInputElement>, "value">
     {
+        value: string;
         selected?: boolean;
 }
  
@@ -87,23 +88,23 @@ Chips.Items = component$(() => {
     );
 });
 
-Chips.Item = component$(({ selected, ...props}) => {
-    const { name, disabled, currentValue, ...rootProps } = useContext(ChipsContext);
+Chips.Item = component$(({ selected, value, disabled: itemDisabled, ...props }) => {
+    const { name, disabled, currentValue, onClick$ } = useContext(ChipsContext);
 
     return (
         <>
             <label
-                for={props?.value?.toString()}
-                onClick$={rootProps.onClick$?.bind(props.value)}
+                for={value?.toString()}
+                onClick$={() => onClick$?.(value)}
                 
                 class={`
                     h-[40px] py-1.5 px-3 flex items-center font-medium transition-all rounded-[4px]
-                    ${(currentValue === props.value && !(disabled || props.disabled)) && "bg-primary-50 text-primary-800 border-primary-50"}
-                    ${(!(currentValue === props.value) && !(disabled || props.disabled)) && "bg-neutral-custom-base text-neutral-custom-700 border-neutral-custom-100"}
-                    ${(disabled || props.disabled) ? "bg-neutral-custom-50 text-neutral-custom-400 border-none cursor-not-allowed" : "cursor-pointer border-[1.5px] select-none"}
+                    ${(currentValue === value && !(disabled || itemDisabled)) && "bg-primary-50 text-primary-800 border-primary-50"}
+                    ${(!(currentValue === value) && !(disabled || itemDisabled)) && "bg-neutral-custom-base text-neutral-custom-700 border-neutral-custom-100"}
+                    ${(disabled || itemDisabled) ? "bg-neutral-custom-50 text-neutral-custom-400 border-none cursor-not-allowed" : "cursor-pointer border-[1.5px] select-none"}
                 `}
             >
-                { props?.value?.toString() }
+                { value?.toString() }
             </label>
 
             <input
@@ -111,9 +112,9 @@ Chips.Item = component$(({ selected, ...props}) => {
                 class="hidden"
                 checked={selected}
                 type='radio'
-                id={props?.value?.toString()}
+                id={value?.toString()}
                 name={name}
-                value={props.value}
+                value={value}
             />
         </>
     );
