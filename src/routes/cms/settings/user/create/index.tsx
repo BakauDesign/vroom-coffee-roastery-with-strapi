@@ -1,15 +1,12 @@
 import * as v from 'valibot';
 
 import {
-    // $,
     component$,
     useSignal,
-    // useSignal
 } from "@builder.io/qwik";
  
 import {
     routeLoader$,
-    // useLocation,
     useNavigate
 } from '@builder.io/qwik-city';
  
@@ -18,12 +15,6 @@ import { Button } from "~/components/main/button";
 import { Separator } from "~/components/cms/separator";
  
 import { HeaderBlock as Header } from "~/components/blocks/cms/header-block";
- 
-// import { useUsers } from "~/hooks/useUsers";
- 
-// import { getDB } from "~/lib/db";
-// import { formatDateTime } from "~/lib/utils";
-// import { Complete } from "~/assets/cms/icons/Complete";
  
 import { useForm, formAction$, valiForm$ } from "@modular-forms/qwik";
 import type {
@@ -36,6 +27,7 @@ import { FormBlock } from "~/components/blocks/cms/form-block";
 import { UploadPhoto } from "~/components/cms/upload-photo";
 import { Chips } from "~/components/cms/chips";
 import { uploadFileToBucket } from '~/lib/r2';
+import { createUser } from '~/lib/auth';
  
 export const useUserFormLoader = routeLoader$<InitialValues<UserForm>>(() => ({
     name: '',
@@ -46,7 +38,7 @@ export const useUserFormLoader = routeLoader$<InitialValues<UserForm>>(() => ({
 }));
  
 export const useUserFromAction = formAction$<UserForm>(
-    async (values, { platform }) => {
+    async (values, { platform, request, cookie, redirect }) => {
         const validAvatar = v.safeParse(UserAvatarSchema, values.avatar);
 
         if (!validAvatar.success) {
@@ -55,13 +47,19 @@ export const useUserFromAction = formAction$<UserForm>(
             }
         }
         try {
-            await uploadFileToBucket(values.avatar, platform.env.BUCKET);
+            const avatar = await uploadFileToBucket(values.avatar, platform.env.BUCKET);
 
-      
-            return { message: "User berhasil dibuat!" };
+            const user = {
+                ...values,
+                avatar: avatar.path
+            }
+
+            await createUser({ user, ...platform, request, cookie });
+
+            throw redirect(301, "/cms/settings/user")
         } catch (err) {
             return {
-                errors: { avatar: `Gagal mengunggah file. ${err}` }
+                errors: { avatar: `Gagal mengunggah file.` }
             };
         }
         
@@ -83,9 +81,7 @@ export default component$(() => {
         validateOn: 'submit'
     });
  
-    // const loc = useLocation();
     const navigate = useNavigate();
-    // const users = useUserLoader();
 
     return (
         <>
@@ -299,10 +295,6 @@ export default component$(() => {
                                                     { field.error }
                                                 </p>
                                             </Chips.Root>
-
-                                            {/* <p class="text-red-500">
-                                                { field.error }
-                                            </p> */}
                                         </section>
                                     )}
                                 </Field>
