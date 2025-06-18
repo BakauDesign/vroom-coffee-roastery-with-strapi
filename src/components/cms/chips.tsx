@@ -94,7 +94,7 @@ Chips.Item = component$(({ selected, value, disabled: itemDisabled, ...props }) 
     return (
         <>
             <label
-                for={value?.toString()}
+                for={value.toString()}
                 onClick$={() => onClick$?.(value)}
                 
                 class={`
@@ -104,7 +104,7 @@ Chips.Item = component$(({ selected, value, disabled: itemDisabled, ...props }) 
                     ${(disabled || itemDisabled) ? "bg-neutral-custom-50 text-neutral-custom-400 border-none cursor-not-allowed" : "cursor-pointer border-[1.5px] select-none"}
                 `}
             >
-                { value?.toString() }
+                { value.toString() }
             </label>
 
             <input
@@ -112,7 +112,7 @@ Chips.Item = component$(({ selected, value, disabled: itemDisabled, ...props }) 
                 class="hidden"
                 checked={selected}
                 type='radio'
-                id={value?.toString()}
+                id={value.toString()}
                 name={name}
                 value={value}
             />
