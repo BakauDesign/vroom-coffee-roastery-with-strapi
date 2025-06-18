@@ -8,7 +8,7 @@ import {
     Link,
     routeLoader$,
     useLocation,
-    // useNavigate
+    useNavigate
 } from '@builder.io/qwik-city';
 
 import { Breadcrumb } from "~/components/cms/breadcrumb";
@@ -22,7 +22,6 @@ import { HeaderBlock as Header } from "~/components/blocks/cms/header-block";
 import { Pagination } from "~/components/blocks/cms/pagination-block";
 
 import { useUsers } from "~/hooks/useUsers";
-// import { roastedFilterOption as filterOption } from "~/lib/filter-option";
 
 import MenuDotsIcon from "~/assets/Icons/Menu Dots.svg";
 import PenIcon from "~/assets/Icons/Pen.svg";
@@ -72,7 +71,7 @@ export const useUserLoader = routeLoader$(
 
 export default component$(() => {
     const loc = useLocation();
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     const users = useUserLoader();
 
     // const perPage = useSignal(10);
@@ -125,7 +124,7 @@ export default component$(() => {
                             <Button
                                 variant="primary"
                                 size="large"
-                                // onClick$={() => navigate("/cms/settings/user/create")}
+                                onClick$={() => navigate("/cms/settings/user/create")}
                             >
                                 Tambah User Baru
                             </Button>
