@@ -54,7 +54,17 @@ export const useUserFromAction = formAction$<UserForm>(
                 errors: { avatar: validAvatar.issues[0].message }
             }
         }
-        await uploadFileToBucket(values.avatar, platform.env.BUCKET);
+        try {
+            await uploadFileToBucket(values.avatar, platform.env.BUCKET);
+
+      
+            return { message: "User berhasil dibuat!" };
+        } catch (err) {
+            return {
+                errors: { avatar: `Gagal mengunggah file. ${err}` }
+            };
+        }
+        
     },
     {
         validate: valiForm$(UserSchema),
