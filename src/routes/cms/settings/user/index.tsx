@@ -189,7 +189,7 @@ export default component$(() => {
                                                     </Popover.Trigger>
 
                                                     <Popover.Content class="flex flex-col gap-y-4 text-cms-label-small *:cursor-pointer *:flex *:gap-2 *:items-center">
-                                                        <Link href={``}>
+                                                        <Link href={`${user.id}/edit`}>
                                                             <img src={PenIcon} alt="Pen Icon" height={16} width={16} />
                                                             <p>Edit user</p>
                                                         </Link>
