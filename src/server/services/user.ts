@@ -1,23 +1,60 @@
-import bcrypt, { hash } from "bcryptjs";
+import { hash } from "bcryptjs";
 
 import { getDB } from '~/lib/db';
 
 import { Users } from "~/interfaces";
 import { getTokenUserId } from "~/lib/cookie";
 import { Cookie } from "@builder.io/qwik-city";
-import { PlatformCloudflarePages } from "@builder.io/qwik-city/middleware/cloudflare-pages";
 
 export type ErrorAuthentication = {
 	message: string;
 }
 
-interface CreateUser {
-	user: Omit<Users, "id" | "created_at">;
-	env: { DB: D1Database };
+interface Params {
+    env: { DB: D1Database };
 	request: Request;
 	cookie: Cookie;
 }
 
+interface GetUser extends Omit<Params,
+        "request" |
+        "cookie"
+    > {
+	id: number;
+}
+
+interface CreateUser extends Params {
+	user: Omit<Users, "id" | "created_at">;
+}
+
+interface UpdateUser extends Params {
+	user: Omit<Users, "created_at">;
+}
+
+export async function getUserById({
+    id,
+    env
+}: GetUser) {
+    try {
+        const db = await getDB(env);
+
+        const user = await db.user.findUnique({
+                                where: { id },
+                            });
+            
+        return {
+            user,
+            success: true,
+            message: "Success retrieved user" 
+        };
+    } catch (error) {
+        return {
+            user: null,
+            success: false,
+            message: "Error in server" 
+        };
+    }
+}
 
 export async function createUser({
     user,
@@ -42,6 +79,50 @@ export async function createUser({
                                     avatar,
                                     role,
                                     password: hashPassword
+                                }
+                            });
+            
+            return {
+                success: true,
+                message: "User has been created"
+            }
+        
+        } catch (error) {
+            return {
+                success: false,
+                message: "Error in server" 
+            };
+        }
+    }
+    return verifiedRole?.message;
+}
+
+export async function updateUser({
+    user,
+    env,
+    request,
+    cookie
+}: UpdateUser) {
+    const verifiedRole = await verifyRole(request, cookie, env);
+
+    if (verifiedRole?.verified) {
+        const { id, name, username, avatar, role, password } = user;
+    
+        try {
+            const db = await getDB(env);
+
+            const hashPassword = await hash(password, 12);
+
+            await db.user.update({
+                                data: {
+                                    name,
+                                    username,
+                                    avatar,
+                                    role,
+                                    password: hashPassword
+                                },
+                                where: {
+                                    id: id
                                 }
                             });
             
