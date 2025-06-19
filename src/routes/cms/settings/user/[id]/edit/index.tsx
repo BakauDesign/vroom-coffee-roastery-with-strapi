@@ -38,7 +38,7 @@ export const useUserFormLoader = routeLoader$<InitialValues<UserForm>>(
             path: '/',
             httpOnly: true,
             secure: true,
-            maxAge: [12, 'days'],
+            maxAge: [1, 'days'],
             sameSite: 'lax',
         });
 
@@ -67,6 +67,9 @@ export const useUserFromAction = formAction$<UserForm>(
                 }
 
                 await updateUser({ user, ...platform, request, cookie });
+
+                cookie.delete("vroom-coffee-roastery-user-avatar");
+
                 throw redirect(301, "/cms/settings/user");
             } catch (error) {
                 console.error("There's error in server");
