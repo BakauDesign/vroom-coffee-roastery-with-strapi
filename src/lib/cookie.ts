@@ -191,5 +191,12 @@ export async function deleteToken({
             maxAge: 0,
             sameSite: 'lax',
         });
+        cookie.set('vroom-coffee-roastery-user-avatar', '', {
+            path: '/',
+            httpOnly: true,
+            secure: true,
+            maxAge: 0,
+            sameSite: 'lax',
+        });
     } catch (e) {}
 }
