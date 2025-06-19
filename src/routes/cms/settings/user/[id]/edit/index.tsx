@@ -38,7 +38,7 @@ export const useUserFormLoader = routeLoader$<InitialValues<UserForm>>(
             path: '/',
             httpOnly: true,
             secure: true,
-            maxAge: [1, 'days'],
+            maxAge: [5, 'minutes'],
             sameSite: 'lax',
         });
 
@@ -85,9 +85,9 @@ export const useUserFromAction = formAction$<UserForm>(
                 }
 
                 await deleteFileFromBucket(currentAvatar, platform.env.BUCKET);
-                await uploadFileToBucket(values.avatar, platform.env.BUCKET);
+                const { path } = await uploadFileToBucket(values.avatar, platform.env.BUCKET);
 
-                await updateUser({ user, ...platform, request, cookie });
+                await updateUser({...{ user, avatar: path }, ...platform, request, cookie });
 
                 cookie.delete("vroom-coffee-roastery-user-avatar");
 
