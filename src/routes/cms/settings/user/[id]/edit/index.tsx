@@ -88,6 +88,9 @@ export const useUserFromAction = formAction$<UserForm>(
                 await uploadFileToBucket(values.avatar, platform.env.BUCKET);
 
                 await updateUser({ user, ...platform, request, cookie });
+
+                cookie.delete("vroom-coffee-roastery-user-avatar");
+
                 throw redirect(301, "/cms/settings/user");
             } catch (error) {
                 console.error("There's error in server")
