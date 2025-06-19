@@ -27,7 +27,7 @@ import { FormBlock } from "~/components/blocks/cms/form-block";
 import { UploadPhoto } from "~/components/cms/upload-photo";
 import { Chips } from "~/components/cms/chips";
 import { uploadFileToBucket } from '~/lib/r2';
-import { createUser } from '~/lib/auth';
+import { createUser } from '~/server/services/user';
  
 export const useUserFormLoader = routeLoader$<InitialValues<UserForm>>(() => ({
     name: '',
