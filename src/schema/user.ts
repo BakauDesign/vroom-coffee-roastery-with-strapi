@@ -17,7 +17,7 @@ export const UserSchema = v.object({
     password: v.pipe(
         v.string(),
         v.nonEmpty('Mohon masukan password kamu'),
-        v.minLength(8, 'Panjang password harus 8 karakter atau lebih'),
+        v.minLength(18, 'Panjang password harus 18 karakter atau lebih'),
     ),
 });
 

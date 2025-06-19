@@ -308,7 +308,7 @@ export default component$(() => {
                                                 </h1>
  
                                                 <p class="text-cms-body-small sm:text-cms-body-medium text-neutral-custom-600">
-                                                    Masukkan nama lengkap user (contoh: 'Aulia Azahra'). Hindari singkatan atau simbol khusus.
+                                                    Gunakan kombinasi huruf besar/kecil, angka dan harus 18+ karakter dengan kombinasi aman.
                                                 </p>
                                             </article>
  
@@ -324,7 +324,7 @@ export default component$(() => {
                                                     name={field.name}
                                                     value={field.value}
                                                     placeholder="cth: mysecretpassword123213"
-                                                    minLength={8}
+                                                    minLength={18}
                                                 />
  
                                                 <Input.Message>
