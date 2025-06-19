@@ -18,3 +18,10 @@ export async function uploadFileToBucket(
 
     return { path: filePath };
 }
+
+export async function deleteFileFromBucket(
+    filePath: string,
+    bucket: R2Bucket
+) {
+    await bucket.delete(filePath);
+}
