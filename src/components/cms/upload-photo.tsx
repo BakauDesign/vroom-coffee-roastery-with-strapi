@@ -19,12 +19,18 @@
         disabled?: boolean;
     }
 
+    interface FieldFileProps 
+        extends InputHTMLAttributes<HTMLInputElement> 
+        {
+            currentImageUrl: string | null;
+    }
+
     interface UploadPhotoComponent extends Component {
         Root: Component<UploadPhotoProps>;
         Header: Component;
         Label: Component;
         Option: Component;
-        FieldFile: Component<InputHTMLAttributes<HTMLInputElement>>;
+        FieldFile: Component<FieldFileProps>;
         Message: Component;
     }
 
@@ -72,15 +78,15 @@
         );
     });
 
-    UploadPhoto.FieldFile = component$<InputHTMLAttributes<HTMLInputElement>>((props) => {
-        const imageUrl = useSignal<string | null>(null);
+    UploadPhoto.FieldFile = component$<FieldFileProps>((props) => {
+        const imageUrl = useSignal<string | null>(props.value?.toString() || null);
         const rootProps = useContext(UploadPhotoContext);
 
         return (
             <div class="h-[180px] w-[180px] bg-neutral-custom-base border-dashed border-[1.5px] border-neutral-200 rounded-[6px] flex items-center justify-between relative overflow-hidden">
                 <input
                     id='upload-photo'
-                    name='upload-photo'
+                    name={props.name}
                     type='file'
                     accept='.jpg,.jpeg,.png,.avif'
                     {...props}
@@ -101,22 +107,26 @@
                     for="upload-photo"
                     class={`
                         flex flex-col justify-center items-center gap-y-1.5 top-0 bottom-0 left-0 right-0 absolute bg-cover cursor-pointer
-                        ${imageUrl.value ? "bg-none" : "bg-neutral-custom-base"} ${imageUrl.value && "grayscale"}
+                        ${(props.currentImageUrl || imageUrl.value) ? "bg-none" : "bg-neutral-custom-base"} ${(props.currentImageUrl || imageUrl.value) && "grayscale"}
                     `}
 
                     style={{
-                        backgroundImage: imageUrl.value ? `url(${imageUrl.value})` : 'bg-neutral-custom-base',
+                        backgroundImage: props.currentImageUrl && !imageUrl.value ? (
+                            `url(https://vroom-coffee-roastery.pages.dev/media/${props.currentImageUrl})`
+                        ) : (
+                            imageUrl.value ? `url(${imageUrl.value})` : 'bg-neutral-custom-base'
+                        )
                     }}
                 >
                     <img
-                        src={imageUrl.value ? UploadMinimalisticLight : UploadMinimalisticDark}
+                        src={(props.currentImageUrl || imageUrl.value) ? UploadMinimalisticLight : UploadMinimalisticDark}
                         alt="Upload Minimalistic Icon"
                         height={24}
                         width={24}
                     />
 
-                    <p class={`text-cms-label-small sm:text-cms-label-medium ${imageUrl.value ? "text-neutral-custom-base" : "text-neutral-custom-700"}`}>
-                        {imageUrl.value ? "Click to change file" : "Click to select file"}
+                    <p class={`text-cms-label-small sm:text-cms-label-medium ${(props.currentImageUrl || imageUrl.value) ? "text-neutral-custom-base" : "text-neutral-custom-700"}`}>
+                        {(props.currentImageUrl || imageUrl.value) ? "Click to change file" : "Click to select file"}
                     </p>
                 </label>
             </div>
