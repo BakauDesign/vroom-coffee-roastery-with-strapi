@@ -1,3 +1,5 @@
+import * as v from 'valibot';
+
 import {
     $,
     component$,
@@ -6,6 +8,7 @@ import {
 
 import { 
     Link,
+    routeAction$,
     routeLoader$,
     useLocation,
     useNavigate
@@ -30,6 +33,7 @@ import TrashIcon from "~/assets/Icons/Trash Bin Trash.svg";
 import UserIllustration from "~/assets/cms/icons/Review.avif";
 import { getDB } from "~/lib/db";
 import { formatDateTime } from "~/lib/utils";
+import { deleteUser } from "~/server/services/user";
 
 export const useUserLoader = routeLoader$( 
     async ({ platform, url }) => {
@@ -69,11 +73,26 @@ export const useUserLoader = routeLoader$(
     }
 );
 
+export const useDeleteUser = routeAction$(
+    async (values, { platform, request, cookie }) => {
+        const { output: user, success: validUser } = v.safeParse(
+            v.object({
+                id: v.number(),
+                avatar: v.any(),
+            }), values);
+
+        if (validUser) {
+            deleteUser({ user, ...platform, request, cookie,})
+        }
+        
+    }
+);
+
 export default component$(() => {
     const loc = useLocation();
     const navigate = useNavigate();
     const users = useUserLoader();
-
+    const deleteUser = useDeleteUser();
     // const perPage = useSignal(10);
 
     const {
@@ -194,7 +213,7 @@ export default component$(() => {
                                                             <p>Edit user</p>
                                                         </Link>
 
-                                                        <div>
+                                                        <div onClick$={() => deleteUser.submit(user)}>
                                                             <img src={TrashIcon} alt="Trash Icon" height={16} width={16} />
                                                             <p>Hapus user</p>
                                                         </div>

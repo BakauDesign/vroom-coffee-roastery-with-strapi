@@ -5,13 +5,14 @@ import { getDB } from '~/lib/db';
 import { Users } from "~/interfaces";
 import { getTokenUserId } from "~/lib/cookie";
 import { Cookie } from "@builder.io/qwik-city";
+import { message } from "valibot";
 
 export type ErrorAuthentication = {
 	message: string;
 }
 
 interface Params {
-    env: { DB: D1Database };
+    env: { DB: D1Database; BUCKET: R2Bucket; };
 	request: Request;
 	cookie: Cookie;
 }
@@ -29,6 +30,16 @@ interface CreateUser extends Params {
 
 interface UpdateUser extends Params {
 	user: Omit<Users, "created_at">;
+}
+
+interface DeleteUser extends Params {
+	user: Omit<Users,
+        "name" |
+        "username" |
+        "role" |
+        "password" |
+        "created_at"
+    >;
 }
 
 export async function getUserById({
@@ -139,6 +150,31 @@ export async function updateUser({
         }
     }
     return verifiedRole?.message;
+}
+
+export async function deleteUser({
+    user,
+    env,
+    request,
+    cookie
+}: DeleteUser) {
+    const verifiedRole = await verifyRole(request, cookie, env);
+
+    if (verifiedRole?.verified) {
+        try {
+            const db = await getDB(env);
+
+            await db.user.delete({
+                where: { id: user.id }
+            });
+
+            await env.BUCKET.delete(user.avatar)
+        } catch (error) {
+            return {
+                message: "Error in server"
+            }
+        }
+    }
 }
 
 async function verifyRole(request: Request, cookie: Cookie, env: { DB: D1Database }) {
