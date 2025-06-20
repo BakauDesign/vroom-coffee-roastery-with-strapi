@@ -1,6 +1,8 @@
 import { getDB } from '~/lib/db';
 
 import { Cookie } from "@builder.io/qwik-city";
+import { Shipping } from '~/interfaces';
+
 export type ErrorAuthentication = {
 	message: string;
 }
@@ -16,6 +18,10 @@ interface GetShipping extends Omit<Params,
     "cookie"
 > {}
 
+interface CreateShipping extends Params {
+    shipping: Omit<Shipping, "id">;
+}
+
 export async function getShipping({ env }: GetShipping) {
     try {
         const db = await getDB(env);
@@ -30,6 +36,29 @@ export async function getShipping({ env }: GetShipping) {
     } catch (error) {
         return {
             data: [],
+            success: false,
+            message: "Error in server" 
+        };
+    }
+}
+
+export async function createShipping({
+    shipping,
+    env
+}: CreateShipping) {
+    try {
+        const db = await getDB(env);
+
+        await db.shipping.create({
+            data: shipping
+        });
+
+        return {
+            success: true,
+            message: "User has been created"
+        }        
+    } catch (error) {
+        return {
             success: false,
             message: "Error in server" 
         };
