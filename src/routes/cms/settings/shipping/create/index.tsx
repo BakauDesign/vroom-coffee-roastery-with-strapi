@@ -77,7 +77,7 @@ export default component$(() => {
     const action = useShippingFromAction();
     const loader = useShippingFormLoader();
  
-    const [form, { Form, Field }] = useForm<ShippingForm>({
+    const [, { Form, Field }] = useForm<ShippingForm>({
         loader: loader,
         action: action,
         validateOn: 'submit'
