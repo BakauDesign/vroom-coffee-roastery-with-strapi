@@ -1,18 +1,14 @@
 import * as v from 'valibot';
 
 export const ShippingSchema = v.object({
-    id: v.nullable(
-        v.pipe(
-            v.number()
-        )
-    ),
     name: v.pipe(
         v.string(),
         v.nonEmpty('Mohon masukan nama pengiriman')
     ),
     logo: v.any(),
     cost: v.pipe(
-        v.number('Mohon masukan biaya pengiriman')
+        v.number('Mohon masukan biaya pengiriman yang valid (harus angka).'),
+        v.minValue(0, 'Biaya tidak boleh kurang dari 0.')
     ),
     status: v.pipe(
         v.boolean('Mohon pilih status pengiriman')
