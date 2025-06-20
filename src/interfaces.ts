@@ -95,3 +95,11 @@ export interface Reviews {
     date: string;
     isHidden: boolean;
 }
+
+export interface Shipping {
+    id: number;
+    name: string;
+    logo: string;
+    cost: number;
+    status: boolean;
+}
