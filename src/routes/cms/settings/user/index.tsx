@@ -74,7 +74,7 @@ export const useUserLoader = routeLoader$(
 );
 
 export const useDeleteUser = routeAction$(
-    async (values, { platform, request, cookie }) => {
+    async (values, { platform, request, cookie, redirect }) => {
         const { output: user, success: validUser } = v.safeParse(
             v.object({
                 id: v.number(),
@@ -82,7 +82,9 @@ export const useDeleteUser = routeAction$(
             }), values);
 
         if (validUser) {
-            deleteUser({ user, ...platform, request, cookie,})
+            deleteUser({ user, ...platform, request, cookie,});
+
+            throw redirect(302, "/cms/settings/user");
         }
         
     }
