@@ -55,7 +55,7 @@ export const useUserFormLoader = routeLoader$<InitialValues<UserForm>>(
 export const useUserFromAction = formAction$<UserForm>(
     async (values, { platform, request, cookie, redirect, params }) => {
         const { success: avatarChanged } = v.safeParse(UserAvatarSchema, values.avatar);
-
+        
         if (!avatarChanged) {
             try {
                 const currentAvatar = cookie.get("vroom-coffee-roastery-user-avatar")?.value || "";
@@ -78,16 +78,17 @@ export const useUserFromAction = formAction$<UserForm>(
         } else {
             try {
                 const currentAvatar = cookie.get("vroom-coffee-roastery-user-avatar")?.value || "";
-            
-                const user = {
-                    ...values,
-                    id: parseInt(params.id)   
-                }
 
                 await deleteFileFromBucket(currentAvatar, platform.env.BUCKET);
                 const { path } = await uploadFileToBucket(values.avatar, platform.env.BUCKET);
 
-                await updateUser({...{ user, avatar: path }, ...platform, request, cookie });
+                const user = {
+                    ...values,
+                    id: parseInt(params.id),
+                    avatar: path
+                }
+
+                await updateUser({ user, ...platform, request, cookie });
 
                 cookie.delete("vroom-coffee-roastery-user-avatar");
 
@@ -95,7 +96,7 @@ export const useUserFromAction = formAction$<UserForm>(
             } catch (error) {
                 console.error("There's error in server")
             }
-        }    
+        }
     },
     {
         validate: valiForm$(UserSchema)
