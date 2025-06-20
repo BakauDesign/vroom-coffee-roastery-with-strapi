@@ -88,7 +88,7 @@ Chips.Items = component$(() => {
     );
 });
 
-Chips.Item = component$(({ selected, value, disabled: itemDisabled, ...props }) => {
+Chips.Item = component$(({ selected, value, disabled: itemDisabled }) => {
     const { name, disabled, currentValue, onClick$ } = useContext(ChipsContext);
 
     return (
