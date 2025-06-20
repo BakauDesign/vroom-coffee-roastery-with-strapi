@@ -1,3 +1,5 @@
+import * as v from 'valibot';
+
 import {
     component$,
 } from "@builder.io/qwik";
@@ -5,6 +7,7 @@ import {
 import { 
     Link,
     routeLoader$,
+    routeAction$,
     // useLocation,
     useNavigate
 } from '@builder.io/qwik-city';
@@ -23,7 +26,7 @@ import TrashIcon from "~/assets/Icons/Trash Bin Trash.svg";
 
 import ShippingIllustration from "~/assets/cms/icons/Shipping.avif";
 // import { getDB } from "~/lib/db";
-import { getShipping } from '~/server/services/shipping';
+import { getShipping, updateShippingStatus } from '~/server/services/shipping';
 import { Toggle } from "~/components/cms/toggle";
 
 import { formatRupiah } from "~/lib/utils";
@@ -35,10 +38,26 @@ export const useShippingLoader = routeLoader$(
     }
 );
 
+export const useChangeShippingStatus = routeAction$(
+    async (values, { platform, redirect }) => {
+        const { output: shipping, success: validShipping } = v.safeParse(
+            v.object({
+                id: v.pipe(v.number()),
+                status: v.pipe(v.boolean()),
+        }), values);
+
+        if (validShipping) {
+            await updateShippingStatus({ shipping, ...platform });
+            throw redirect(302, "/cms/settings/shipping")
+        }
+    }
+)
+
 export default component$(() => {
     const navigate = useNavigate();
     const { value: shipping } = useShippingLoader();
-    // const deleteUser = useDeleteUser();
+
+    const changeShippingStatus = useChangeShippingStatus();
 
     return (
         <>
@@ -118,7 +137,7 @@ export default component$(() => {
                                             <Table.Cell class="min-w-[250px]">
                                                 <Toggle 
                                                     value={shipping.status}
-                                                    // onClick$={}
+                                                    onClick$={() => changeShippingStatus.submit(shipping)}
                                                 />
                                                 { shipping.status }
                                             </Table.Cell>
