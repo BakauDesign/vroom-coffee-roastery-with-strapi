@@ -6,7 +6,7 @@ import {
     Link,
     routeLoader$,
     // useLocation,
-    // useNavigate
+    useNavigate
 } from '@builder.io/qwik-city';
 
 import { Breadcrumb } from "~/components/cms/breadcrumb";
@@ -36,7 +36,7 @@ export const useShippingLoader = routeLoader$(
 );
 
 export default component$(() => {
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     const { value: shipping } = useShippingLoader();
     // const deleteUser = useDeleteUser();
 
@@ -77,7 +77,7 @@ export default component$(() => {
                             <Button
                                 variant="primary"
                                 size="large"
-                                // onClick$={() => navigate("/cms/settings/shipping/create")}
+                                onClick$={() => navigate("/cms/settings/shipping/create")}
                             >
                                 Tambah Pengiriman Baru
                             </Button>
