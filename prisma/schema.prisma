@@ -20,3 +20,11 @@ model User {
 	password	String
 	created_at	DateTime?	@default(now())
 }
+
+model Shipping {
+	id			Int			@id @default(autoincrement())
+	name		String
+	logo		String
+	cost		Int
+	status		Boolean		@default(true)
+}
