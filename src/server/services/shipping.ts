@@ -22,6 +22,16 @@ interface CreateShipping extends Params {
     shipping: Omit<Shipping, "id">;
 }
 
+interface UpdateShippingStatus
+    extends Omit<Params, "cookie"> 
+        {
+            shipping: Omit<Shipping,
+                "name" |
+                "logo" |
+                "cost"
+            >;
+}
+
 export async function getShipping({ env }: GetShipping) {
     try {
         const db = await getDB(env);
@@ -57,6 +67,34 @@ export async function createShipping({
             success: true,
             message: "User has been created"
         }        
+    } catch (error) {
+        return {
+            success: false,
+            message: "Error in server" 
+        };
+    }
+}
+
+export async function updateShippingStatus({
+    shipping,
+    env
+}: UpdateShippingStatus) {
+    try {
+        const db = await getDB(env);
+
+        await db.shipping.update({
+            data: {
+                status: !shipping.status
+            },
+            where: {
+                id: shipping.id
+            }
+        });
+
+        return {
+            success: true,
+            message: "User has been updated"
+        }   
     } catch (error) {
         return {
             success: false,
