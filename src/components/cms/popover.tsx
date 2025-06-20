@@ -94,6 +94,7 @@ Popover.Content = component$<ContentProps>((
 				${isOpened.value ? "border-[1.5px] opacity-100 z-10" : "opacity-0"}
                 ${cn(className)}
             `}
+            onClick$={() => isOpened.value = false}
             {...props}
         >
             <Slot />
