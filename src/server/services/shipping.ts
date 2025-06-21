@@ -18,6 +18,13 @@ interface GetShipping extends Omit<Params,
     "cookie"
 > {}
 
+interface GetShippingById extends Omit<Params,
+    "request" |
+    "cookie"
+> {
+    id: number;
+}
+
 interface CreateShipping extends Params {
     shipping: Omit<Shipping, "id">;
 }
@@ -32,6 +39,14 @@ interface UpdateShippingStatus
             >;
 }
 
+interface UpdateShipping extends Omit<Params, 
+    "cookie" |
+    "request"
+>  
+    {
+            shipping: Shipping;
+}
+
 export async function getShipping({ env }: GetShipping) {
     try {
         const db = await getDB(env);
@@ -40,6 +55,29 @@ export async function getShipping({ env }: GetShipping) {
             
         return {
             data: shipping,
+            success: true,
+            message: "Success retrieved user" 
+        };
+    } catch (error) {
+        return {
+            data: [],
+            success: false,
+            message: "Error in server" 
+        };
+    }
+}
+
+
+export async function getShippingById({ env, id }: GetShippingById) {
+    try {
+        const db = await getDB(env);
+
+        const shipping = await db.shipping.findUnique({
+            where: { id: id }
+        });
+            
+        return {
+            shipping,
             success: true,
             message: "Success retrieved user" 
         };
@@ -86,6 +124,33 @@ export async function updateShippingStatus({
             data: {
                 status: !shipping.status
             },
+            where: {
+                id: shipping.id
+            }
+        });
+
+        return {
+            success: true,
+            message: "User has been updated"
+        }   
+    } catch (error) {
+        return {
+            success: false,
+            message: "Error in server" 
+        };
+    }
+}
+
+
+export async function updateShipping({
+    shipping,
+    env
+}: UpdateShipping) {
+    try {
+        const db = await getDB(env);
+
+        await db.shipping.update({
+            data: shipping,
             where: {
                 id: shipping.id
             }
