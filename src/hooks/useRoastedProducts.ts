@@ -1,4 +1,5 @@
-import { $, useSignal, useTask$ } from "@builder.io/qwik";
+import { $, useSignal, useTask$, useVisibleTask$ } from "@builder.io/qwik";
+import { useLocation, useNavigate } from "@builder.io/qwik-city";
 import type { RoastedBeansProduct } from "~/interfaces";
 
 type roastedProducts = {
@@ -47,5 +48,40 @@ export function useRoastedProducts({
         totalPages,
         loadMore,
         displayedProducts
+    };
+}
+
+export function useRoastedProductsCMS() {
+    const brewingMethod = useSignal("Semua Metode");
+    const searchKeyword = useSignal("");
+
+    const nav = useNavigate();
+    const loc = useLocation();
+    const currentSearchParams = new URLSearchParams(loc.url.searchParams);
+
+    // eslint-disable-next-line qwik/no-use-visible-task
+    useVisibleTask$(({ track }) => {
+        track(() => brewingMethod.value);
+        track(() => searchKeyword.value);
+
+        if (searchKeyword.value) {
+            currentSearchParams.set('search', searchKeyword.value);
+        } else {
+            currentSearchParams.delete('search');
+        }
+
+        if (brewingMethod.value && brewingMethod.value !== "Semua Metode") {
+            currentSearchParams.set('brewingMethod', brewingMethod.value);
+        } else {
+            currentSearchParams.delete('brewingMethod');
+        }
+
+        const newUrl = `${loc.url.pathname}?${currentSearchParams.toString()}`;
+        nav(newUrl, { replaceState: true });
+    });
+
+    return {
+        brewingMethod,
+        searchKeyword
     };
 }
