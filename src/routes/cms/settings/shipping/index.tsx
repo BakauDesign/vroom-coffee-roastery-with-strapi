@@ -159,7 +159,7 @@ export default component$(() => {
 
                                                     <Popover.Content class="flex flex-col gap-y-4 text-cms-label-small *:cursor-pointer *:flex *:gap-2 *:items-center">
                                                         <Link
-                                                            // href={`${shipping.id}/edit`}
+                                                            href={`${shipping.id}/edit`}
                                                         >
                                                             <img src={PenIcon} alt="Pen Icon" height={16} width={16} />
                                                             <p>Edit pengiriman</p>
