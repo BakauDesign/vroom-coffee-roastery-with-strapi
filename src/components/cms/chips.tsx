@@ -109,7 +109,7 @@ Chips.Item = component$(({ selected, value, disabled: itemDisabled }) => {
 
             <input
                 // {...props}
-                // class="hidden"
+                class="hidden"
                 checked={selected}
                 type='radio'
                 id={value.toString()}
