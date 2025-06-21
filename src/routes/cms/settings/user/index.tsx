@@ -1,7 +1,6 @@
 import * as v from 'valibot';
 
 import {
-    $,
     component$,
     // useSignal
 } from "@builder.io/qwik";
@@ -158,7 +157,7 @@ export default component$(() => {
                         <SearchBarFilter.SearchBar
                             placeholder="Cari user..."
                             value={loc.url.searchParams.get("search")}
-                            onValueChange={$((value) => handleSearchValueChange(value))}
+                            valueChange$={(value) => handleSearchValueChange(value)}
                         />
                     </SearchBarFilter.Root>
 
