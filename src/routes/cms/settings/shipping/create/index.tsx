@@ -168,7 +168,7 @@ export default component$(() => {
  
                                             <Input.Root>
                                                 <Input.Header>
-                                                    <Input.Label>Name</Input.Label>
+                                                    <Input.Label>Nama</Input.Label>
                                                     <Input.Option>Wajib</Input.Option>
                                                 </Input.Header>
  
@@ -206,7 +206,7 @@ export default component$(() => {
  
                                             <UploadPhoto.Root>
                                                 <UploadPhoto.Header>
-                                                    <UploadPhoto.Label>Foto Profil</UploadPhoto.Label>
+                                                    <UploadPhoto.Label>Logo</UploadPhoto.Label>
                                                     <UploadPhoto.Option>Wajib</UploadPhoto.Option>
                                                 </UploadPhoto.Header>
  
