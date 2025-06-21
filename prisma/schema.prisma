@@ -41,6 +41,7 @@ model Product {
 	discount_price	Int?
 	weight			Int
 	type			String
+	is_active		Boolean		@default(true)
 
 	review			Review[]
 	roasted_beans   Roasted_Beans_Product?
