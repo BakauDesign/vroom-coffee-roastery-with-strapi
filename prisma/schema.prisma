@@ -28,3 +28,17 @@ model Shipping {
 	cost		Int
 	status		Boolean		@default(true)
 }
+
+model Product {
+	id				Int 		@id @default(autoincrement())
+	name			String
+	description		String
+	photo			String
+	highlight		String?
+	stock			Int
+	price			Int
+	discount		Int?
+	discount_price	Int?
+	weight			Int
+	type			String
+}
