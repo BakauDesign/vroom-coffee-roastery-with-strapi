@@ -1,6 +1,8 @@
+import * as v from 'valibot';
+
 import { getDB } from '~/lib/db';
 
-import { Cookie } from "@builder.io/qwik-city";
+import { Cookie, JSONObject, RequestEventAction } from "@builder.io/qwik-city";
 import { Shipping } from '~/interfaces';
 
 export type ErrorAuthentication = {
@@ -45,6 +47,11 @@ interface UpdateShipping extends Omit<Params,
 >  
     {
             shipping: Shipping;
+}
+
+interface DeleteShipping {
+    values: JSONObject;
+    event: RequestEventAction<QwikCityPlatform>
 }
 
 export async function getShipping({ env }: GetShipping) {
@@ -165,5 +172,34 @@ export async function updateShipping({
             success: false,
             message: "Error in server" 
         };
+    }
+}
+
+export async function deleteShipping({
+    values,
+    event
+}: DeleteShipping) {
+    const { platform } = event;
+
+    const { output: shipping, success: validShipping } = v.safeParse(
+        v.object({
+            id: v.pipe(v.number()),
+            logo: v.pipe(v.string()),
+    }), values);
+
+    if (validShipping) {
+        try {
+            const db = await getDB(platform.env);
+
+            await db.shipping.delete({
+                where: { id: shipping.id }
+            });
+
+            await platform.env.BUCKET.delete(shipping.logo);
+        } catch (error) {
+            return {
+                message: "Error in server"
+            }
+        }
     }
 }
