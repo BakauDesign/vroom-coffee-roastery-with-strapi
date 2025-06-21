@@ -26,7 +26,7 @@ import TrashIcon from "~/assets/Icons/Trash Bin Trash.svg";
 
 import ShippingIllustration from "~/assets/cms/icons/Shipping.avif";
 // import { getDB } from "~/lib/db";
-import { getShipping, updateShippingStatus } from '~/server/services/shipping';
+import { deleteShipping, getShipping, updateShippingStatus } from '~/server/services/shipping';
 import { Toggle } from "~/components/cms/toggle";
 
 import { formatRupiah } from "~/lib/utils";
@@ -51,13 +51,21 @@ export const useChangeShippingStatus = routeAction$(
             throw redirect(302, "/cms/settings/shipping")
         }
     }
-)
+);
+
+export const useDeleteShipping = routeAction$(
+    async (values, event) => {
+        deleteShipping({ values, event });
+        throw event.redirect(302, "/cms/settings/shipping");
+    }
+);
 
 export default component$(() => {
     const navigate = useNavigate();
     const { value: shipping } = useShippingLoader();
 
     const changeShippingStatus = useChangeShippingStatus();
+    const deleteShipping = useDeleteShipping();
 
     return (
         <>
@@ -166,7 +174,7 @@ export default component$(() => {
                                                         </Link>
 
                                                         <div 
-                                                            // onClick$={() => deleteUser.submit(shipping)}
+                                                            onClick$={() => deleteShipping.submit(shipping)}
                                                         >
                                                             <img src={TrashIcon} alt="Trash Icon" height={16} width={16} />
                                                             <p>Hapus pengiriman</p>
