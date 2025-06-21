@@ -53,6 +53,7 @@ SearchBarFilterBlock.Filter = component$((
     return (
         <section class="flex gap-8 flex-wrap">
             <Chips.Root
+                name={props.label}
                 onClick$={props.onClick$}
                 currentValue={props.currentValue}
                 disabled={props.disabled}
@@ -72,7 +73,7 @@ SearchBarFilterBlock.Filter = component$((
                 <Chips.Items>
                     {filterValues.value.length > 0 && filterValues.value.map((value) => {
                         return (
-                            <Chips.Item key={value.id} value={value.label}>
+                            <Chips.Item {...props} key={value.id} value={value.label}>
                                 { value.label }
                             </Chips.Item>
                         );
