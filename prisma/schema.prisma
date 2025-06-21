@@ -41,4 +41,19 @@ model Product {
 	discount_price	Int?
 	weight			Int
 	type			String
+
+	review			Review[]
+}
+
+model Review {
+	id			Int			@id() @default(autoincrement())
+	name		String
+	location	String
+	rating		Int
+	content		String
+	date		DateTime	@default(now())
+	is_hidden	Boolean
+
+	product		Product		@relation(fields: [product_id], references: [id])
+	product_id	Int
 }
