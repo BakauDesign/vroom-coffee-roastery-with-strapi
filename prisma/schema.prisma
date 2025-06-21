@@ -43,6 +43,7 @@ model Product {
 	type			String
 
 	review			Review[]
+	roasted_beans   Roasted_Beans_Product?
 }
 
 model Review {
@@ -56,4 +57,24 @@ model Review {
 
 	product		Product		@relation(fields: [product_id], references: [id])
 	product_id	Int
+}
+
+model Roasted_Beans_Product {
+	id				Int		@id @default(autoincrement())
+	origin			String
+	process			String
+	test_notes		String
+	packaging		String
+
+	product			Product @relation(fields: [product_id], references: [id])
+	product_id		Int		@unique
+	serving_recommendation	Serving_Recomendation[]
+}
+
+model Serving_Recomendation {
+	id							Int		@id @default(autoincrement())
+	name						String
+	description					String
+	roasted_beans_product		Roasted_Beans_Product	@relation(fields: [roasted_beans_product_id], references: [id])
+	roasted_beans_product_id	Int
 }
