@@ -10,13 +10,13 @@ import Magnifier from "~/assets/Icons/Magnifer.svg";
 
 export interface SearchBarProps extends InputHTMLAttributes<HTMLInputElement> {
     delay?: number;
-    onValueChange?: QRL<(value: string) => void>;
+    valueChange$?: QRL<(value: string) => void>;
 }
 
 export const SearchBar = component$<SearchBarProps>(({ 
     delay = 300, 
     placeholder = 'Search...',
-    onValueChange,
+    valueChange$,
     ...props
 }) => {
     const inputValue = useSignal('');
@@ -27,7 +27,7 @@ export const SearchBar = component$<SearchBarProps>(({
         
         const timer = setTimeout(() => {
             debouncedValue.value = inputValue.value;
-            onValueChange && onValueChange(inputValue.value);
+            valueChange$?.(inputValue.value);
         }, delay);
 
         cleanup(() => clearTimeout(timer));
