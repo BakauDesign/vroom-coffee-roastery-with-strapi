@@ -84,4 +84,14 @@ export const ProductSchema = v.object({
     ),
 });
 
+export const ProductPhotoSchema = v.pipe(
+    v.nullable(
+        v.pipe(
+            v.file(),
+            v.mimeType(['image/jpeg', 'image/jpg', 'image/png', 'image/avif'], 'Mohon pilih gambar dengan format JPEG atau PNG.'),
+            v.maxSize(1024 * 1024 * 10, 'Mohon pilih gambar berukuran kurang dari 5 MB.')
+        )
+    )
+);
+
 export type ProductForm = v.InferInput<typeof ProductSchema>;
