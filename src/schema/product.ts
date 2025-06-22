@@ -18,7 +18,7 @@ export const RoastedBeansSchema = v.object({
         v.string(),
         v.nonEmpty('Mohon masukan asal geografis biji')
     ),
-    proess: v.pipe(
+    process: v.pipe(
         v.string(),
         v.nonEmpty('Mohon masukan metode pengolahan biji')
     ),
@@ -42,54 +42,46 @@ export const RoastedBeansSchema = v.object({
 export const ProductSchema = v.object({
     name: v.pipe(
         v.string(),
-        v.maxLength(28),
+        v.maxLength(28, 'Panjang maksimal 28 karakter'),
         v.nonEmpty('Mohon masukan nama produk')
     ),
     description: v.pipe(
         v.string(),
-        v.maxLength(1000),
+        v.maxLength(1000, 'Panjang maksimal 1000 karakter'),
         v.nonEmpty('Mohon masukan deskripsi produk')
     ),
     photo: v.any(),
     highlight: v.optional(
-        v.pipe(
-            v.string(),
-            v.maxLength(45)
+        v.nullable(
+            v.pipe(
+                v.string('Mohon masukan'),
+                v.maxLength(45, 'Panjang maksimal 45 karakter')
+            )
         )
     ),
     stock: v.pipe(
-        v.number(),
-        v.minValue(1)
+        v.number('Mohon masukan stok produk'),
+        v.minValue(1, 'Stok produk minimal 1')
     ),
     discount: v.optional(
-        v.pipe(
-            v.number(),
-            v.minValue(1)
+        v.nullable(
+            v.pipe(
+                v.number('Mohon masukan persentase diskon'),
+                v.minValue(1, 'Persetase diskon minimal 1%')
+            )
         )
     ),
-    discountPrice: v.optional(
-        v.pipe(
-            v.number(),
-            v.minValue(1)
-        )
+    price: v.pipe(
+        v.number('Mohon masukan harga produk'),
+        v.minValue(1, 'Harga produk minimal 1')
     ),
     weight: v.pipe(
         v.number('Mohon masukan berat produk'),
-        v.minValue(1)
+        v.minValue(1, 'Berat produk minimal 1')
     ),
-    is_active: v.pipe(
-        v.boolean()
+    roasted_beans_data: v.optional(
+        v.nullable(RoastedBeansSchema)
     ),
-    type: v.pipe(
-        v.string(),
-        v.nonEmpty('Mohon masukan jenis produk'),
-        v.union([
-            v.literal('roasted-coffee-beans'),
-            v.literal('green-coffee-beans'),
-            v.literal('coffee-tools')
-        ], 'Jenis produk tidak valid')
-    ),
-    roasted_beans_data: v.optional(RoastedBeansSchema),
 });
 
 export type ProductForm = v.InferInput<typeof ProductSchema>;
