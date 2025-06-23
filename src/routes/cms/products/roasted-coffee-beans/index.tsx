@@ -155,7 +155,7 @@ export default component$(() => {
 
                                         <Table.Cell class="min-w-[200px]">
                                             <img 
-                                                src={product.photo}
+                                                src={`https://vroom-coffee-roastery.pages.dev/media/${product.photo}`}
                                                 alt="Product Photo"
                                                 class="w-full h-full object-cover rounded-[4px]"
                                                 height={200}
