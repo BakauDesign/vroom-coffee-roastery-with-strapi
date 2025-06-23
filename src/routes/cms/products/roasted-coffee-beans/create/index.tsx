@@ -27,7 +27,7 @@ import { UploadPhoto } from "~/components/cms/upload-photo";
 import { // eslint-disable-line @typescript-eslint/consistent-type-imports
     ProductSchema,
     RoastedBeansProductForm,
-    ProductPhotoSchema
+    // ProductPhotoSchema
 } from '~/schema/product';
 
 import { TextField } from '~/components/cms/text-field';
@@ -37,7 +37,7 @@ import { useDiscount } from "~/hooks/useDiscount";
 import { useServingRecommendations } from "~/hooks/useServingRecommendations";
 import { Trash } from "~/assets/cms/icons/Trash";
 import { createProduct } from "~/server/services/products";
-import { uploadFileToBucket } from '~/lib/r2';
+// import { uploadFileToBucket } from '~/lib/r2';
 
 export const useProductFormLoader = routeLoader$<InitialValues<RoastedBeansProductForm>>(() => ({
     name: '',
