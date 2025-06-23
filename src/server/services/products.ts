@@ -4,11 +4,10 @@ import { getDB } from '~/lib/db';
 
 import { RequestEventAction, RequestEventLoader } from "@builder.io/qwik-city";
 import {
-    // ProductPhotoSchema,
-    // ProductSchema,
+    ProductPhotoSchema,
     RoastedBeansProductSchema
 } from '~/schema/product';
-// import { uploadFileToBucket } from '~/lib/r2';
+import { uploadFileToBucket } from '~/lib/r2';
 
 type roastedBeansProductSchema = v.InferInput<typeof RoastedBeansProductSchema>;
 
@@ -18,7 +17,6 @@ interface LoaderParams {
 
 interface ActionParams {
     values: roastedBeansProductSchema;
-    photo: any;
     event: RequestEventAction<QwikCityPlatform>;
 }
 
@@ -80,29 +78,28 @@ export async function getProducts({
 
 export async function createProduct({
     values,
-    event,
-    photo
+    event
 }: ActionParams) {
     const { platform, url, redirect } = event;
-    // const validPhoto = v.safeParse(ProductPhotoSchema, values.photo);
+    const validPhoto = v.safeParse(ProductPhotoSchema, values.photo);
     
-    // if (!validPhoto.success) {
-    //     return {
-    //         errors: { photo: validPhoto.issues[0].message }
-    //     }
-    // }
+    if (!validPhoto.success) {
+        return {
+            errors: { photo: validPhoto.issues[0].message }
+        }
+    }
 
     const productType = extractType(url.pathname);
 
     const discount_price = values.discount ? values.price - (values.price * values.discount / 100) : undefined;
 
     try {
-        // const uploadedPhoto = await uploadFileToBucket(values.photo, platform.env.BUCKET);
+        const uploadedPhoto = await uploadFileToBucket(values.photo, platform.env.BUCKET);
     
         const productData = {
             name: values.name,
             description: values.description,
-            photo: photo,
+            photo: uploadedPhoto.path,
             highlight: values.highlight,
             stock: values.stock,
             price: values.price,
@@ -119,14 +116,8 @@ export async function createProduct({
             packaging: values.roasted_beans_data.packaging,
         };
 
-        // const servingRecommendationsData = values.roasted_beans_data.serving_recomendation.map(sr => ({
-        //     name: sr.name,
-        //     description: sr.description,
-        // }));
-
         const db = await getDB(platform.env);
 
-        // await db.$transaction(async (prisma) => {
         const newProduct = await db.product.create({
             data: productData,
         });
