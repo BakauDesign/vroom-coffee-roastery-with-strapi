@@ -119,34 +119,36 @@ export async function createProduct({
             packaging: values.roasted_beans_data.packaging,
         };
 
-        const servingRecommendationsData = values.roasted_beans_data.serving_recomendation.map(sr => ({
-            name: sr.name,
-            description: sr.description,
-        }));
+        // const servingRecommendationsData = values.roasted_beans_data.serving_recomendation.map(sr => ({
+        //     name: sr.name,
+        //     description: sr.description,
+        // }));
 
         const db = await getDB(platform.env);
 
-        await db.$transaction(async (prisma) => {
-            const newProduct = await prisma.product.create({
-                data: productData,
-            });
-
-            await prisma.roasted_Beans_Product.create({
-                data: {
-                    ...roastedBeansData,
-                    product: {
-                        connect: {
-                            id: newProduct.id,
-                        },
-                    },
-                    serving_recommendation: {
-                        createMany: {
-                            data: servingRecommendationsData,
-                        },
-                    },
-                },
-            });
+        // await db.$transaction(async (prisma) => {
+        const newProduct = await db.product.create({
+            data: productData,
         });
+
+        const newRoastedBeansProduct = await db.roasted_Beans_Product.create({
+            data: {
+                ...roastedBeansData,
+                product_id: newProduct.id
+            }
+        });
+
+        const servingRecommendationsData = values.roasted_beans_data.serving_recomendation.map(sr => ({
+            name: sr.name,
+            description: sr.description,
+            roasted_beans_product_id: newRoastedBeansProduct.id,
+        }));
+
+        if (servingRecommendationsData.length > 0) {
+            await db.serving_Recomendation.createMany({
+                data: servingRecommendationsData,
+            });
+        }
     } catch (error) {
         console.error("Error creating product");
     }
