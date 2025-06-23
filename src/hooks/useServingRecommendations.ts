@@ -1,5 +1,5 @@
 import { insert, remove, type FormStore } from "@modular-forms/qwik";
-import { type ServingRecommendation } from "./useRoastedProducts";
+import { ServingRecommendation } from "./useRoastedProducts"; // eslint-disable-line @typescript-eslint/consistent-type-imports
 import { $, useSignal } from "@builder.io/qwik";
 
 export function useServingRecommendations(form: FormStore<any>) {
