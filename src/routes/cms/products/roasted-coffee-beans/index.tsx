@@ -5,7 +5,8 @@ import {
 
 import { 
     Link,
-    routeLoader$
+    routeLoader$,
+    useNavigate
 } from '@builder.io/qwik-city';
 
 import { Breadcrumb } from "~/components/cms/breadcrumb";
@@ -43,7 +44,7 @@ export const useProducts = routeLoader$(
 );
 
 export default component$(() => {
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     const { brewingMethod: brewingMethodFilter } = useFilter().value;
     
     const { value: products } = useProducts();
@@ -103,7 +104,7 @@ export default component$(() => {
                             <Button
                                 variant="primary"
                                 size="large"
-                                // onClick$={() => navigate("/cms/products/roasted-coffee-beans/create")}
+                                onClick$={() => navigate("/cms/products/roasted-coffee-beans/create")}
                             >
                                 Tambah Produk Baru
                             </Button>

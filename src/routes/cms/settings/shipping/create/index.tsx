@@ -72,7 +72,7 @@ export const useShippingFromAction = formAction$<ShippingForm>(
         booleans: ['status']
     }
 );
- 
+
 export default component$(() => {
     const action = useShippingFromAction();
     const loader = useShippingFormLoader();

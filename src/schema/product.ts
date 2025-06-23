@@ -22,11 +22,9 @@ export const RoastedBeansSchema = v.object({
         v.string(),
         v.nonEmpty('Mohon masukan metode pengolahan biji')
     ),
-    testNotes: v.optional(
-        v.pipe(
-            v.string(),
-            v.nonEmpty('Mohon masukan metode pengolahan biji')
-        )
+    testNotes: v.pipe(
+        v.string(),
+        v.nonEmpty('Mohon masukan metode test notes')
     ),
     packaging: v.pipe(
         v.string(),

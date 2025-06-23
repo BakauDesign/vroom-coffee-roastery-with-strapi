@@ -2,18 +2,20 @@ import * as v from 'valibot';
 
 import { getDB } from '~/lib/db';
 
-import { JSONObject, RequestEventAction, RequestEventLoader } from "@builder.io/qwik-city";
-import { Products, RoastedBeansProduct } from '~/interfaces';
+import { RequestEventAction, RequestEventLoader } from "@builder.io/qwik-city";
+import { ProductPhotoSchema, ProductSchema, RoastedBeansProductSchema } from '~/schema/product';
+import { uploadFileToBucket } from '~/lib/r2';
 
+type roastedBeansProductSchema = v.InferInput<typeof RoastedBeansProductSchema>;
 
 interface LoaderParams {
     event: RequestEventLoader<QwikCityPlatform>
 }
 
-// interface ActionParams {
-//     values: JSONObject;
-//     event: RequestEventAction<QwikCityPlatform>
-// }
+interface ActionParams {
+    values: roastedBeansProductSchema;
+    event: RequestEventAction<QwikCityPlatform>;
+}
 
 export async function getProducts({
     event
@@ -28,8 +30,6 @@ export async function getProducts({
 
     try {
         const db = await getDB(platform.env);
-
-        console.info(brewingMethod)
         
         if (keyword || brewingMethod) {
             const products = await db.product.findMany({
@@ -71,6 +71,87 @@ export async function getProducts({
             message: "Error in server" 
         };   
     }
+}
+
+export async function createProduct({
+    values,
+    event
+}: ActionParams) {
+    const { platform, url, redirect } = event;
+    const validPhoto = v.safeParse(ProductPhotoSchema, values.photo);
+    
+    if (!validPhoto.success) {
+        return {
+            errors: { photo: validPhoto.issues[0].message }
+        }
+    }
+
+    const productType = extractType(url.pathname);
+
+    const discount_price = values.discount ? values.price - (values.price * values.discount / 100) : undefined;
+
+    const productData = {
+        name: values.name,
+        description: values.description,
+        photo: values.photo,
+        highlight: values.highlight,
+        stock: values.stock,
+        price: values.price,
+        discount: values.discount,
+        discount_price,
+        weight: values.weight,
+        type: productType
+    };
+
+    try {
+        const uploadedPhoto = await uploadFileToBucket(values.photo, platform.env.BUCKET);
+        productData.photo = uploadedPhoto.path;
+    } catch (error) {
+        console.error("Error uploading product photo");
+    }
+
+    const roastedBeansData = {
+        origin: values.roasted_beans_data.origin,
+        process: values.roasted_beans_data.process,
+        test_notes: values.roasted_beans_data.testNotes,
+        packaging: values.roasted_beans_data.packaging,
+    };
+
+    const servingRecommendationsData = values.roasted_beans_data.serving_recomendation.map(sr => ({
+        name: sr.name,
+        description: sr.description,
+    }));
+
+    try {
+        const db = await getDB(platform.env);
+
+        await db.$transaction(async (prisma) => {
+            const newProduct = await prisma.product.create({
+                data: productData,
+            });
+
+            const newRoastedBeansProduct = await prisma.roasted_Beans_Product.create({
+                data: {
+                    ...roastedBeansData,
+                    product: {
+                        connect: {
+                            id: newProduct.id,
+                        },
+                    },
+                    serving_recommendation: {
+                        createMany: {
+                            data: servingRecommendationsData,
+                        },
+                    },
+                },
+            });
+
+            return { newProduct, newRoastedBeansProduct };
+        });
+    } catch (error) {
+        console.error("Error creating product");
+    }
+    throw redirect(301, "/cms/products/roasted-coffee-beans");
 }
 
 function extractType(pathname: string) {
