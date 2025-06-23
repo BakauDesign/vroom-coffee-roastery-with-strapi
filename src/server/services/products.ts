@@ -3,8 +3,12 @@ import * as v from 'valibot';
 import { getDB } from '~/lib/db';
 
 import { RequestEventAction, RequestEventLoader } from "@builder.io/qwik-city";
-import { ProductPhotoSchema, ProductSchema, RoastedBeansProductSchema } from '~/schema/product';
-import { uploadFileToBucket } from '~/lib/r2';
+import {
+    ProductPhotoSchema,
+    // ProductSchema,
+    RoastedBeansProductSchema
+} from '~/schema/product';
+// import { uploadFileToBucket } from '~/lib/r2';
 
 type roastedBeansProductSchema = v.InferInput<typeof RoastedBeansProductSchema>;
 
@@ -14,6 +18,7 @@ interface LoaderParams {
 
 interface ActionParams {
     values: roastedBeansProductSchema;
+    photo: any;
     event: RequestEventAction<QwikCityPlatform>;
 }
 
@@ -75,7 +80,8 @@ export async function getProducts({
 
 export async function createProduct({
     values,
-    event
+    event,
+    photo
 }: ActionParams) {
     const { platform, url, redirect } = event;
     const validPhoto = v.safeParse(ProductPhotoSchema, values.photo);
@@ -91,12 +97,12 @@ export async function createProduct({
     const discount_price = values.discount ? values.price - (values.price * values.discount / 100) : undefined;
 
     try {
-        const uploadedPhoto = await uploadFileToBucket(values.photo, platform.env.BUCKET);
+        // const uploadedPhoto = await uploadFileToBucket(values.photo, platform.env.BUCKET);
     
         const productData = {
             name: values.name,
             description: values.description,
-            photo: uploadedPhoto.path,
+            photo: photo,
             highlight: values.highlight,
             stock: values.stock,
             price: values.price,

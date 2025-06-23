@@ -1,3 +1,5 @@
+import * as v from 'valibot';
+
 import {
     component$
 } from "@builder.io/qwik";
@@ -24,7 +26,8 @@ import { UploadPhoto } from "~/components/cms/upload-photo";
 
 import { // eslint-disable-line @typescript-eslint/consistent-type-imports
     ProductSchema,
-    RoastedBeansProductForm
+    RoastedBeansProductForm,
+    ProductPhotoSchema
 } from '~/schema/product';
 
 import { TextField } from '~/components/cms/text-field';
@@ -34,6 +37,7 @@ import { useDiscount } from "~/hooks/useDiscount";
 import { useServingRecommendations } from "~/hooks/useServingRecommendations";
 import { Trash } from "~/assets/cms/icons/Trash";
 import { createProduct } from "~/server/services/products";
+import { uploadFileToBucket } from '~/lib/r2';
 
 export const useProductFormLoader = routeLoader$<InitialValues<RoastedBeansProductForm>>(() => ({
     name: '',
@@ -64,7 +68,21 @@ export const useProductFormLoader = routeLoader$<InitialValues<RoastedBeansProdu
  
 export const useProductFormAction = formAction$<RoastedBeansProductForm>(
     async (values, event) => {
-        return await createProduct({ values, event });
+        const validPhoto = v.safeParse(ProductPhotoSchema, values.photo);
+
+        if (!validPhoto.success) {
+            return {
+                errors: { photo: validPhoto.issues[0].message }
+            }
+        }
+        try {
+            const uploadedPhoto = await uploadFileToBucket(values.photo, event.platform.env.BUCKET);
+            
+            return await createProduct({ values, event, photo: uploadedPhoto.path });
+        } catch (error) {
+            console.info("Error uploading photo");
+        }
+
 
     },
     {
