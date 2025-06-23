@@ -4,7 +4,7 @@ import { getDB } from '~/lib/db';
 
 import { RequestEventAction, RequestEventLoader } from "@builder.io/qwik-city";
 import {
-    ProductPhotoSchema,
+    // ProductPhotoSchema,
     // ProductSchema,
     RoastedBeansProductSchema
 } from '~/schema/product';
@@ -84,13 +84,13 @@ export async function createProduct({
     photo
 }: ActionParams) {
     const { platform, url, redirect } = event;
-    const validPhoto = v.safeParse(ProductPhotoSchema, values.photo);
+    // const validPhoto = v.safeParse(ProductPhotoSchema, values.photo);
     
-    if (!validPhoto.success) {
-        return {
-            errors: { photo: validPhoto.issues[0].message }
-        }
-    }
+    // if (!validPhoto.success) {
+    //     return {
+    //         errors: { photo: validPhoto.issues[0].message }
+    //     }
+    // }
 
     const productType = extractType(url.pathname);
 
