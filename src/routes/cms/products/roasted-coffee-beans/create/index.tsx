@@ -1,4 +1,4 @@
-import * as v from 'valibot';
+// import * as v from 'valibot';
 
 import {
     component$
@@ -68,17 +68,17 @@ export const useProductFormLoader = routeLoader$<InitialValues<RoastedBeansProdu
  
 export const useProductFormAction = formAction$<RoastedBeansProductForm>(
     async (values, event) => {
-        const validPhoto = v.safeParse(ProductPhotoSchema, values.photo);
+        // const validPhoto = v.safeParse(ProductPhotoSchema, values.photo);
 
-        if (!validPhoto.success) {
-            return {
-                errors: { photo: validPhoto.issues[0].message }
-            }
-        }
+        // if (!validPhoto.success) {
+        //     return {
+        //         errors: { photo: validPhoto.issues[0].message }
+        //     }
+        // }
         try {
-            const uploadedPhoto = await uploadFileToBucket(values.photo, event.platform.env.BUCKET);
+            // const uploadedPhoto = await uploadFileToBucket(values.photo, event.platform.env.BUCKET);
             
-            return await createProduct({ values, event, photo: uploadedPhoto.path });
+            return await createProduct({ values, event, photo: 'test.jpg' });
         } catch (error) {
             console.info("Error uploading photo");
         }
