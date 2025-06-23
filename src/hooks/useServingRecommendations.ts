@@ -1,6 +1,10 @@
+import { InferInput } from 'valibot'; // eslint-disable-line @typescript-eslint/consistent-type-imports
 import { insert, remove, type FormStore } from "@modular-forms/qwik";
-import { ServingRecommendation } from "./useRoastedProducts"; // eslint-disable-line @typescript-eslint/consistent-type-imports
+// import { ServingRecommendation } from "./useRoastedProducts"; // eslint-disable-line @typescript-eslint/consistent-type-imports
 import { $, useSignal } from "@builder.io/qwik";
+import { ServingRecomendationSchema } from "~/schema/product"; // eslint-disable-line @typescript-eslint/consistent-type-imports
+
+type ServingRecommendation = InferInput<typeof ServingRecomendationSchema>;
 
 export function useServingRecommendations(form: FormStore<any>) {
     const newRecName = useSignal('');
