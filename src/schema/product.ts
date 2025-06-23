@@ -32,11 +32,10 @@ export const RoastedBeansSchema = v.object({
         v.string(),
         v.nonEmpty('Mohon jenis kemasan')
     ),
-    serving_recomendation: v.optional(
+    serving_recomendation: 
         v.array(
             ServingRecomendationSchema
         )
-    )
 });
 
 export const ProductSchema = v.object({
@@ -78,10 +77,7 @@ export const ProductSchema = v.object({
     weight: v.pipe(
         v.number('Mohon masukan berat produk'),
         v.minValue(1, 'Berat produk minimal 1')
-    ),
-    roasted_beans_data: v.optional(
-        v.nullable(RoastedBeansSchema)
-    ),
+    )    
 });
 
 export const ProductPhotoSchema = v.pipe(
@@ -94,4 +90,11 @@ export const ProductPhotoSchema = v.pipe(
     )
 );
 
+export const RoastedBeansProductSchema = v.object({
+    ...ProductSchema.entries,
+    roasted_beans_data: RoastedBeansSchema
+});
+    
+
 export type ProductForm = v.InferInput<typeof ProductSchema>;
+export type RoastedBeansProductForm = v.InferInput<typeof RoastedBeansProductSchema>;
