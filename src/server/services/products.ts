@@ -131,7 +131,7 @@ export async function createProduct({
                 data: productData,
             });
 
-            const newRoastedBeansProduct = await prisma.roasted_Beans_Product.create({
+            await prisma.roasted_Beans_Product.create({
                 data: {
                     ...roastedBeansData,
                     product: {
@@ -146,8 +146,6 @@ export async function createProduct({
                     },
                 },
             });
-
-            return { newProduct, newRoastedBeansProduct };
         });
     } catch (error) {
         console.error("Error creating product");
