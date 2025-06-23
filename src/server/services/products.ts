@@ -90,39 +90,34 @@ export async function createProduct({
 
     const discount_price = values.discount ? values.price - (values.price * values.discount / 100) : undefined;
 
-    const productData = {
-        name: values.name,
-        description: values.description,
-        photo: values.photo,
-        highlight: values.highlight,
-        stock: values.stock,
-        price: values.price,
-        discount: values.discount,
-        discount_price,
-        weight: values.weight,
-        type: productType
-    };
-
     try {
         const uploadedPhoto = await uploadFileToBucket(values.photo, platform.env.BUCKET);
-        productData.photo = uploadedPhoto.path;
-    } catch (error) {
-        console.error("Error uploading product photo");
-    }
+    
+        const productData = {
+            name: values.name,
+            description: values.description,
+            photo: uploadedPhoto.path,
+            highlight: values.highlight,
+            stock: values.stock,
+            price: values.price,
+            discount: values.discount,
+            discount_price,
+            weight: values.weight,
+            type: productType
+        };
 
-    const roastedBeansData = {
-        origin: values.roasted_beans_data.origin,
-        process: values.roasted_beans_data.process,
-        test_notes: values.roasted_beans_data.testNotes,
-        packaging: values.roasted_beans_data.packaging,
-    };
+        const roastedBeansData = {
+            origin: values.roasted_beans_data.origin,
+            process: values.roasted_beans_data.process,
+            test_notes: values.roasted_beans_data.testNotes,
+            packaging: values.roasted_beans_data.packaging,
+        };
 
-    const servingRecommendationsData = values.roasted_beans_data.serving_recomendation.map(sr => ({
-        name: sr.name,
-        description: sr.description,
-    }));
+        const servingRecommendationsData = values.roasted_beans_data.serving_recomendation.map(sr => ({
+            name: sr.name,
+            description: sr.description,
+        }));
 
-    try {
         const db = await getDB(platform.env);
 
         await db.$transaction(async (prisma) => {
