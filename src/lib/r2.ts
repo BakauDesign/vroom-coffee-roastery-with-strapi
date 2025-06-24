@@ -10,7 +10,9 @@ export async function uploadFileToBucket(
     const safeFileName = file.name.replace(/\s+/g, "_");
     const filePath = `${timestamp}-${safeFileName}`;
 
-    await bucket.put(filePath, file.stream(), {
+    const fileBuffer = await file.arrayBuffer();
+
+    await bucket.put(filePath, fileBuffer, {
         httpMetadata: {
             contentType: file.type,
         },
