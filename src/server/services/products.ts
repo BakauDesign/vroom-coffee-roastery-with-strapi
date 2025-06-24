@@ -105,6 +105,53 @@ export async function getProducts({
     }
 }
 
+export async function getProductById({
+    productId,
+    event,
+    options
+}: { 
+    productId: number, 
+    event: RequestEventLoader<QwikCityPlatform>;
+    options: "Roasted Coffee Beans" | "Green Coffee Beans" | "Coffee Tools";
+}) {
+    const { platform } = event;
+    const db = await getDB(platform.env);
+
+    try {
+        if (options === "Roasted Coffee Beans") {
+            const product = await db.product.findUnique({
+                where: {
+                    id: productId,
+                },
+                include: {
+                    roasted_beans: {
+                        include: {
+                            serving_recommendation: true
+                        },
+                    }
+                },
+            });
+            if (!product) {
+                return {
+                    success: true,
+                    data: null,
+                };
+            }
+
+            return {
+                success: true,
+                data: product,
+            };
+        }
+    } catch (error: any) {
+        console.error(`Error fetching product with ID ${productId}:`, error);
+        return {
+            success: false,
+            message: error.message || "Gagal mengambil detail produk."
+        };
+    }
+}
+
 export async function createBaseProduct({
     values,
     event
