@@ -11,11 +11,11 @@ export interface Products {
     id: number;
     name: string;
     description: string;
-    highlight?: string;
+    highlight: string | null;
     photo: string;
     price: number;
-    discount?: number;
-    discountPrice?: number;
+    discount: number | null;
+    discountPrice: number | null;
     stock: number;
     weight: number;
     type: string;
