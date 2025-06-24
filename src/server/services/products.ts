@@ -1,4 +1,4 @@
-// import * as v from 'valibot';
+import * as v from 'valibot';
 
 import { getDB } from '~/lib/db';
 
@@ -149,6 +149,52 @@ export async function createBaseProduct({
         }
     } catch (error) {
         console.error("Error creating product");
+    }
+}
+
+export async function updateProductStatus({
+    values,
+    event
+}: {
+    values: JSONObject;
+    event: RequestEventAction<QwikCityPlatform>;
+}) {
+    const { platform } = event;
+
+    const validUser = v.safeParse(
+        v.object({
+            id: v.number(),
+            is_active: v.boolean()
+        }
+    ), values);
+
+    
+    if (!validUser.success) {
+        return {
+            success: false,
+            message: "Status gagal diperbarui!!"
+        };
+    }
+    
+    try {
+        const db = await getDB(platform.env);
+
+        await db.product.update({
+            where: { id: validUser.output.id},
+            data: {
+                is_active: !validUser.output.is_active
+            }
+        });
+        
+        return {
+            success: true,
+            message: "Status Product berhasil diperbarui!!"
+        };
+    } catch (error) {
+        return {
+            success: true,
+            message: "Status Product gagal diperbarui!!"
+        };
     }
 }
 
