@@ -47,3 +47,11 @@ functions/**/*.js
 # wrangler files
 .wrangler
 .dev.vars*
+
+prisma/dev.db-journal
+prisma/seed.js
+prisma/product-seed.js
+prisma/*.db
+/prisma/migrations/migration_lock.toml
+/vite.config.ts.timestamp*.mjs
+/src/assets/data/*.ts
