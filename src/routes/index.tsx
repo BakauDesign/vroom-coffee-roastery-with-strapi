@@ -1,5 +1,11 @@
-import { component$, isDev } from "@builder.io/qwik";
-import type { DocumentHead, RequestHandler } from "@builder.io/qwik-city";
+import {
+	component$,
+	// isDev
+} from "@builder.io/qwik";
+import type {
+	DocumentHead,
+	// RequestHandler
+} from "@builder.io/qwik-city";
 import { routeLoader$ } from '@builder.io/qwik-city';
 
 import { Button } from "~/components/main/button";
@@ -7,11 +13,18 @@ import { Gradient } from "~/components/main/gradient";
 import { Separator } from "~/components/main/separator";
 import { Testimony } from "~/components/main/testimony";
 
-export const onGet: RequestHandler = async ({ redirect }) => {
-	if (!isDev) {
-		throw redirect(302, "/coming-soon");		
-	}
-};
+import HeroImage_1 from "~/assets/main/home/Hero image 1.avif";
+import ShortDescriptionImage_1 from "~/assets/main/home/Short Description image 1.avif";
+import MockupSocialMedia_Small from "~/assets/main/home/Mockup social media Small.avif"
+import MockupSocialMedia_Large from "~/assets/main/home/Mockup social media Large.avif"
+import { getHighlightedProduct } from "~/server/services/products";
+import { Product } from "~/components/main/product";
+
+// export const onGet: RequestHandler = async ({ redirect }) => {
+// 	if (!isDev) {
+// 		throw redirect(302, "/coming-soon");		
+// 	}
+// };
 
 export const useTestimonial = routeLoader$(async () => {
 	return [
@@ -73,8 +86,17 @@ export const useTestimonial = routeLoader$(async () => {
 	];
 });
 
+export const useProduct = routeLoader$(
+	async (event) => {
+		return await getHighlightedProduct({ event });
+	}
+)
+
 export default component$(() => {
 	const testimonial = useTestimonial();
+	const { value: products } = useProduct();
+
+	console.info(products)
 
 	return (
 		<>			
@@ -100,7 +122,7 @@ export default component$(() => {
 				</figcaption>
 
 				<section class="hero-image grid-cols-1 max-h-[500px]">
-					<img src="https://i.pinimg.com/736x/a1/cd/44/a1cd44f6617beebb9794877ef59082a1.jpg" alt="Hero image" height={500} width={500} />
+					<img src={HeroImage_1} alt="Hero image" height={500} width={500} />
 				</section>
 			</figure>
 
@@ -112,7 +134,7 @@ export default component$(() => {
 
 				<figure class="general-section gap-[60px] lg:grid-cols-2 items-center">
 					<section class="general-image max-h-[400px]">
-						<img src="https://i.pinimg.com/736x/a1/cd/44/a1cd44f6617beebb9794877ef59082a1.jpg" alt="Hero image" height={500} width={500} />
+						<img src={ShortDescriptionImage_1} alt="Hero image" height={500} width={500} />
 					</section>
 
 					<figcaption class="content">
@@ -147,6 +169,25 @@ export default component$(() => {
 								Temukan karakter unik setiap asal-usul biji kopi, dari Aceh Gayo yang fruity hingga Java Bold yang earthy - semua disangrai sempurna untuk dieksplorasi.
 							</p>
 						</article>
+
+						<section class="grid gap-9 overflow-scroll grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
+							{products.data.map((product) => {
+								return (
+									<Product
+										key={product.id}
+										id={product.id}
+										name={product.name}
+										description={product.description}
+										type={product.type}
+										price={product.price}
+										discount={product.discount}
+										discountPrice={product.discount_price}
+										photo={"https://i.pinimg.com/736x/88/da/c9/88dac9fa8ba68389988c7ea42c9c8b76.jpg"}
+										weight={product.weight}
+									/>
+								)
+							})}
+						</section>
 					</section>
 				</section>
 
@@ -186,7 +227,18 @@ export default component$(() => {
 					</section>
 
 					<section class="general-image *:max-w-[1000px] justify-items-center">
-						<img src="https://i.pinimg.com/736x/a1/cd/44/a1cd44f6617beebb9794877ef59082a1.jpg" alt="Hero image" height={900} width={1000} />
+						<picture>
+							<source
+								srcset={MockupSocialMedia_Large}
+								media="(min-width: 648px)"
+							/>
+
+							<source
+								srcset={MockupSocialMedia_Small}
+								media="(max-width: 648px)"
+							/>
+							<img src={MockupSocialMedia_Small} alt="Mockup Social Media" />
+						</picture>
 					</section>
 				</section>
 			</div>
