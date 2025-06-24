@@ -347,20 +347,71 @@
   }
 
   /* Hero section */
-  .general-section, .hero-section {
+  .general-section, .hero-section, .hero-product {
     @apply w-full grid;
   }
 
-  .hero-section {
+  .hero-section, .hero-product {
     @apply pt-[148px] pb-12 px-4 sm:px-6 lg:px-12 gap-y-12 gap-x-[60px] items-center bg-primary-base;
   }
 
-  .hero-section .hero-image, .general-section .general-image {
+  .hero-section .hero-image, .general-section .general-image, .hero-product .product-image {
     @apply h-full grid gap-4 sm:gap-6 *:rounded-[12px] *:overflow-hidden *:object-cover *:h-full *:w-full;
+  }
+
+  .hero-product .product-image .higlight img {
+    @apply h-[60px] w-[60px] aspect-square rounded-[4px] overflow-hidden object-cover;
+  }
+
+  .hero-product .product-image .higlight {
+    @apply flex items-center gap-6;
+    @apply font-work-sans font-medium text-body-small sm:text-body-medium text-neutral-custom-800;
   }
 
   .hero-section .content, .general-section .content {
     @apply flex flex-col gap-y-6;
+  }
+
+  .hero-product .content {
+    @apply flex flex-col gap-y-12;
+  }
+
+  .hero-product .actions {
+    @apply flex gap-4;
+  }
+
+  .hero-product .content .detail {
+    @apply flex flex-col gap-y-8;
+  }
+
+  .hero-product .content .price-stock {
+    @apply flex justify-between gap-x-6;
+  }
+
+  .hero-product .content .price-stock .stock {
+    @apply h-fit py-1.5 px-3 rounded-[6px] bg-primary-base border-[1px] border-solid border-primary-100;
+    @apply font-work-sans font-medium text-label-small sm:text-label-medium text-primary-600;
+  }
+
+  .hero-product .content .price-stock .price-weight-wrapper {
+    @apply flex flex-col gap-y-3;
+  }
+
+  .hero-product .content .price-stock .price-weight-wrapper .price-weight {
+    @apply font-lora font-medium text-h2-small sm:text-h2-medium lg:text-h2-large text-neutral-custom-950;
+  }
+
+  .hero-product .content .price-stock .price-weight-wrapper .price-discount {
+    @apply flex gap-x-2;
+  }
+
+  .hero-product .content .price-stock .price-weight-wrapper .price-discount h1 {
+    @apply font-lora text-h3-small sm:text-h2-medium text-neutral-custom-600 line-through;
+  }
+
+  .hero-product .content .price-stock .price-weight-wrapper .price-discount p {
+    @apply py-1.5 px-2 rounded-[4px] bg-red-50;
+    @apply font-work-sans font-medium text-label-small sm:text-label-large text-red-600;
   }
 
   .hero-section .content .headline-and-supporting-headline,
@@ -368,11 +419,13 @@
     @apply flex flex-col gap-y-4;
   }
 
-  .hero-section .content .headline-and-supporting-headline h1 {
+  .hero-section .content .headline-and-supporting-headline h1,
+  .hero-product .content .detail .headline-and-supporting-headline h1 {
     @apply font-playfair-display text-display-small sm:text-display-medium xl:text-display-large font-medium text-primary-800;
   }
 
-  .hero-section .content .headline-and-supporting-headline p {
+  .hero-section .content .headline-and-supporting-headline p,
+  .hero-product .content .detail .headline-and-supporting-headline p {
     @apply font-work-sans text-body-small sm:text-body-medium text-neutral-custom-800;
   }
 
