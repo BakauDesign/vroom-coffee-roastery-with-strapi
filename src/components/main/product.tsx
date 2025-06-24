@@ -122,7 +122,7 @@ const PricePackagingBlock: Component<PricePackagingBlockProps> = component$((
                     {discount ? formatRupiah(discountPrice as number) : formatRupiah(price)}
                 </h1>
 
-                {discount && (
+                {(discount) ? (
                     <section class="flex items-center gap-x-2">
                         <h1 class="font-lora line-through">
                             { formatRupiah(price) }
@@ -132,7 +132,7 @@ const PricePackagingBlock: Component<PricePackagingBlockProps> = component$((
                             { discount }%
                         </p>
                     </section>
-                )}
+                ) : null}
             </section>
 
             <p class="py-1 px-3 font-work-sans font-medium text-label-small sm:text-label-medium text-primary-base bg-primary-700 rounded h-fit">
