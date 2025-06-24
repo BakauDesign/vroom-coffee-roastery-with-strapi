@@ -33,7 +33,7 @@ import { formatRupiah } from "~/lib/utils";
 import { useDiscount } from "~/hooks/useDiscount";
 import { useServingRecommendations } from "~/hooks/useServingRecommendations";
 import { Trash } from "~/assets/cms/icons/Trash";
-import { createProduct } from "~/server/services/products";
+import { createRoastedBeansProduct } from "~/server/services/products";
 
 export const useProductFormLoader = routeLoader$<InitialValues<RoastedBeansProductForm>>(() => ({
     name: '',
@@ -64,7 +64,7 @@ export const useProductFormLoader = routeLoader$<InitialValues<RoastedBeansProdu
  
 export const useProductFormAction = formAction$<RoastedBeansProductForm>(
     async (values, event) => {
-        return await createProduct({ values, event });
+        return await createRoastedBeansProduct({ values, event });
     },
     {
         validate: valiForm$(ProductSchema),

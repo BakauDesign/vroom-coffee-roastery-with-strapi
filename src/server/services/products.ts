@@ -1,22 +1,23 @@
-import * as v from 'valibot';
+// import * as v from 'valibot';
 
 import { getDB } from '~/lib/db';
 
 import { RequestEventAction, RequestEventLoader } from "@builder.io/qwik-city";
 import {
-    ProductPhotoSchema,
-    RoastedBeansProductSchema
+    // RoastedBeansProductSchema,
+    RoastedBeansProductForm
 } from '~/schema/product';
 import { uploadFileToBucket } from '~/lib/r2';
 
-type roastedBeansProductSchema = v.InferInput<typeof RoastedBeansProductSchema>;
+// type roastedBeansProductSchema = v.InferInput<typeof RoastedBeansProductSchema>;
+type AllProductForms = RoastedBeansProductForm;
 
 interface LoaderParams {
     event: RequestEventLoader<QwikCityPlatform>
 }
 
-interface ActionParams {
-    values: roastedBeansProductSchema;
+interface ActionParams<T extends AllProductForms> {
+    values: T;
     event: RequestEventAction<QwikCityPlatform>;
 }
 
@@ -76,18 +77,18 @@ export async function getProducts({
     }
 }
 
-export async function createProduct({
+export async function createBaseProduct({
     values,
     event
-}: ActionParams) {
+}: ActionParams<AllProductForms>) {
     const { platform, url, redirect } = event;
-    const validPhoto = v.safeParse(ProductPhotoSchema, values.photo);
+    // const validPhoto = v.safeParse(ProductPhotoSchema, values.photo);
     
-    if (!validPhoto.success) {
-        return {
-            errors: { photo: validPhoto.issues[0].message }
-        }
-    }
+    // if (!validPhoto.success) {
+    //     return {
+    //         errors: { photo: validPhoto.issues[0].message }
+    //     }
+    // }
 
     const productType = extractType(url.pathname);
 
@@ -96,6 +97,8 @@ export async function createProduct({
     try {
         const uploadedPhoto = await uploadFileToBucket(values.photo, platform.env.BUCKET);
     
+        const db = await getDB(platform.env);
+
         const productData = {
             name: values.name,
             description: values.description,
@@ -106,28 +109,35 @@ export async function createProduct({
             discount: values.discount,
             discount_price,
             weight: values.weight,
-            type: productType
+            type: productType,
+            is_active: true,
         };
+
+        return await db.product.create({ data: productData });
+    } catch (error) {
+        console.error("Error creating product");
+    }
+    throw redirect(301, "/cms/products/roasted-coffee-beans");
+}
+
+export async function createRoastedBeansProduct({
+    values,
+    event,
+}: ActionParams<RoastedBeansProductForm>) {
+    const { platform, url } = event;
+    const db = await getDB(platform.env);
+
+    try {
+        const newProduct = await createBaseProduct({ values, event });
 
         const roastedBeansData = {
             origin: values.roasted_beans_data.origin,
             process: values.roasted_beans_data.process,
-            test_notes: values.roasted_beans_data.testNotes,
+            test_notes: values.roasted_beans_data.testNotes || '',
             packaging: values.roasted_beans_data.packaging,
+            product_id: newProduct.id,
         };
-
-        const db = await getDB(platform.env);
-
-        const newProduct = await db.product.create({
-            data: productData,
-        });
-
-        const newRoastedBeansProduct = await db.roasted_Beans_Product.create({
-            data: {
-                ...roastedBeansData,
-                product_id: newProduct.id
-            }
-        });
+        const newRoastedBeansProduct = await db.roasted_Beans_Product.create({ data: roastedBeansData });
 
         const servingRecommendationsData = values.roasted_beans_data.serving_recomendation.map(sr => ({
             name: sr.name,
@@ -136,12 +146,45 @@ export async function createProduct({
         }));
 
         if (servingRecommendationsData.length > 0) {
-            await db.serving_Recomendation.createMany({
-                data: servingRecommendationsData,
-            });
+            await db.serving_Recomendation.createMany({ data: servingRecommendationsData });
         }
+
+        return {
+            success: true,
+            message: "Roasted Beans Product berhasil ditambahkan!"
+        };
+
+    } catch (error: any) {
+        console.error("Error creating Roasted Beans Product:", error);
+        return {
+            success: false,
+            message: error.message || "Gagal menambahkan Roasted Beans Product.",
+            errors: {
+                general: (error.meta?.cause || error.message || 'Terjadi kesalahan tidak dikenal.') as string
+            }
+        };
+    }
+}
+
+export async function deleteProduct({
+    values,
+    event
+}: {
+    values: { id: number; photo: string; };
+    event: RequestEventAction<QwikCityPlatform>;
+}) {
+    const { platform, redirect } = event;
+
+    try {
+        const db = await getDB(platform.env);
+
+        // await deleteFileFromBucket(values.photo, platform.env.BUCKET);
+
+        await db.product.delete({
+            where: { id: values.id as number }
+        });
     } catch (error) {
-        console.error("Error creating product");
+        console.error("Error deleting product");
     }
     throw redirect(301, "/cms/products/roasted-coffee-beans");
 }
