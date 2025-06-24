@@ -96,8 +96,6 @@ export default component$(() => {
 	const testimonial = useTestimonial();
 	const { value: products } = useProduct();
 
-	console.info(products)
-
 	return (
 		<>			
 			<figure class="hero-section lg:grid-cols-2">
