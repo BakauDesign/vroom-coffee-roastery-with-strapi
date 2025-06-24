@@ -180,7 +180,7 @@ export default component$(() => {
 										price={product.price}
 										discount={product.discount}
 										discountPrice={product.discount_price}
-										photo={"https://i.pinimg.com/736x/88/da/c9/88dac9fa8ba68389988c7ea42c9c8b76.jpg"}
+										photo={`https://vroom-coffee-roastery.pages.dev/media/${product.photo}`}
 										weight={product.weight}
 									/>
 								)
