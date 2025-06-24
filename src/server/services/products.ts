@@ -21,6 +21,35 @@ interface ActionParams<T extends AllProductForms> {
     event: RequestEventAction<QwikCityPlatform>;
 }
 
+export async function getHighlightedProduct ({
+    event
+}: LoaderParams) {
+    const { platform } = event;
+    
+    try {
+        const db = await getDB(platform.env);
+        
+        const products = await db.product.findMany({
+            where: {
+                is_highlight: true
+            }
+        });
+
+        return {
+            data: products,
+            success: true,
+            message: "Success retrieved product" 
+        };
+
+    } catch (error) {
+        return {
+            data: [],
+            success: false,
+            message: "Error in product" 
+        };   
+    }
+}
+
 export async function getProducts({
     event
 }: LoaderParams) {
@@ -28,7 +57,6 @@ export async function getProducts({
 
     const productType = extractType(url.pathname);
 
-    
     const keyword = url.searchParams.get("search");
     const brewingMethod = url.searchParams.get("brewingMethod");
 
@@ -111,6 +139,7 @@ export async function createBaseProduct({
             weight: values.weight,
             type: productType,
             is_active: true,
+            is_highlight: false
         };
 
         const product = await db.product.create({ data: productData });
