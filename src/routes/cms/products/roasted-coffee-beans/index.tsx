@@ -31,7 +31,7 @@ import Roasted_Coffee_Beans from "~/assets/cms/icons/Roasted Coffee Beans.avif";
 
 import { formatRupiah } from "~/lib/utils";
 // import { roastedCoffeeBeans } from "~/assets/data/products";
-import { deleteProduct, getProducts } from "~/server/services/products";
+import { deleteProduct, getProducts, updateProductHighlight, updateProductStatus } from "~/server/services/products";
 // import { SearchBar } from "~/components/cms/search-bar";
 
 export const useFilter = routeLoader$(async () => {
@@ -51,9 +51,25 @@ export const useDeleteProduct = routeAction$(
     }
 );
 
+export const useUpdateStatus = routeAction$(
+    async (values, event) => {
+        await updateProductStatus({ values, event });
+        throw event.redirect(302, "/cms/products/roasted-coffee-beans");
+    }
+);
+
+export const useUpdateHighlight = routeAction$(
+    async (values, event) => {
+        await updateProductHighlight({ values, event });
+        throw event.redirect(302, "/cms/products/roasted-coffee-beans");
+    }
+);
+
 export default component$(() => {
     const navigate = useNavigate();
     const { submit: deleteProduct } = useDeleteProduct();
+    const { submit: updateStatus } = useUpdateStatus();
+    const { submit: updateHighlight } = useUpdateHighlight();
     const { brewingMethod: brewingMethodFilter } = useFilter().value;
     
     const { value: products } = useProducts();
@@ -143,6 +159,7 @@ export default component$(() => {
                             <Table.Row>
                                 <Table.Cell type="header" class="min-w-[250px]">Nama produk</Table.Cell>
                                 <Table.Cell type="header" class="min-w-[100px]">Status</Table.Cell>
+                                <Table.Cell type="header" class="min-w-[100px]">Highlight</Table.Cell>
                                 <Table.Cell type="header" class="min-w-[150px]">Stok</Table.Cell>
                                 <Table.Cell type="header" class="min-w-[200px]">Foto</Table.Cell>
                                 <Table.Cell type="header" class="min-w-[200px]">Harga</Table.Cell>
@@ -157,7 +174,17 @@ export default component$(() => {
                                         <Table.Cell class="min-w-[250px]">{product.name}</Table.Cell>
 
                                         <Table.Cell class="min-w-[100px]">
-                                            <Toggle value={product.is_active} />
+                                            <Toggle
+                                                value={product.is_active}
+                                                onClick$={() => updateStatus(product)}
+                                            />
+                                        </Table.Cell>
+
+                                        <Table.Cell class="min-w-[150px]">
+                                            <Toggle
+                                                value={product.is_highlight}
+                                                onClick$={() => updateHighlight(product)}
+                                            />
                                         </Table.Cell>
 
                                         <Table.Cell class="min-w-[150px]">{ product.stock }</Table.Cell>
