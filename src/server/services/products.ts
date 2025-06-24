@@ -198,6 +198,51 @@ export async function updateProductStatus({
     }
 }
 
+export async function updateProductHighlight({
+    values,
+    event
+}: {
+    values: JSONObject;
+    event: RequestEventAction<QwikCityPlatform>;
+}) {
+    const { platform } = event;
+
+    const validUser = v.safeParse(
+        v.object({
+            id: v.number(),
+            is_highlight: v.nullable(v.boolean())
+        }
+    ), values);
+
+    if (!validUser.success) {
+        return {
+            success: false,
+            message: "Highlight gagal diperbarui!!"
+        };
+    }
+    
+    try {
+        const db = await getDB(platform.env);
+
+        await db.product.update({
+            where: { id: validUser.output.id },
+            data: {
+                is_highlight: !validUser.output.is_highlight
+            }
+        });
+        
+        return {
+            success: true,
+            message: "Highlight Product berhasil diperbarui!!"
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: "Highlight Product gagal diperbarui!!"
+        };
+    }
+}
+
 export async function createRoastedBeansProduct({
     values,
     event,
