@@ -42,6 +42,7 @@ model Product {
 	weight			Int
 	type			String
 	is_active		Boolean		@default(true)
+	is_highlight	Boolean?
 
 	review			Review[]
 	roasted_beans   Roasted_Beans_Product?
