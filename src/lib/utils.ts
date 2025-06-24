@@ -46,3 +46,7 @@ export function formatDateTime(isoString: string) {
 
     return formattedDate.replace(':', '.');
 }
+
+export function isLocalhost(url: URL): boolean {
+  return url.hostname === '127.0.0.1' || url.hostname === 'localhost';
+}
