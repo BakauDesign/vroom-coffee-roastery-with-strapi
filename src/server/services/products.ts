@@ -81,7 +81,7 @@ export async function createBaseProduct({
     values,
     event
 }: ActionParams<AllProductForms>) {
-    const { platform, url, redirect } = event;
+    const { platform, url } = event;
     // const validPhoto = v.safeParse(ProductPhotoSchema, values.photo);
     
     // if (!validPhoto.success) {
@@ -113,22 +113,29 @@ export async function createBaseProduct({
             is_active: true,
         };
 
-        return await db.product.create({ data: productData });
+        const product = await db.product.create({ data: productData });
+
+        if (product) {
+            return product;
+        }
     } catch (error) {
         console.error("Error creating product");
     }
-    throw redirect(301, "/cms/products/roasted-coffee-beans");
 }
 
 export async function createRoastedBeansProduct({
     values,
     event,
 }: ActionParams<RoastedBeansProductForm>) {
-    const { platform, url } = event;
+    const { platform, redirect } = event;
     const db = await getDB(platform.env);
 
     try {
         const newProduct = await createBaseProduct({ values, event });
+
+        if (!newProduct) {
+            return;
+        }
 
         const roastedBeansData = {
             origin: values.roasted_beans_data.origin,
@@ -164,19 +171,31 @@ export async function createRoastedBeansProduct({
             }
         };
     }
+    finally {
+        throw redirect(301, "/cms/products/roasted-coffee-beans");
+    }
 }
 
 export async function deleteProduct({
     values,
     event
 }: {
-    values: { id: number; photo: string; };
+    values: { id: number; photo: string; type: string; };
     event: RequestEventAction<QwikCityPlatform>;
 }) {
     const { platform, redirect } = event;
 
     try {
         const db = await getDB(platform.env);
+
+        switch (values.type) {
+            case "Roasted":
+                
+                break;
+        
+            default:
+                break;
+        }
 
         // await deleteFileFromBucket(values.photo, platform.env.BUCKET);
 
