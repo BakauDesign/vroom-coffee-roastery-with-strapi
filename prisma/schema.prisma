@@ -27,6 +27,8 @@ model Shipping {
 	logo		String
 	cost		Int
 	status		Boolean		@default(true)
+
+	orders      Order[]
 }
 
 model Product {
@@ -45,6 +47,7 @@ model Product {
 	is_highlight	Boolean?
 
 	review			Review[]
+	purchased_product	Purchased_Product[]
 	roasted_beans   Roasted_Beans_Product?
 }
 
@@ -79,4 +82,37 @@ model Serving_Recomendation {
 	description					String
 	roasted_beans_product		Roasted_Beans_Product	@relation(fields: [roasted_beans_product_id], references: [id])
 	roasted_beans_product_id	Int
+}
+
+model Order {
+	id				Int		@id @default(autoincrement())
+	buyer_name		String
+	whatsapp_number	Int
+	address			String
+	courier_notes	String?
+	notes			String
+	status			String
+	tracking_number	String
+	shipping_cost	Int
+	date			DateTime	@default(now())
+	payment_method	String
+
+	purchasedProduct	Purchased_Product[]
+
+	shipping_data	Shipping	@relation(fields: [shipping_id], references: [id])
+	shipping_id		Int
+}
+
+model Purchased_Product {
+	id				Int		@id @default(autoincrement())
+	name			String
+	type			String
+	price			Int
+	weight			Int
+	quantity		Int
+
+	order_data		Order		@relation(fields: [order_id], references: [id])
+	order_id		Int
+	product_data	Product		@relation(fields: [product_id], references: [id])
+	product_id		Int
 }
