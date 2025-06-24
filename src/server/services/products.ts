@@ -2,12 +2,12 @@
 
 import { getDB } from '~/lib/db';
 
-import { RequestEventAction, RequestEventLoader } from "@builder.io/qwik-city";
+import { JSONObject, RequestEventAction, RequestEventLoader } from "@builder.io/qwik-city";
 import {
     // RoastedBeansProductSchema,
     RoastedBeansProductForm
 } from '~/schema/product';
-import { uploadFileToBucket } from '~/lib/r2';
+import { deleteFileFromBucket, uploadFileToBucket } from '~/lib/r2';
 
 // type roastedBeansProductSchema = v.InferInput<typeof RoastedBeansProductSchema>;
 type AllProductForms = RoastedBeansProductForm;
@@ -180,28 +180,61 @@ export async function deleteProduct({
     values,
     event
 }: {
-    values: { id: number; photo: string; type: string; };
+    values: JSONObject;
     event: RequestEventAction<QwikCityPlatform>;
 }) {
     const { platform, redirect } = event;
+    const id = parseInt(values.id as string);
 
     try {
         const db = await getDB(platform.env);
 
-        switch (values.type) {
-            case "Roasted":
-                
-                break;
-        
-            default:
-                break;
+        const productToDelete = await db.product.findUnique({
+            where: { id: id },
+            select: {
+                id: true,
+                type: true,
+                photo: true,
+                roasted_beans: {
+                    select: {
+                        id: true,
+                    }
+                },
+            },
+        });
+
+        if (!productToDelete) {
+            return {
+                success: false,
+                message: "Produk tidak ditemukan."
+            };
         }
 
-        // await deleteFileFromBucket(values.photo, platform.env.BUCKET);
+        if (
+            productToDelete.type === 'Roasted Coffee Beans' &&
+            productToDelete.roasted_beans
+        ) {
+            await db.serving_Recomendation.deleteMany({
+                    where: { roasted_beans_product_id: productToDelete.roasted_beans.id }
+            });
+        
+            await db.roasted_Beans_Product.delete({
+                where: { id: productToDelete.roasted_beans.id }
+            });
+        }
 
         await db.product.delete({
-            where: { id: values.id as number }
+            where: { id: id }
         });
+
+        if (productToDelete.photo) {
+            await deleteFileFromBucket(productToDelete.photo, platform.env.BUCKET);
+        }
+
+        return {
+            success: true,
+            message: "Produk berhasil dihapus!"
+        };
     } catch (error) {
         console.error("Error deleting product");
     }

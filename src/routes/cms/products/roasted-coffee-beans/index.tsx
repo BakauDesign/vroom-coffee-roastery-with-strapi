@@ -5,6 +5,7 @@ import {
 
 import { 
     Link,
+    routeAction$,
     routeLoader$,
     useNavigate
 } from '@builder.io/qwik-city';
@@ -30,7 +31,7 @@ import Roasted_Coffee_Beans from "~/assets/cms/icons/Roasted Coffee Beans.avif";
 
 import { formatRupiah } from "~/lib/utils";
 // import { roastedCoffeeBeans } from "~/assets/data/products";
-import { getProducts } from "~/server/services/products";
+import { deleteProduct, getProducts } from "~/server/services/products";
 // import { SearchBar } from "~/components/cms/search-bar";
 
 export const useFilter = routeLoader$(async () => {
@@ -43,8 +44,16 @@ export const useProducts = routeLoader$(
     }
 );
 
+export const useDeleteProduct = routeAction$(
+    async (values, event) => {
+        // console.info(id)
+        return await deleteProduct({ values, event })
+    }
+);
+
 export default component$(() => {
     const navigate = useNavigate();
+    const { submit: deleteProduct } = useDeleteProduct();
     const { brewingMethod: brewingMethodFilter } = useFilter().value;
     
     const { value: products } = useProducts();
@@ -193,7 +202,9 @@ export default component$(() => {
                                                         <p>Edit produk</p>
                                                     </Link>
 
-                                                    <div>
+                                                    <div
+                                                        onClick$={() => deleteProduct({ id: product.id })}
+                                                    >
                                                         <img src={TrashIcon} alt="Trash Icon" height={16} width={16} />
                                                         <p>Hapus produk</p>
                                                     </div>
