@@ -9,7 +9,8 @@ import {
     routeLoader$,
     routeAction$,
     // useLocation,
-    useNavigate
+    useNavigate,
+    useLocation
 } from '@builder.io/qwik-city';
 
 import { Breadcrumb } from "~/components/cms/breadcrumb";
@@ -29,7 +30,7 @@ import ShippingIllustration from "~/assets/cms/icons/Shipping.avif";
 import { deleteShipping, getShipping, updateShippingStatus } from '~/server/services/shipping';
 import { Toggle } from "~/components/cms/toggle";
 
-import { formatRupiah } from "~/lib/utils";
+import { formatRupiah, isLocalhost } from "~/lib/utils";
 
 export const useShippingLoader = routeLoader$( 
     async ({ platform }) => {
@@ -61,6 +62,7 @@ export const useDeleteShipping = routeAction$(
 );
 
 export default component$(() => {
+    const loc = useLocation();
     const navigate = useNavigate();
     const { value: shipping } = useShippingLoader();
 
@@ -133,7 +135,7 @@ export default component$(() => {
                                                     height={60}
                                                     width={60}
                                                     class="object-contain"
-                                                    src={`https://vroom-coffee-roastery.pages.dev/media/${shipping.logo}`}
+                                                    src={isLocalhost(loc.url) ? `http://127.0.0.1:8788/media/${shipping.logo}` : `https://vroom-coffee-roastery.pages.dev/media/${shipping.logo}`}
                                                     alt={`${shipping.name} Logo`}
                                                 />
 
