@@ -7,6 +7,7 @@ import {
     Link,
     routeAction$,
     routeLoader$,
+    useLocation,
     useNavigate
 } from '@builder.io/qwik-city';
 
@@ -29,7 +30,7 @@ import PenIcon from "~/assets/Icons/Pen.svg";
 import TrashIcon from "~/assets/Icons/Trash Bin Trash.svg";
 import Roasted_Coffee_Beans from "~/assets/cms/icons/Roasted Coffee Beans.avif";
 
-import { formatRupiah } from "~/lib/utils";
+import { formatRupiah, isLocalhost } from "~/lib/utils";
 // import { roastedCoffeeBeans } from "~/assets/data/products";
 import { deleteProduct, getProducts, updateProductHighlight, updateProductStatus } from "~/server/services/products";
 // import { SearchBar } from "~/components/cms/search-bar";
@@ -66,7 +67,9 @@ export const useUpdateHighlight = routeAction$(
 );
 
 export default component$(() => {
+    const loc = useLocation();
     const navigate = useNavigate();
+
     const { submit: deleteProduct } = useDeleteProduct();
     const { submit: updateStatus } = useUpdateStatus();
     const { submit: updateHighlight } = useUpdateHighlight();
@@ -191,7 +194,7 @@ export default component$(() => {
 
                                         <Table.Cell class="min-w-[200px]">
                                             <img 
-                                                src={`https://vroom-coffee-roastery.pages.dev/media/${product.photo}`}
+                                                src={`${isLocalhost(loc.url) ? `http://127.0.0.1:8788/media/${product.photo}` : `https://vroom-coffee-roastery.pages.dev/media/${product.photo}`}`}
                                                 alt="Product Photo"
                                                 class="w-full h-full object-cover rounded-[4px]"
                                                 height={200}
@@ -223,7 +226,7 @@ export default component$(() => {
 
                                                 <Popover.Content class="flex flex-col gap-y-4 text-cms-label-small *:cursor-pointer *:flex *:gap-2 *:items-center">
                                                     <Link 
-                                                        // href={`/cms/products/roasted-coffee-beans/${product.id}/edit`}
+                                                        href={`/cms/products/roasted-coffee-beans/${product.id}/edit`}
                                                     >
                                                         <img src={PenIcon} alt="Pen Icon" height={16} width={16} />
                                                         <p>Edit produk</p>
