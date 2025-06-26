@@ -7,13 +7,13 @@ import type {
     HTMLAttributes
 } from '@builder.io/qwik';
 
-import { useNavigate } from '@builder.io/qwik-city';
+import { useLocation, useNavigate } from '@builder.io/qwik-city';
 
 import type { Products } from "~/interfaces";
 
 import { Button } from './button';
 
-import { formatRupiah, toSlug } from '~/lib/utils';
+import { formatRupiah, isLocalhost, toSlug } from '~/lib/utils';
 
 interface ProductsProps 
     extends Omit<Products,
@@ -70,6 +70,7 @@ interface ProductComponent extends Component<ProductsProps> {
 
 export const Product: ProductComponent = component$((
     { id, name, description, type, price, discount, discountPrice, photo, weight }) => {
+    const loc = useLocation();
     const navigate = useNavigate();
 
     return (
@@ -78,7 +79,7 @@ export const Product: ProductComponent = component$((
                 class="h-[300px] w-full object-cover"
                 height={400}
                 width={400}
-                src={photo}
+                src={isLocalhost(loc.url) ? `http://127.0.0.1:8788/media/${photo}` : `https://vroom-coffee-roastery.pages.dev/media/${photo}`}
                 alt={name}
             />
 
