@@ -118,8 +118,8 @@ Input.Message = component$(() => {
     const props = useContext(InputContext);
 
     return (
-        <p q:slot="message" class={`${props.disabled ? "text-neutral-400" : "text-neutral-700"}`}>
+        <div q:slot="message" class={`${props.disabled ? "text-neutral-400" : "text-neutral-700"}`}>
             <Slot />
-        </p>
+        </div>
     );
 });
