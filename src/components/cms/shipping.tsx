@@ -7,10 +7,11 @@ import {
 } from '@builder.io/qwik';
 
 import type { QRL, Component, Signal, HTMLAttributes, ImgHTMLAttributes } from '@builder.io/qwik';
+import { useLocation } from '@builder.io/qwik-city';
 
 import { cva, type VariantProps } from "class-variance-authority";
 
-import { cn } from "~/lib/utils";
+import { cn, isLocalhost } from "~/lib/utils";
 
 interface ShippingProps extends 
 	HTMLAttributes<HTMLElement>,
@@ -136,8 +137,9 @@ Shipping.Item = component$((
 
 Shipping.Logo = component$((
     { ...props }) => {
+    const loc = useLocation();
     return (
-        <img {...props} class="h-[50px] w-[50px] object-contain rounded-[4px]" />
+        <img {...props} src={isLocalhost(loc.url) ? `http://127.0.0.1:8788/media/${props.src}` : `https://vroom-coffee-roastery.pages.dev/media/${props.src}`} class="h-[50px] w-[50px] object-contain rounded-[4px]" />
     );
 });
 
