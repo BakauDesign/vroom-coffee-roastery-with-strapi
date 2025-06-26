@@ -72,7 +72,7 @@ TextField.Field = component$<TextareaHTMLAttributes<HTMLTextAreaElement>>((props
     const rootProps = useContext(TextFieldContext);
 
     return (
-        <div class="h-[48px] min-h-[120px] bg-primary-base border-[1.5px] border-neutral-200 rounded-[6px] flex items-center justify-between">
+        <div class="h-fit *:min-h-[120px] bg-primary-base border-[1.5px] border-neutral-200 rounded-[6px] flex items-center justify-between">
             <textarea
                 {...props}
                 disabled={rootProps.disabled || props.disabled}
@@ -86,8 +86,8 @@ TextField.Message = component$(() => {
     const props = useContext(TextFieldContext);
 
     return (
-        <p q:slot="message" class={`${props.disabled ? "text-neutral-400" : "text-neutral-700"}`}>
+        <div q:slot="message" class={`${props.disabled ? "text-neutral-400" : "text-neutral-700"}`}>
             <Slot />
-        </p>
+        </div>
     );
 });
