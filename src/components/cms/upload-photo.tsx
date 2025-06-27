@@ -1,4 +1,5 @@
     import {
+        // $,
         component$,
         createContextId,
         Slot,
@@ -7,13 +8,17 @@
         useSignal
     } from '@builder.io/qwik';
 
-    import type {
-        Component,
-        InputHTMLAttributes,
-    } from '@builder.io/qwik';
+import type {
+    Component,
+    InputHTMLAttributes,
+    Signal,
+} from '@builder.io/qwik';
+
+import { useLocation } from '@builder.io/qwik-city';
     
     import UploadMinimalisticDark from "~/assets/Icons/Upload Minimalistic Dark.svg";
     import UploadMinimalisticLight from "~/assets/Icons/Upload Minimalistic Light.svg";
+import { isLocalhost } from '~/lib/utils';
 
     interface UploadPhotoProps {
         disabled?: boolean;
@@ -22,7 +27,10 @@
     interface FieldFileProps 
         extends InputHTMLAttributes<HTMLInputElement> 
         {
-            currentImageUrl: string | null;
+            currentImageUrl?: string | null;
+            loader?: Readonly<Signal<any>>;
+            photoFile?: string;
+            photoUrl?: string;
     }
 
     interface UploadPhotoComponent extends Component {
@@ -79,54 +87,70 @@
     });
 
     UploadPhoto.FieldFile = component$<FieldFileProps>((props) => {
+        const loc = useLocation();
         const imageUrl = useSignal<string | null>(props.value?.toString() || null);
+
+        const loader = props.loader;
+        const newLogoFile = useSignal<File | null>(null);
+        const logoPreviewUrl = useSignal<string | null>(null);
+
         const rootProps = useContext(UploadPhotoContext);
 
         return (
             <div class="h-[180px] w-[180px] bg-neutral-custom-base border-dashed border-[1.5px] border-neutral-200 rounded-[6px] flex items-center justify-between relative overflow-hidden">
                 <input
                     id='upload-photo'
-                    name={props.name}
+                    name={props.photoFile}
                     type='file'
                     accept='.jpg,.jpeg,.png,.avif'
-                    {...props}
                     disabled={rootProps.disabled || props.disabled}
                     
                     class="opacity-0"
 
                     onChange$={(e) => {
                         const file = (e.target as HTMLInputElement).files?.[0];
+                        newLogoFile.value = file || null;
 
                         if (file) {
+                            logoPreviewUrl.value = URL.createObjectURL(file);
                             imageUrl.value = URL.createObjectURL(file);
+                        } else {
+                            const oldLogoPath = loader?.value.logo;
+                            if (oldLogoPath) {
+                                logoPreviewUrl.value = `${isLocalhost(loc.url) ? "http://127.0.0.1:8788/media/" : "https://vroom-coffee-roastery.pages.dev/media/"}${oldLogoPath}`;
+                            } else {
+                                logoPreviewUrl.value = null;
+                            }
                         }
                     }}
                 />
+
+                <input type="hidden" name={props.photoUrl} value={newLogoFile.value ? '' : props.loader?.value.logo} />
 
                 <label
                     for="upload-photo"
                     class={`
                         flex flex-col justify-center items-center gap-y-1.5 top-0 bottom-0 left-0 right-0 absolute bg-cover cursor-pointer
-                        ${(props.currentImageUrl || imageUrl.value) ? "bg-none" : "bg-neutral-custom-base"} ${(props.currentImageUrl || imageUrl.value) && "grayscale"}
+                        ${(props.loader?.value.logo || imageUrl.value) ? "bg-none" : "bg-neutral-custom-base"} ${(props.loader?.value.logo || imageUrl.value) && "grayscale"}
                     `}
 
                     style={{
-                        backgroundImage: props.currentImageUrl && !imageUrl.value ? (
-                            `url(https://vroom-coffee-roastery.pages.dev/media/${props.currentImageUrl})`
+                        backgroundImage: !imageUrl.value ? (
+                            `url(${isLocalhost(loc.url) ? "http://127.0.0.1:8788/media/" : "https://vroom-coffee-roastery.pages.dev/media/"}${props.loader?.value.logo})`
                         ) : (
                             imageUrl.value ? `url(${imageUrl.value})` : 'bg-neutral-custom-base'
                         )
                     }}
                 >
                     <img
-                        src={(props.currentImageUrl || imageUrl.value) ? UploadMinimalisticLight : UploadMinimalisticDark}
+                        src={(props.loader?.value.logo || imageUrl.value) ? UploadMinimalisticLight : UploadMinimalisticDark}
                         alt="Upload Minimalistic Icon"
                         height={24}
                         width={24}
                     />
 
-                    <p class={`text-cms-label-small sm:text-cms-label-medium ${(props.currentImageUrl || imageUrl.value) ? "text-neutral-custom-base" : "text-neutral-custom-700"}`}>
-                        {(props.currentImageUrl || imageUrl.value) ? "Click to change file" : "Click to select file"}
+                    <p class={`text-cms-label-small sm:text-cms-label-medium ${(props.loader?.value.logo || imageUrl.value) ? "text-neutral-custom-base" : "text-neutral-custom-700"}`}>
+                        {(props.loader?.value.logo || imageUrl.value) ? "Click to change file" : "Click to select file"}
                     </p>
                 </label>
             </div>
