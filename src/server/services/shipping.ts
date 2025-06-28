@@ -110,20 +110,35 @@ export async function getShippingById({ env, id }: GetShippingById) {
 }
 
 export async function createShipping({
-    shipping,
-    env
-}: CreateShipping) {
+    values,
+    event
+}: ActionParams<ShippingForm>) {
+    const { platform } = event;
+
+    const validLogo = v.safeParse(ShippingLogoSchema, values.logoFile);
+
     try {
-        const db = await getDB(env);
+        const db = await getDB(platform.env);
 
-        await db.shipping.create({
-            data: shipping
-        });
+        if (validLogo.success) {
+            const { path } = await uploadFileToBucket(values.logoFile, platform.env.BUCKET);
 
+            await db.shipping.create({
+                data: {
+                    name: values.name,
+                    cost: values.cost,
+                    logo: path
+                }
+            });
+
+            return {
+                success: true,
+                message: "Shipping has been created"
+            }
+        }
         return {
-            success: true,
-            message: "User has been created"
-        }        
+            errors: { logo: validLogo.issues[0].message }
+        }
     } catch (error) {
         return {
             success: false,

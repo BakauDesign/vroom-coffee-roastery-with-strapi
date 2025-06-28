@@ -1,5 +1,3 @@
-import * as v from 'valibot';
-
 import {
     component$
 } from "@builder.io/qwik";
@@ -23,48 +21,26 @@ import type {
 import { Input } from "~/components/cms/input";
 import { FormBlock } from "~/components/blocks/cms/form-block";
 import { UploadPhoto } from "~/components/cms/upload-photo";
-import { uploadFileToBucket } from '~/lib/r2';
+
 import { 
     ShippingSchema,
-    ShippingLogoSchema,
     type ShippingForm
 } from '~/schema/shipping';
+
 import { createShipping } from '~/server/services/shipping';
  
 export const useShippingFormLoader = routeLoader$<InitialValues<ShippingForm>>(() => ({
     name: '',
     logo: null,
+    logoFile: null,
     cost: 0,
     status: true
 }));
  
 export const useShippingFromAction = formAction$<ShippingForm>(
-    async (values, { platform, request, cookie, redirect }) => {
-        const validAvatar = v.safeParse(ShippingLogoSchema, values.logo);
-
-
-        if (!validAvatar.success) {
-            return {
-                errors: { logo: validAvatar.issues[0].message }
-            }
-        }
-
-        try {
-            const logo = await uploadFileToBucket(values.logo, platform.env.BUCKET);
-
-            const shipping = {
-                ...values,
-                logo: logo.path
-            }
-
-            await createShipping({ shipping, ...platform, request, cookie });
-
-            throw redirect(301, "/cms/settings/shipping")
-        } catch (err) {
-            return {
-                errors: { logo: `Gagal mengunggah file.` }
-            };
-        }
+    async (values, event) => {
+        await createShipping({ values, event });
+        event.redirect(301, "/cms/settings/shipping");
     },
     {
         validate: valiForm$(ShippingSchema),
@@ -191,7 +167,7 @@ export default component$(() => {
                                     )}
                                 </Field>
  
-                                <Field name="logo">
+                                <Field name="logoFile">
                                     {(field: any, props: any) => (
                                         <section class="flex flex-col lg:flex-row gap-6 lg:gap-8 justify-between">
                                             <article class="font-inter flex flex-col gap-2 w-full max-w-[400px]">
@@ -212,7 +188,10 @@ export default component$(() => {
  
                                                 <UploadPhoto.FieldFile
                                                     {...props}
-                                                    name={field.name}
+                                                    photoFile="logoFile"
+                                                    photoUrl="logo"
+                                                    currentImageUrl={field.value}
+                                                    loader={loader}
                                                 />
  
                                                 <UploadPhoto.Message>
