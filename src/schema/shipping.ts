@@ -6,6 +6,7 @@ export const ShippingSchema = v.object({
         v.nonEmpty('Mohon masukan nama pengiriman')
     ),
     logo: v.any(),
+    logoFile: v.any(),
     cost: v.pipe(
         v.number('Mohon masukan biaya pengiriman yang valid (harus angka).'),
         v.minValue(0, 'Biaya tidak boleh kurang dari 0.')

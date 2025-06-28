@@ -1,7 +1,6 @@
 import type { RequestHandler } from "@builder.io/qwik-city";
 
 export const onGet: RequestHandler = async ({ params, send, platform, headers }) => {
-    console.info("MEDIA API RUNNING")
     const filePath = params.path;
 
     if (!filePath) {
@@ -11,7 +10,6 @@ export const onGet: RequestHandler = async ({ params, send, platform, headers })
     
     try {
         const file = await platform.env.BUCKET.get(filePath);
-        console.info(file)
 
         if (!file) {
             send(404, { message: `Not Found: File '${filePath}' not found.` });

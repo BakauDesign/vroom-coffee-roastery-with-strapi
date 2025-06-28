@@ -5,8 +5,20 @@ import { getDB } from '~/lib/db';
 import { Cookie, JSONObject, RequestEventAction } from "@builder.io/qwik-city";
 import { Shipping } from '~/interfaces';
 
+import {
+    ShippingForm,
+    ShippingLogoSchema
+} from '~/schema/shipping';
+
+import { deleteFileFromBucket, uploadFileToBucket } from '~/lib/r2';
+
 export type ErrorAuthentication = {
 	message: string;
+}
+
+export interface ActionParams<T extends ShippingForm> {
+    values: T;
+    event: RequestEventAction<QwikCityPlatform>;
 }
 
 interface Params {
@@ -150,22 +162,43 @@ export async function updateShippingStatus({
 
 
 export async function updateShipping({
-    shipping,
-    env
-}: UpdateShipping) {
-    try {
-        const db = await getDB(env);
+    values,
+    event
+}: ActionParams<ShippingForm>) {
+    const { platform, params } = event;
+    const id = parseInt(params.id);
 
-        await db.shipping.update({
-            data: shipping,
-            where: {
-                id: shipping.id
-            }
-        });
+    const logoChanged = v.safeParse(ShippingLogoSchema, values.logoFile);
+
+    try {
+        const db = await getDB(platform.env);
+
+        if (logoChanged.success) {
+            await deleteFileFromBucket(values.logo, platform.env.BUCKET);
+
+            const { path } = await uploadFileToBucket(values.logoFile, platform.env.BUCKET);
+
+            await db.shipping.update({
+                data: {
+                    name: values.name,
+                    cost: values.cost,
+                    logo: path
+                },
+                where: { id }
+            });
+        } else {
+            await db.shipping.update({
+                data: {
+                    name: values.name,
+                    cost: values.cost
+                },
+                where: { id }
+            });
+        }
 
         return {
             success: true,
-            message: "User has been updated"
+            message: "Shipping has been updated"
         }   
     } catch (error) {
         return {

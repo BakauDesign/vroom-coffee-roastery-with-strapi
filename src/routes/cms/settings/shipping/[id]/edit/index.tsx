@@ -1,5 +1,3 @@
-import * as v from 'valibot';
-
 import {
     component$
 } from "@builder.io/qwik";
@@ -23,29 +21,26 @@ import type {
 import { Input } from "~/components/cms/input";
 import { FormBlock } from "~/components/blocks/cms/form-block";
 import { UploadPhoto } from "~/components/cms/upload-photo";
-import { deleteFileFromBucket, uploadFileToBucket } from '~/lib/r2';
+
 import { 
     ShippingSchema,
-    ShippingLogoSchema,
     type ShippingForm
 } from '~/schema/shipping';
-import { getShippingById, updateShipping } from '~/server/services/shipping';
+
+import {
+    getShippingById,
+    updateShipping
+} from '~/server/services/shipping';
+
 export const useShippingFormLoader = routeLoader$<InitialValues<ShippingForm>>(
-    async ({ params, platform, cookie }) => {
+    async ({ params, platform }) => {
         const id = parseInt(params.id);
         const data = await getShippingById({ id, ...platform });
-
-        cookie.set("vroom-coffee-roastery-shipping-logo", data.shipping?.logo as string, {
-            path: '/',
-            httpOnly: true,
-            secure: true,
-            maxAge: [5, 'minutes'],
-            sameSite: 'lax',
-        });
 
         return {
             name: data.shipping?.name || '',
             logo: data.shipping?.logo,
+            logoFile: null,
             cost: data.shipping?.cost || 0,
             status: data.shipping?.status || false
         }
@@ -53,47 +48,9 @@ export const useShippingFormLoader = routeLoader$<InitialValues<ShippingForm>>(
 );
  
 export const useShippingFormAction = formAction$<ShippingForm>(
-    async (values, { platform, redirect, cookie, params }) => {
-        const { success: logoChanged } = v.safeParse(ShippingLogoSchema, values.logo);
-
-        if (!logoChanged) {
-            try {
-                const currentLogo = cookie.get("vroom-coffee-roastery-shipping-logo")?.value || "";
-
-                const shipping = {
-                    ...values,
-                    id: parseInt(params.id),
-                    logo: currentLogo
-                }
-                
-                await updateShipping({ shipping, ...platform });
-                
-                cookie.delete("vroom-coffee-roastery-shipping-logo");
-            } catch (error) {
-                console.error("There's error in server Shipping 1 ", error);
-            }
-        } else {
-            try {
-                const currentLogo = cookie.get("vroom-coffee-roastery-shipping-logo")?.value || "";
-                
-                await deleteFileFromBucket(currentLogo, platform.env.BUCKET);
-                const { path } = await uploadFileToBucket(values.logo, platform.env.BUCKET);
-                
-                const shipping = {
-                    ...values,
-                    id: parseInt(params.id),
-                    logo: path
-                }
-                
-                await updateShipping({ shipping, ...platform });
-
-                cookie.delete("vroom-coffee-roastery-shipping-logo");
-            } catch (error) {
-                console.error("There's error in server Shipping 2 ");
-            }
-        }
-
-        throw redirect(301, "/cms/settings/shipping");
+    async (values, event) => {
+        await updateShipping({ values, event });
+        throw event.redirect(301, "/cms/settings/shipping");
     },
     {
         validate: valiForm$(ShippingSchema),
@@ -111,7 +68,7 @@ export default component$(() => {
         action: action,
         validateOn: 'submit'
     });
- 
+
     const navigate = useNavigate();
 
     return (
@@ -241,13 +198,14 @@ export default component$(() => {
  
                                                 <UploadPhoto.FieldFile
                                                     {...props}
-                                                    name={field.name}
-                                                    currentImageUrl={field.value}
+                                                    photoFile="logoFile"
+                                                    photoUrl="logo"
+                                                    loader={loader}
                                                 />
  
                                                 <UploadPhoto.Message>
                                                     <p class="text-red-500">
-                                                        { field.error }
+                                                        { field?.error }
                                                     </p>
                                                 </UploadPhoto.Message>
                                             </UploadPhoto.Root>
