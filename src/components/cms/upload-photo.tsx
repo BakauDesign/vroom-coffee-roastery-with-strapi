@@ -125,7 +125,7 @@ import { isLocalhost } from '~/lib/utils';
                     }}
                 />
 
-                <input type="hidden" name={props.photoUrl} value={newLogoFile.value ? '' : props.loader?.value.logo} />
+                <input type="hidden" name={props.photoUrl} value={loader?.value.logo} />
 
                 <label
                     for="upload-photo"
