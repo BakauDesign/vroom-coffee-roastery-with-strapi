@@ -90,8 +90,6 @@ export const useDeleteServingRecommendations = routeAction$(
  
 export const useProductFormAction = formAction$<EditForm>(
     async (values, event) => {
-        // console.info(values);
-        // console.info(values.roasted_beans_data.serving_recomendation);
         await updateRoastedBeansProduct({ values, event });
 
         throw event.redirect(301, "/cms/products/roasted-coffee-beans");
@@ -154,7 +152,7 @@ export default component$(() => {
                         </Breadcrumb.Item>
  
                         <Breadcrumb.Item visited>
-                            Add New Product
+                            Edit Product
                         </Breadcrumb.Item>
                     </Breadcrumb.Root>
  
@@ -162,7 +160,7 @@ export default component$(() => {
                         <Header.Content>
                             <Header.Detail>
                                 <Header.Headline>
-                                    Tambah Produk Roasted Beans
+                                    Perbarui Produk Roasted Beans
                                 </Header.Headline>
  
                                 <Header.SupportingHeadline>
@@ -185,7 +183,7 @@ export default component$(() => {
                                     size="large"
                                     type="submit"
                                 >
-                                    Tambahkan Produk
+                                    Perbarui Produk
                                 </Button>
                             </Header.Actions>
                         </Header.Content>
