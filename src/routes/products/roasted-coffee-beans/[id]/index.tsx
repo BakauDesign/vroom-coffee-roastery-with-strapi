@@ -65,10 +65,10 @@ export default component$(() => {
 
                         <article class="price-stock">
                             <section class="price-weight-wrapper">
-                                { product.discount && product.discount_price ? (
+                                { product.discount ? (
                                     <section class="price-discount">
                                         <h1>
-                                            {formatRupiah(product.discount_price)}
+                                            {formatRupiah(product.price)}
                                         </h1>
 
                                         <p>
@@ -78,7 +78,11 @@ export default component$(() => {
                                 ) : null}
                                 
                                 <h1 class="price-weight">
-                                    {formatRupiah(product.price)}/{product.weight}gr
+                                    { product.discount_price ? (
+                                        `${formatRupiah(product.discount_price)}/${product.weight}gr`
+                                    ) : (
+                                        `${formatRupiah(product.price)}/${product.weight}gr`
+                                    )}
                                 </h1>
                             </section>
 
