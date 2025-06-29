@@ -29,6 +29,7 @@ import { isLocalhost } from '~/lib/utils';
         {
             currentImageUrl?: string | null;
             loader?: Readonly<Signal<any>>;
+            photo?: string;
             photoFile?: string;
             photoUrl?: string;
     }
@@ -94,6 +95,8 @@ import { isLocalhost } from '~/lib/utils';
         const newLogoFile = useSignal<File | null>(null);
         const logoPreviewUrl = useSignal<string | null>(null);
 
+        const photo = props.photo;
+
         const rootProps = useContext(UploadPhotoContext);
 
         return (
@@ -112,12 +115,12 @@ import { isLocalhost } from '~/lib/utils';
                         newLogoFile.value = file || null;
 
                         if (file) {
-                            logoPreviewUrl.value = URL.createObjectURL(file);
+                            logoPreviewUrl.value = URL.createObjectURL(file); //loader error
                             imageUrl.value = URL.createObjectURL(file);
                         } else {
-                            const oldLogoPath = loader?.value.logo;
+                            const oldLogoPath = loader?.value.photo;
                             if (oldLogoPath) {
-                                logoPreviewUrl.value = `${isLocalhost(loc.url) ? "http://127.0.0.1:8788/media/" : "https://vroom-coffee-roastery.pages.dev/media/"}${oldLogoPath}`;
+                                logoPreviewUrl.value = `${isLocalhost(loc.url) ? "http://127.0.0.1:8788/media/" : "https://vroom-coffee-roastery.pages.dev/media/"}${photo}`;
                             } else {
                                 logoPreviewUrl.value = null;
                             }
@@ -125,32 +128,32 @@ import { isLocalhost } from '~/lib/utils';
                     }}
                 />
 
-                <input type="hidden" name={props.photoUrl} value={loader?.value.logo} />
+                <input type="hidden" name={props.photoUrl} value={photo} />
 
                 <label
                     for="upload-photo"
                     class={`
                         flex flex-col justify-center items-center gap-y-1.5 top-0 bottom-0 left-0 right-0 absolute bg-cover cursor-pointer
-                        ${(props.loader?.value.logo || imageUrl.value) ? "bg-none" : "bg-neutral-custom-base"} ${(props.loader?.value.logo || imageUrl.value) && "grayscale"}
+                        ${(photo || imageUrl.value) ? "bg-none" : "bg-neutral-custom-base"} ${(photo || imageUrl.value) && "grayscale"}
                     `}
 
                     style={{
                         backgroundImage: !imageUrl.value ? (
-                            `url(${isLocalhost(loc.url) ? "http://127.0.0.1:8788/media/" : "https://vroom-coffee-roastery.pages.dev/media/"}${props.loader?.value.logo})`
+                            `url(${isLocalhost(loc.url) ? "http://127.0.0.1:8788/media/" : "https://vroom-coffee-roastery.pages.dev/media/"}${photo})`
                         ) : (
                             imageUrl.value ? `url(${imageUrl.value})` : 'bg-neutral-custom-base'
                         )
                     }}
                 >
                     <img
-                        src={(props.loader?.value.logo || imageUrl.value) ? UploadMinimalisticLight : UploadMinimalisticDark}
+                        src={(photo || imageUrl.value) ? UploadMinimalisticLight : UploadMinimalisticDark}
                         alt="Upload Minimalistic Icon"
                         height={24}
                         width={24}
                     />
 
-                    <p class={`text-cms-label-small sm:text-cms-label-medium ${(props.loader?.value.logo || imageUrl.value) ? "text-neutral-custom-base" : "text-neutral-custom-700"}`}>
-                        {(props.loader?.value.logo || imageUrl.value) ? "Click to change file" : "Click to select file"}
+                    <p class={`text-cms-label-small sm:text-cms-label-medium ${(photo || imageUrl.value) ? "text-neutral-custom-base" : "text-neutral-custom-700"}`}>
+                        {(photo || imageUrl.value) ? "Click to change file" : "Click to select file"}
                     </p>
                 </label>
             </div>

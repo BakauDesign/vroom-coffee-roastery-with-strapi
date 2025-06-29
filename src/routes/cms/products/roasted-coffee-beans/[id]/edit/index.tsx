@@ -3,6 +3,7 @@ import {
 } from "@builder.io/qwik";
  
 import {
+    routeAction$,
     routeLoader$,
     useNavigate
 } from '@builder.io/qwik-city';
@@ -23,8 +24,10 @@ import { FormBlock } from "~/components/blocks/cms/form-block";
 import { UploadPhoto } from "~/components/cms/upload-photo";
 
 import { // eslint-disable-line @typescript-eslint/consistent-type-imports
-    RoastedBeansProductForm,
-    RoastedBeansProductSchema,
+    RoastedBeansProductEditSchema,
+    RoastedBeansProductEditForm as EditForm,
+    // RoastedBeansProductForm,
+    // RoastedBeansProductSchema,
 } from '~/schema/product';
 
 import { TextField } from '~/components/cms/text-field';
@@ -33,55 +36,81 @@ import { formatRupiah } from "~/lib/utils";
 import { useDiscount } from "~/hooks/useDiscount";
 import { useServingRecommendations } from "~/hooks/useServingRecommendations";
 import { Trash } from "~/assets/cms/icons/Trash";
-import { createRoastedBeansProduct } from "~/server/services/products/roasted-coffee-beans";
+import { getProductById } from "~/server/services/products";
+import { deleteServingRecommendations, getServingRecommendations, updateRoastedBeansProduct } from "~/server/services/products/roasted-coffee-beans";
 
-export const useProductFormLoader = routeLoader$<InitialValues<RoastedBeansProductForm>>(() => ({
-    name: '',
-    description: '',
-    photo: null,
-    photoFile: null,
-    highlight: '',
-    stock: 0,
-    price: 0,
-    discount: null,
-    weight: 0,
-    roasted_beans_data: {
-        origin: '',
-        process: '',
-        testNotes: '',
-        packaging: '',
-        serving_recomendation: [
-            {
-                id: null,
-                name: "V60",
-                description: "15g coffee, 250ml water @93°C, brew time 2:30 mins (medium grind)."
-            },
-            {
-                id: null,
-                name: "Espresso",
-                description: "18g coffee, 36ml yield, 28 sec extraction (fine grind)."
+export const useProductFormLoader = routeLoader$<InitialValues<EditForm>>(
+    async (event) => {
+        const id = parseInt(event.params.id);
+        const product = await getProductById({
+            productId: id,
+            event,
+            options: "Roasted Coffee Beans"
+        });
+
+        console.info(product);
+
+        return {
+            name: product?.data?.name,
+            description: product?.data?.description,
+            photo: product?.data?.photo,
+            photoFile: null,
+            highlight: product?.data?.highlight,
+            stock: product?.data?.stock,
+            price: product?.data?.price,
+            discount: product?.data?.discount,
+            weight: product?.data?.weight,
+            roasted_beans_data: {
+                id: product?.data?.roasted_beans?.id,
+                origin: product?.data?.roasted_beans?.origin,
+                process: product?.data?.roasted_beans?.process,
+                testNotes: product?.data?.roasted_beans?.test_notes,
+                packaging: product?.data?.roasted_beans?.packaging,
+                serving_recomendation: []
             }
-        ]
+        }
     }
-}));
- 
-export const useProductFormAction = formAction$<RoastedBeansProductForm>(
+);
+
+export const useServingRecomendationLoader = routeLoader$(
+    async (event) => {
+        return await getServingRecommendations({ event });
+    }
+)
+
+export const useDeleteServingRecommendations = routeAction$(
     async (values, event) => {
-        return await createRoastedBeansProduct({ values, event });
+        const { params } = event;
+        const id = params.id;
+
+        await deleteServingRecommendations({ values, event });
+        throw event.redirect(301, `/cms/products/roasted-coffee-beans/${id}/edit`)
+    }
+)
+ 
+export const useProductFormAction = formAction$<EditForm>(
+    async (values, event) => {
+        // console.info(values);
+        // console.info(values.roasted_beans_data.serving_recomendation);
+        await updateRoastedBeansProduct({ values, event });
+
+        throw event.redirect(301, "/cms/products/roasted-coffee-beans");
     },
     {
-        validate: valiForm$(RoastedBeansProductSchema),
+        validate: valiForm$(RoastedBeansProductEditSchema),
         numbers: ['stock', 'price', 'discount', 'weight'],
         arrays: ['roasted_beans_data.serving_recomendation']
     }
 );
 
-
 export default component$(() => {
+    const servingRecommendations = useServingRecomendationLoader();
+    const { submit: deleteServingRecommendation } = useDeleteServingRecommendations();
+
     const loader = useProductFormLoader();
     const action = useProductFormAction();
  
-    const [form, { Form, Field , FieldArray}] = useForm<RoastedBeansProductForm>({
+    const [form, { Form, Field , FieldArray}] = useForm<EditForm>({
         loader: loader,
         action: action,
         validateOn: 'submit',
@@ -235,7 +264,9 @@ export default component$(() => {
  
                                                 <UploadPhoto.FieldFile
                                                     {...props}
-                                                    name={field.name}
+                                                    photoFile="photoFile"
+                                                    photoUrl="photo"
+                                                    photo={loader.value.photo}
                                                 />
  
                                                 <UploadPhoto.Message>
@@ -657,11 +688,53 @@ export default component$(() => {
                         </FormBlock.Header>
  
                         <FormBlock.Content>
+                            <section class="pb-6 flex flex-col gap-y-8">
+                                <article class="flex flex-col gap-y-2 text-cms-label-small sm:text-cms-label-medium">
+                                    <h1 class="text-neutral-custom-800 font-medium">
+                                        Serving Recommendation Saat Ini
+                                    </h1>
+
+                                    <p class="text-neutral-custom-700">
+                                        Menekan Icon Hapus akan langsung berdampak pada data saat ini
+                                    </p>
+                                </article>
+
+                                <ul class="flex gap-4 *:w-[360px] *:max-w-[360px] *:flex *:flex-col *:gap-y-3 *:py-3 *:px-4 *:bg-neutral-custom-base *:border-[1.5px] *:border-neutral-custom-100 *:rounded-2xl">                               
+                                    {servingRecommendations.value.data.map((serving) => (
+                                        <li
+                                            key={serving.id}
+                                            class="text-cms-label-small sm:text-cms-label-medium *:first:font-medium"
+                                        >
+                                            <div class="flex items-center justify-between gap-2 text-neutral-custom-800">
+                                                <p>{serving.name}</p>
+                                                <Trash
+                                                    class="cursor-pointer"
+                                                    onClick$={() => deleteServingRecommendation(serving)}
+                                                />
+                                            </div>
+                                                    
+                                            <p class="text-neutral-custom-700">{serving.description}</p>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </section>
+
+                            <Separator />
+
                             <FieldArray
                                 name="roasted_beans_data.serving_recomendation"
                             >
                                 {(fieldArray) => (
-                                    <section class="flex flex-col gap-y-8">
+                                    <section class="pt-6 flex flex-col gap-y-8">
+                                        <article class="flex flex-col gap-y-2">
+                                            <h1 class="text-neutral-custom-800 font-medium text-cms-label-small sm:text-cms-label-medium">
+                                                Serving Recommendation Baru
+                                            </h1>
+
+                                            <p class="text-yellow-400">
+                                                Menekan Icon Hapus tidak akan langsung berdampak pada data saat ini
+                                            </p>
+                                        </article>
                                         <ul class="flex gap-4 *:w-[360px] *:max-w-[360px] *:flex *:flex-col *:gap-y-3 *:py-3 *:px-4 *:bg-neutral-custom-base *:border-[1.5px] *:border-neutral-custom-100 *:rounded-2xl">
                                         {fieldArray.items.map((item, index) => (
                                             <li

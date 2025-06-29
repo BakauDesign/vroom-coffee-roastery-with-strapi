@@ -65,14 +65,14 @@ export default component$(() => {
 
                         <article class="price-stock">
                             <section class="price-weight-wrapper">
-                                { product.discount ? (
+                                { product.discount && product.discount_price ? (
                                     <section class="price-discount">
                                         <h1>
-                                            Rp115.000
+                                            {formatRupiah(product.discount_price)}
                                         </h1>
 
                                         <p>
-                                            12%
+                                            {product.discount}%
                                         </p>
                                     </section>
                                 ) : null}
@@ -166,7 +166,7 @@ export default component$(() => {
                     <section class={`
                         grid gap-8 grid-cols-3
                         *:*:first:font-lora  *:*:first:text-h3-small *:*:first:font-medium *:*:first:text-neutral-custom-950
-                        *:*:font-work-sans  *:*:text-label-small *:*:sm:text-label-medium *:*:text-neutral-custom-600
+                        *:*:font-work-sans  *:*:text-label-small *:*:sm:text-label-medium *:*:text-neutral-custom-600 *:*:*:first:min-w-[100px] *:*:*:first:sm:min-w-[100px]
                         *:flex *:flex-col *:gap-4 *:*:flex *:*:gap-4
                     `}>
                         <ul>
@@ -189,7 +189,7 @@ export default component$(() => {
                             <li>👃 Test Notes</li>
                             
                             <li>
-                                <p>{ product.roasted_beans?.test_notes }</p>
+                                <p>{ product.roasted_beans?.test_notes || "Tidak ada test notes" }</p>
                             </li>
                         </ul>
 

@@ -1,8 +1,11 @@
 import {
     $,
     useSignal,
-    useTask$
+    useTask$,
 } from "@builder.io/qwik";
+
+import { getValue, type FormStore } from "@modular-forms/qwik";
+
 
 /**
  * @typedef {Object} UseDiscountReturn
@@ -20,27 +23,35 @@ import {
  * @returns {UseDiscountReturn} An object containing signals for discount state and price, along with event handlers.
  */
 
-export function useDiscount() {
+export function useDiscount(form: FormStore<any>) {
+    const discountValue = getValue(form, "discount", {
+        shouldActive: false
+    });
+
+    const pricevalue = getValue(form, "price", {
+        shouldActive: false
+    });
+
     /**
      * @type {Signal<boolean>}
      * A boolean Signal indicating whether the discount feature is considered active.
      * This is an internal state that can be used to control UI elements related to discounts.
      */
-    const activatedDiscount = useSignal(false);
+    const activatedDiscount = useSignal(discountValue || false);
 
     /**
      * @type {Signal<number>}
      * A number Signal representing the base price of the product.
      * This value is updated via the `handlePriceChange` QRL.
      */
-    const price = useSignal(0);
+    const price = useSignal(pricevalue || 0);
 
     /**
      * @type {Signal<number>}
      * A number Signal representing the discount percentage applied to the product (e.g., 10 for 10%).
      * This value is updated via the `handleDiscountChange` QRL.
      */
-    const discountPercentage = useSignal(0);
+    const discountPercentage = useSignal(discountValue || 0);
 
     /**
      * @type {Signal<number>}
@@ -79,7 +90,9 @@ export function useDiscount() {
         track(() => price.value);
         track(() => discountPercentage.value);
         
-        discountPrice.value =  price.value - ((discountPercentage.value / 100) * price.value)
+        const originalDiscountPrice = price.value - ((discountPercentage.value / 100) * price.value);
+
+        discountPrice.value = Math.round(originalDiscountPrice / 500) * 500;
     });
 
     return {

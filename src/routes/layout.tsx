@@ -1,4 +1,4 @@
-import { component$, Slot, isDev } from "@builder.io/qwik";
+import { component$, Slot } from "@builder.io/qwik";
 import { routeLoader$, useLocation } from "@builder.io/qwik-city";
 import { Footer } from "~/components/main/footer";
 import { Header } from "~/components/main/header";
@@ -18,9 +18,9 @@ export default component$(() => {
 
 	return (
 		<main class="w-full bg-neutral-custom-base flex flex-col items-center gap-y-20">
-			{isDev && <Header />}
+			<Header />
 			<Slot />
-			{isDev && <Footer />}
+			<Footer />
 		</main>
 	);
 });

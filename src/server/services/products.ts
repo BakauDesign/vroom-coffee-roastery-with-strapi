@@ -4,6 +4,8 @@ import { getDB } from '~/lib/db';
 
 import { JSONObject, RequestEventAction, RequestEventLoader } from "@builder.io/qwik-city";
 import {
+    RoastedBeansProductEditForm as EditForm,
+    ProductPhotoSchema,
     // RoastedBeansProductSchema,
     RoastedBeansProductForm
 } from '~/schema/product';
@@ -12,11 +14,16 @@ import { deleteFileFromBucket, uploadFileToBucket } from '~/lib/r2';
 // type roastedBeansProductSchema = v.InferInput<typeof RoastedBeansProductSchema>;
 type AllProductForms = RoastedBeansProductForm;
 
+// export type EditProductForms = AllProductForms & {
+//     is_active: true;
+//     roasted_beans_id: number;
+// }
+
 interface LoaderParams {
     event: RequestEventLoader<QwikCityPlatform>
 }
 
-interface ActionParams<T extends AllProductForms> {
+export interface ActionParams<T extends AllProductForms> {
     values: T;
     event: RequestEventAction<QwikCityPlatform>;
 }
@@ -127,7 +134,7 @@ export async function getProductById({
                     roasted_beans: {
                         include: {
                             serving_recommendation: true
-                        },
+                        }
                     }
                 },
             });
@@ -167,7 +174,9 @@ export async function createBaseProduct({
 
     const productType = extractType(url.pathname);
 
-    const discount_price = values.discount ? values.price - (values.price * values.discount / 100) : undefined;
+    const originalDiscountPrice = values.discount ? values.price - (values.price * values.discount / 100) : undefined;
+
+    const discount_price = originalDiscountPrice ? Math.round(originalDiscountPrice / 500) * 500 : undefined;
 
     try {
         const uploadedPhoto = await uploadFileToBucket(values.photo, platform.env.BUCKET);
@@ -197,6 +206,82 @@ export async function createBaseProduct({
     } catch (error) {
         console.error("Error creating product");
     }
+}
+
+export async function updateBaseProduct({
+    values,
+    event
+}: {
+    values: EditForm;
+    event: RequestEventAction<QwikCityPlatform>;
+} ) {
+    const { platform, url} = event;
+
+    const productId = parseInt(event.params.id);
+
+    const productType = extractType(url.pathname);
+
+    const originalDiscountPrice = values.discount ? values.price - (values.price * values.discount / 100) : undefined;
+
+    const discount_price = originalDiscountPrice ? Math.round(originalDiscountPrice / 500) * 500 : undefined;
+    
+    const photoChanged = v.safeParse(ProductPhotoSchema, values.photoFile);
+    
+    try {
+        const db = await getDB(platform.env);
+
+        if (photoChanged.success) {
+            await deleteFileFromBucket(values.photo, platform.env.BUCKET);
+            const { path } = await uploadFileToBucket(values.photoFile, platform.env.BUCKET);
+
+            const data: any = {
+                name: values.name,
+                description: values.description,
+                photo: path,
+                highlight: values.highlight || null,
+                stock: values.stock,
+                price: values.price,
+                discount: values.discount || null,
+                discount_price: discount_price || null,
+                weight: values.weight,
+                type: productType
+            };
+
+            Object.keys(data).forEach(key => data[key] === undefined && delete data[key]);
+
+            const updatedProduct = await db.product.update({
+                where: { id: productId },
+                data: data,
+            });    
+
+            return updatedProduct;
+        } else {
+            const data: any = {
+                name: values.name,
+                description: values.description,
+                photo: values.photo,
+                highlight: values.highlight || null,
+                stock: values.stock,
+                price: values.price,
+                discount: values.discount || null,
+                discount_price: discount_price || null,
+                weight: values.weight,
+                type: productType
+            };
+
+            Object.keys(data).forEach(key => data[key] === undefined && delete data[key]);
+
+            const updatedProduct = await db.product.update({
+                where: { id: productId },
+                data: data,
+            });    
+
+            return updatedProduct;
+        }
+    } catch (error) {
+       console.info("Error updating product")
+    }
+    
 }
 
 export async function updateProductStatus({
@@ -287,59 +372,6 @@ export async function updateProductHighlight({
             success: false,
             message: "Highlight Product gagal diperbarui!!"
         };
-    }
-}
-
-export async function createRoastedBeansProduct({
-    values,
-    event,
-}: ActionParams<RoastedBeansProductForm>) {
-    const { platform, redirect } = event;
-    const db = await getDB(platform.env);
-
-    try {
-        const newProduct = await createBaseProduct({ values, event });
-
-        if (!newProduct) {
-            return;
-        }
-
-        const roastedBeansData = {
-            origin: values.roasted_beans_data.origin,
-            process: values.roasted_beans_data.process,
-            test_notes: values.roasted_beans_data.testNotes || '',
-            packaging: values.roasted_beans_data.packaging,
-            product_id: newProduct.id,
-        };
-        const newRoastedBeansProduct = await db.roasted_Beans_Product.create({ data: roastedBeansData });
-
-        const servingRecommendationsData = values.roasted_beans_data.serving_recomendation.map(sr => ({
-            name: sr.name,
-            description: sr.description,
-            roasted_beans_product_id: newRoastedBeansProduct.id,
-        }));
-
-        if (servingRecommendationsData.length > 0) {
-            await db.serving_Recomendation.createMany({ data: servingRecommendationsData });
-        }
-
-        return {
-            success: true,
-            message: "Roasted Beans Product berhasil ditambahkan!"
-        };
-
-    } catch (error: any) {
-        console.error("Error creating Roasted Beans Product:", error);
-        return {
-            success: false,
-            message: error.message || "Gagal menambahkan Roasted Beans Product.",
-            errors: {
-                general: (error.meta?.cause || error.message || 'Terjadi kesalahan tidak dikenal.') as string
-            }
-        };
-    }
-    finally {
-        throw redirect(301, "/cms/products/roasted-coffee-beans");
     }
 }
 

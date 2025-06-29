@@ -1,6 +1,11 @@
 import * as v from 'valibot';
 
 export const ServingRecomendationSchema = v.object({
+    id: v.optional(
+        v.nullable(
+            v.number()
+        )
+    ),
     name: v.pipe(
         v.string(),
         v.maxLength(20, 'Nama penyajian maksimal 20 karakter'),
@@ -8,7 +13,7 @@ export const ServingRecomendationSchema = v.object({
     ),
     description: v.pipe(
         v.string(),
-        v.maxLength(50, 'Nama penyajian maksimal 50 karakter'),
+        v.maxLength(100, 'Nama penyajian maksimal 50 karakter'),
         v.nonEmpty('Mohon masukan deskripsi rekomendasi penyajian')
     )
 });
@@ -30,10 +35,9 @@ export const RoastedBeansSchema = v.object({
         v.string(),
         v.nonEmpty('Mohon jenis kemasan')
     ),
-    serving_recomendation: 
-        v.array(
-            ServingRecomendationSchema
-        )
+    serving_recomendation: v.array(
+        ServingRecomendationSchema
+    )
 });
 
 export const ProductSchema = v.object({
@@ -48,6 +52,7 @@ export const ProductSchema = v.object({
         v.nonEmpty('Mohon masukan deskripsi produk')
     ),
     photo: v.any(),
+    photoFile: v.any(),
     highlight: v.optional(
         v.nullable(
             v.pipe(
@@ -92,7 +97,12 @@ export const RoastedBeansProductSchema = v.object({
     ...ProductSchema.entries,
     roasted_beans_data: RoastedBeansSchema
 });
-    
+
+export const RoastedBeansProductEditSchema = v.object({
+     ...ProductSchema.entries,
+    roasted_beans_data: RoastedBeansSchema
+});
 
 export type ProductForm = v.InferInput<typeof ProductSchema>;
 export type RoastedBeansProductForm = v.InferInput<typeof RoastedBeansProductSchema>;
+export type RoastedBeansProductEditForm = v.InferInput<typeof RoastedBeansProductSchema>
