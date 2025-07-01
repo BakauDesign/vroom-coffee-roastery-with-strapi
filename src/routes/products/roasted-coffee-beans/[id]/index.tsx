@@ -79,16 +79,6 @@ export const useProductDetail = routeLoader$(
     }
 );
 
-// export const useOrderFormAction = formAction$<CreateOrderForm>(
-//     async () => {
-
-//     },
-//     {
-//         validate: valiForm$(OrderSchema),
-//         arrays: ['purchasedProduct']
-//     }
-// )
-
 export default component$(() => {
     const product = useProductDetail();
     
@@ -96,14 +86,6 @@ export default component$(() => {
     const nav = useNavigate();
 
     const order = useContext(OrderContext);
-
-    // const order = useContext(OrderContext);
-
-    // const [form, { Form }] = useForm<CreateOrderForm>({
-    //     loader: useOrderFormLoader(),
-    //     fieldArrays: ['purchasedProduct']
-    // });
-
 
     const addToOrder = $(() => {
         if (!product.value) return;
@@ -117,12 +99,7 @@ export default component$(() => {
             quantity: 1
         };
 
-        // --- INI PERBAIKANNYA ---
-        // Buat array baru dengan item lama dan item baru
-        order.value = [...order.value, newItem]; 
-        
-        console.log('Current Order Signal Value:', order.value); // Untuk debugging, pastikan nilainya berubah
-        // ... (opsional) navigasi ke halaman order
+        order.value = [...order.value, newItem];
     });
 
     return (
@@ -188,7 +165,7 @@ export default component$(() => {
                                 //     }
                                 // })
                                 addToOrder();
-                                nav("/products/order/create");
+                                nav("/products/orders/create");
                             }}
                         >
                             Beli Sekarang
