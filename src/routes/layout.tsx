@@ -1,7 +1,8 @@
-import { component$, Slot } from "@builder.io/qwik";
+import { component$, Slot, useContextProvider, useSignal, useVisibleTask$ } from "@builder.io/qwik";
 import { routeLoader$, useLocation } from "@builder.io/qwik-city";
 import { Footer } from "~/components/main/footer";
 import { Header } from "~/components/main/header";
+import { OrderCartItems, OrderContext } from "~/context/order-context";
 
 export const useServerTimeLoader = routeLoader$(() => {
   return {
@@ -11,6 +12,41 @@ export const useServerTimeLoader = routeLoader$(() => {
 
 export default component$(() => {
 	const loc = useLocation();
+	// const orderCartSignal = useOrderCartState();
+	const orderCartSignal = useSignal<OrderCartItems>([]);
+
+    useContextProvider(OrderContext, orderCartSignal);
+
+	useVisibleTask$(({ track }) => {
+		track(() => orderCartSignal.value);
+
+		const cartExist = localStorage.getItem('vroom-cart');
+
+		if (!cartExist) {
+			localStorage.setItem('vroom-cart', "[]");
+		}
+
+		const cart = localStorage.getItem('vroom-cart') as string;
+
+		try {
+			const parsedCart: OrderCartItems = JSON.parse(cart);
+
+			if (
+				parsedCart.length > 0 &&
+				orderCartSignal.value.length < parsedCart.length
+			) {
+				orderCartSignal.value = parsedCart;
+			}
+
+			if (
+				orderCartSignal.value.length > parsedCart.length
+			) {
+				localStorage.setItem('vroom-cart', JSON.stringify(orderCartSignal.value))
+			}
+		} catch (error) {
+			console.info("Error cart")
+		}
+    });
 
 	if (loc.url.pathname.startsWith('/cms')) {
 		return <Slot />;
