@@ -541,13 +541,17 @@ export default component$(() => {
                                             <Field name="shipping.cost" type="number">
                                                 {(fieldCost: any) => (
                                                     <td>
-                                                        <Field name="shipping.name">
-                                                            {(fieldName: any) => (
-                                                                <p>
-                                                                    {`${formatRupiah(fieldCost.value)} (${fieldName.value})`}
-                                                                </p>
-                                                            )}
-                                                        </Field>
+                                                        {fieldCost.value ? (
+                                                            <Field name="shipping.name">
+                                                                {(fieldName: any) => (
+                                                                    <p>
+                                                                        {`${formatRupiah(fieldCost.value)} (${fieldName.value})`}
+                                                                    </p>
+                                                                )}
+                                                            </Field>
+                                                        ) : (
+                                                            "-"
+                                                        )}
                                                     </td>
                                                 )}
                                             </Field>
