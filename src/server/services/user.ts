@@ -1,12 +1,23 @@
+import * as v from 'valibot';
+
 import { hash } from "bcryptjs";
 
 import { getDB } from '~/lib/db';
+import {
+    deleteFileFromBucket,
+    uploadFileToBucket
+} from '~/lib/r2';
 
 import { Users } from "~/interfaces";
-import { getTokenUserId } from "~/lib/cookie";
-import { Cookie } from "@builder.io/qwik-city";
-import { message } from "valibot";
 
+import { getTokenUserId } from "~/lib/cookie";
+
+import { Cookie, RequestEventAction } from "@builder.io/qwik-city";
+
+import {
+    UserForm,
+    UserAvatarSchema,
+} from "~/schema/user";
 export type ErrorAuthentication = {
 	message: string;
 }
@@ -24,12 +35,9 @@ interface GetUser extends Omit<Params,
 	id: number;
 }
 
-interface CreateUser extends Params {
-	user: Omit<Users, "id" | "created_at">;
-}
-
-interface UpdateUser extends Params {
-	user: Omit<Users, "created_at">;
+interface ActionParam<T extends any> {
+    values: T;
+    event: RequestEventAction<QwikCityPlatform>;
 }
 
 interface DeleteUser extends Params {
@@ -68,36 +76,44 @@ export async function getUserById({
 }
 
 export async function createUser({
-    user,
-    env,
-    request,
-    cookie
-}: CreateUser) {
-    const verifiedRole = await verifyRole(request, cookie, env);
+    values,
+    event
+}: ActionParam<UserForm>) {
+    const { request, cookie, platform } = event;
+    const verifiedRole = await verifyRole(request, cookie, platform.env);
 
     if (verifiedRole?.verified) {
-        const { name, username, avatar, role, password } = user;
+        const { name, username, role, password, avatarFile } = values;
     
         try {
-            const db = await getDB(env);
+            const db = await getDB(platform.env);
 
             const hashPassword = await hash(password, 12);
 
+            const validAvatar = v.safeParse(UserAvatarSchema, values.avatarFile);
+
+            if (!validAvatar.success) {
+                return {
+                    errors: { avatar: validAvatar.issues[0].message }
+                }
+            }
+                
+            const avatarUploaded = await uploadFileToBucket(avatarFile, platform.env.BUCKET);
+
             await db.user.create({
-                                data: {
-                                    name,
-                                    username,
-                                    avatar,
-                                    role,
-                                    password: hashPassword
-                                }
-                            });
-            
+                            data: {
+                                name,
+                                username,
+                                avatar: avatarUploaded.path,
+                                role,
+                                password: hashPassword
+                            },
+                        });
+
             return {
                 success: true,
                 message: "User has been created"
             }
-        
         } catch (error) {
             return {
                 success: false,
@@ -105,30 +121,40 @@ export async function createUser({
             };
         }
     }
-    return verifiedRole?.message;
+    return {
+        success: true,
+        message: verifiedRole?.message
+    }
 }
 
 export async function updateUser({
-    user,
-    env,
-    request,
-    cookie
-}: UpdateUser) {
-    const verifiedRole = await verifyRole(request, cookie, env);
+    values,
+    event
+}: ActionParam<UserForm>) {
+    const { request, cookie, platform, params } = event;
+    const verifiedRole = await verifyRole(request, cookie, platform.env);
 
     if (verifiedRole?.verified) {
-        const { id, name, username, avatar, role, password } = user;
+        const id = parseInt(params.id);
+        const { name, username, avatar, role, password, avatarFile } = values;
     
         try {
-            const db = await getDB(env);
+            const { success: avatarChanged } = v.safeParse(UserAvatarSchema, avatarFile);
+
+            const db = await getDB(platform.env);
 
             const hashPassword = await hash(password, 12);
 
-            await db.user.update({
+            if (avatarChanged) {
+                await deleteFileFromBucket(avatar, platform.env.BUCKET);
+                
+                const avatarUploaded = await uploadFileToBucket(avatarFile, platform.env.BUCKET);
+
+                await db.user.update({
                                 data: {
                                     name,
                                     username,
-                                    avatar,
+                                    avatar: avatarUploaded.path,
                                     role,
                                     password: hashPassword
                                 },
@@ -136,12 +162,24 @@ export async function updateUser({
                                     id: id
                                 }
                             });
-            
+            } else {
+                await db.user.update({
+                                data: {
+                                    name,
+                                    username,
+                                    role,
+                                    password: hashPassword
+                                },
+                                where: {
+                                    id: id
+                                }
+                            });
+            }
+
             return {
                 success: true,
                 message: "User has been created"
             }
-        
         } catch (error) {
             return {
                 success: false,
@@ -177,7 +215,7 @@ export async function deleteUser({
     }
 }
 
-async function verifyRole(request: Request, cookie: Cookie, env: { DB: D1Database }) {
+export async function verifyRole(request: Request, cookie: Cookie, env: { DB: D1Database }) {
     const tokenUserId = await getTokenUserId({ request, cookie });
     const db = await getDB(env);
 
@@ -200,7 +238,10 @@ async function verifyRole(request: Request, cookie: Cookie, env: { DB: D1Databas
                     message: "You don't have access for this action" 
                 };
             }
-            return { verified: true };			
+            return {
+                verified: true,
+                message: "You have authorized for this action"
+            };
         }
     } catch (err) {
         return {

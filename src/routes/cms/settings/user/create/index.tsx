@@ -1,5 +1,3 @@
-import * as v from 'valibot';
-
 import {
     component$,
     useSignal,
@@ -21,52 +19,30 @@ import type {
     InitialValues
 } from "@modular-forms/qwik";
  
-import { UserAvatarSchema, UserSchema, type UserForm } from "~/schema/user";
+import { UserForm, UserSchema } from "~/schema/user";
 import { Input } from "~/components/cms/input";
 import { FormBlock } from "~/components/blocks/cms/form-block";
 import { UploadPhoto } from "~/components/cms/upload-photo";
 import { Chips } from "~/components/cms/chips";
-import { uploadFileToBucket } from '~/lib/r2';
 import { createUser } from '~/server/services/user';
  
 export const useUserFormLoader = routeLoader$<InitialValues<UserForm>>(() => ({
     name: '',
     username: '',
     avatar: null,
+    avatarFile: null,
     role: 'Super Admin',
     password: ''
 }));
  
 export const useUserFromAction = formAction$<UserForm>(
-    async (values, { platform, request, cookie, redirect }) => {
-        const validAvatar = v.safeParse(UserAvatarSchema, values.avatar);
+    async (values, event) => {
+        await createUser({ values, event });
 
-        if (!validAvatar.success) {
-            return {
-                errors: { avatar: validAvatar.issues[0].message }
-            }
-        }
-        try {
-            const avatar = await uploadFileToBucket(values.avatar, platform.env.BUCKET);
-
-            const user = {
-                ...values,
-                avatar: avatar.path
-            }
-
-            await createUser({ user, ...platform, request, cookie });
-
-            throw redirect(301, "/cms/settings/user")
-        } catch (err) {
-            return {
-                errors: { avatar: `Gagal mengunggah file.` }
-            };
-        }
-        
+        throw event.redirect(301, "/cms/settings/user");
     },
     {
-        validate: valiForm$(UserSchema),
-        files: ["avatar"]
+        validate: valiForm$(UserSchema)
     }
 );
  
@@ -249,6 +225,9 @@ export default component$(() => {
                                                 <UploadPhoto.FieldFile
                                                     {...props}
                                                     name={field.name}
+                                                    photoFile="avatarFile"
+                                                    photoUrl="avatar"
+                                                    photo={loader.value.avatar}
                                                 />
  
                                                 <UploadPhoto.Message>
@@ -308,7 +287,7 @@ export default component$(() => {
                                                 </h1>
  
                                                 <p class="text-cms-body-small sm:text-cms-body-medium text-neutral-custom-600">
-                                                    Gunakan kombinasi huruf besar/kecil, angka dan harus 18+ karakter dengan kombinasi aman.
+                                                    Gunakan kombinasi huruf besar/kecil, angka dan minimal harus 8 karakter atau lebih dengan kombinasi aman.
                                                 </p>
                                             </article>
  

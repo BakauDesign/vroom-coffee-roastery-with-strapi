@@ -32,7 +32,7 @@ import TrashIcon from "~/assets/Icons/Trash Bin Trash.svg";
 import UserIllustration from "~/assets/cms/icons/Review.avif";
 import { getDB } from "~/lib/db";
 import { formatDateTime } from "~/lib/utils";
-import { deleteUser } from "~/server/services/user";
+import { deleteUser, verifyRole } from "~/server/services/user";
 
 export const useUserLoader = routeLoader$( 
     async ({ platform, url }) => {
@@ -72,6 +72,12 @@ export const useUserLoader = routeLoader$(
     }
 );
 
+export const useUserRole = routeLoader$(
+    async ({ request, cookie, platform }) => {
+        return await verifyRole(request, cookie, platform.env);
+    }
+);
+
 export const useDeleteUser = routeAction$(
     async (values, { platform, request, cookie, redirect }) => {
         const { output: user, success: validUser } = v.safeParse(
@@ -85,7 +91,6 @@ export const useDeleteUser = routeAction$(
 
             throw redirect(302, "/cms/settings/user");
         }
-        
     }
 );
 
@@ -94,6 +99,7 @@ export default component$(() => {
     const navigate = useNavigate();
     const users = useUserLoader();
     const deleteUser = useDeleteUser();
+    const userRole = useUserRole();
     // const perPage = useSignal(10);
 
     const {
@@ -140,15 +146,19 @@ export default component$(() => {
                             </Header.Detail>
                         </Header.Content>
 
-                        <Header.Actions>
-                            <Button
-                                variant="primary"
-                                size="large"
-                                onClick$={() => navigate("/cms/settings/user/create")}
-                            >
-                                Tambah User Baru
-                            </Button>
-                        </Header.Actions>
+                        { userRole.value?.verified ? (
+                            <Header.Actions>
+                                <Button
+                                    variant="primary"
+                                    size="large"
+                                    onClick$={() => navigate("/cms/settings/user/create")}
+                                >
+                                    Tambah User Baru
+                                </Button>
+                            </Header.Actions>
+                        ) : (
+                            null
+                        )}
                     </Header.Root>
 
                     <Separator />
@@ -198,28 +208,32 @@ export default component$(() => {
                                             </Table.Cell>
 
                                             <Table.Cell class="w-fill min-w-[200px]">
-                                                <Popover.Root>
-                                                    <Popover.Trigger>
-                                                        <img
-                                                            src={MenuDotsIcon}
-                                                            alt="Menu Dots Icon"
-                                                            height={24}
-                                                            width={24}
-                                                        />
-                                                    </Popover.Trigger>
+                                                { userRole.value?.verified ? (
+                                                    <Popover.Root>
+                                                        <Popover.Trigger>
+                                                            <img
+                                                                src={MenuDotsIcon}
+                                                                alt="Menu Dots Icon"
+                                                                height={24}
+                                                                width={24}
+                                                            />
+                                                        </Popover.Trigger>
 
-                                                    <Popover.Content class="flex flex-col gap-y-4 text-cms-label-small *:cursor-pointer *:flex *:gap-2 *:items-center">
-                                                        <Link href={`${user.id}/edit`}>
-                                                            <img src={PenIcon} alt="Pen Icon" height={16} width={16} />
-                                                            <p>Edit user</p>
-                                                        </Link>
+                                                        <Popover.Content class="flex flex-col gap-y-4 text-cms-label-small *:cursor-pointer *:flex *:gap-2 *:items-center">
+                                                            <Link href={`${user.id}/edit`}>
+                                                                <img src={PenIcon} alt="Pen Icon" height={16} width={16} />
+                                                                <p>Edit user</p>
+                                                            </Link>
 
-                                                        <div onClick$={() => deleteUser.submit(user)}>
-                                                            <img src={TrashIcon} alt="Trash Icon" height={16} width={16} />
-                                                            <p>Hapus user</p>
-                                                        </div>
-                                                    </Popover.Content>
-                                                </Popover.Root>
+                                                            <div onClick$={() => deleteUser.submit(user)}>
+                                                                <img src={TrashIcon} alt="Trash Icon" height={16} width={16} />
+                                                                <p>Hapus user</p>
+                                                            </div>
+                                                        </Popover.Content>
+                                                    </Popover.Root>
+                                                ) : (
+                                                    null
+                                                )}
                                             </Table.Cell>
                                         </Table.Row>     
                                     );

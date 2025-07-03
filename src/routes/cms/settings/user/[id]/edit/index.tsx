@@ -1,5 +1,3 @@
-import * as v from 'valibot';
-
 import {
     component$,
     useSignal,
@@ -21,13 +19,20 @@ import type {
     InitialValues
 } from "@modular-forms/qwik";
  
-import { UserAvatarSchema, UserSchema, type UserForm } from "~/schema/user";
+import {
+    UserSchema,
+    type UserForm
+} from "~/schema/user";
+
 import { Input } from "~/components/cms/input";
 import { FormBlock } from "~/components/blocks/cms/form-block";
 import { UploadPhoto } from "~/components/cms/upload-photo";
 import { Chips } from "~/components/cms/chips";
-import { deleteFileFromBucket, uploadFileToBucket } from '~/lib/r2';
-import { getUserById, updateUser } from '~/server/services/user';
+
+import {
+    getUserById,
+    updateUser
+} from '~/server/services/user';
  
 export const useUserFormLoader = routeLoader$<InitialValues<UserForm>>(
     async ({ params, platform, cookie }) => {
@@ -46,6 +51,7 @@ export const useUserFormLoader = routeLoader$<InitialValues<UserForm>>(
             name: data.user?.name || "",
             username: data.user?.username || "",
             avatar: data.user?.avatar,
+            avatarFile: null,
             role: data.user?.role,
             password: ''
         }
@@ -53,50 +59,10 @@ export const useUserFormLoader = routeLoader$<InitialValues<UserForm>>(
 );
  
 export const useUserFromAction = formAction$<UserForm>(
-    async (values, { platform, request, cookie, redirect, params }) => {
-        const { success: avatarChanged } = v.safeParse(UserAvatarSchema, values.avatar);
-        
-        if (!avatarChanged) {
-            try {
-                const currentAvatar = cookie.get("vroom-coffee-roastery-user-avatar")?.value || "";
-            
-                const user = {
-                    ...values,
-                    id: parseInt(params.id),
-                    avatar: currentAvatar
-                }
+    async (values, event) => {
+        await updateUser({ values, event });
 
-                await updateUser({ user, ...platform, request, cookie });
-
-                cookie.delete("vroom-coffee-roastery-user-avatar");
-
-                throw redirect(301, "/cms/settings/user");
-            } catch (error) {
-                console.error("There's error in server");
-            }
-            
-        } else {
-            try {
-                const currentAvatar = cookie.get("vroom-coffee-roastery-user-avatar")?.value || "";
-
-                await deleteFileFromBucket(currentAvatar, platform.env.BUCKET);
-                const { path } = await uploadFileToBucket(values.avatar, platform.env.BUCKET);
-
-                const user = {
-                    ...values,
-                    id: parseInt(params.id),
-                    avatar: path
-                }
-
-                await updateUser({ user, ...platform, request, cookie });
-
-                cookie.delete("vroom-coffee-roastery-user-avatar");
-
-                throw redirect(301, "/cms/settings/user");
-            } catch (error) {
-                console.error("There's error in server")
-            }
-        }
+        throw event.redirect(301, "/cms/settings/user");
     },
     {
         validate: valiForm$(UserSchema)
@@ -104,9 +70,10 @@ export const useUserFromAction = formAction$<UserForm>(
 );
  
 export default component$(() => {
-    const role = useSignal("Super Admin");
     const action = useUserFromAction();
     const loader = useUserFormLoader();
+
+    const role = useSignal(loader.value.role);
  
     const [, { Form, Field }] = useForm<UserForm>({
         loader: loader,
@@ -163,7 +130,7 @@ export default component$(() => {
                                     size="large"
                                     type="submit"
                                 >
-                                    Tambahkan User
+                                    Perbarui User
                                 </Button>
                             </Header.Actions>
                         </Header.Content>
@@ -282,7 +249,10 @@ export default component$(() => {
                                                 <UploadPhoto.FieldFile
                                                     {...props}
                                                     name={field.name}
-                                                    currentImageUrl={field.value}
+                                                    photoFile="avatarFile"
+                                                    photoUrl="avatar"
+                                                    photo={loader.value.avatar}
+                                                    // currentImageUrl={field.value}
                                                 />
  
                                                 <UploadPhoto.Message>
@@ -342,7 +312,7 @@ export default component$(() => {
                                                 </h1>
  
                                                 <p class="text-cms-body-small sm:text-cms-body-medium text-neutral-custom-600">
-                                                    Gunakan kombinasi huruf besar/kecil, angka dan harus 18+ karakter dengan kombinasi aman.
+                                                    Gunakan kombinasi huruf besar/kecil, angka dan minimal harus 8 karakter atau lebih dengan kombinasi aman.
                                                 </p>
                                             </article>
  
