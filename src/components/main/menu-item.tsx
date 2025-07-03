@@ -57,7 +57,10 @@ export const MenuItem = component$<MenuItemProps>(({
     return (
         <Link 
             {...props}
-            onClick$={() => onClick$ && onClick$()}
+            onClick$={() => {
+                onClick$?.();
+                isOpened.value = false;
+            }}
             class={`
                 w-fit min-w-[60px] py-2 px-3 h-[34px] text-label-small sm:text-label-medium font-work-sans rounded-full
                 ${(asDropdownItem) 
