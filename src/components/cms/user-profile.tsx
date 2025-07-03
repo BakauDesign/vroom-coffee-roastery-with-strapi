@@ -9,6 +9,8 @@ import type { QRL } from '@builder.io/qwik';
 import SquareTopDown from "~/assets/Icons/Square Top Down.svg";
 import { Separator } from './separator';
 import type { Users } from '~/interfaces';
+import { isLocalhost } from '~/lib/utils';
+import { useLocation } from '@builder.io/qwik-city';
 
 export interface UserProfileProps {
     user: Omit<Users, "id" | "username" | "password"> | null;
@@ -19,11 +21,12 @@ export interface UserProfileProps {
 export const UserProfile = component$<UserProfileProps>((
     { onClickLogout$, showDetail, user }) => {
     const isOpened = useSignal(false);
+    const loc = useLocation();
 
     return (
         <section class="bg-neutral-custom-base pt-4 pb-6 flex items-center justify-between gap-4 z-20">
             <img 
-                src={`${user?.avatar && "https://vroom-coffee-roastery.pages.dev/media/"}${user?.avatar}`} 
+                src={`${isLocalhost(loc.url) ? `http://127.0.0.1:8788/media/${user?.avatar}` : `https://vroom-coffee-roastery.pages.dev/media/${user?.avatar}`}`} 
                 alt={`${user?.name} avatar`}
                 class="min-h-[60px] min-w-[60px] aspect-square object-cover overflow-hidden rounded-[4px]"
                 height={60}
