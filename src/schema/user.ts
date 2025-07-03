@@ -10,6 +10,7 @@ export const UserSchema = v.object({
         v.nonEmpty('Mohon masukan username kamu')
     ),
     avatar: v.any(),
+    avatarFile: v.any(),
     role: v.pipe(
         v.string(),
         v.nonEmpty('Mohon pilih role kamu')
@@ -17,18 +18,14 @@ export const UserSchema = v.object({
     password: v.pipe(
         v.string(),
         v.nonEmpty('Mohon masukan password kamu'),
-        v.minLength(18, 'Panjang password harus 18 karakter atau lebih'),
+        v.minLength(8, 'Panjang password harus 8 karakter atau lebih'),
     ),
 });
 
 export const UserAvatarSchema = v.pipe(
-    v.nullable(
-        v.pipe(
-            v.file(),
-            v.mimeType(['image/jpeg', 'image/jpg', 'image/png', 'image/avif'], 'Mohon pilih gambar dengan format JPEG atau PNG.'),
-            v.maxSize(1024 * 1024 * 10, 'Mohon pilih gambar berukuran kurang dari 10 MB.')
-        )
-    )
+    v.file('Mohon pilih gambar dengan format JPEG atau PNG.'),
+    v.mimeType(['image/jpeg', 'image/jpg', 'image/png', 'image/avif'], 'Mohon pilih gambar dengan format JPEG atau PNG.'),
+    v.maxSize(1024 * 1024 * 10, 'Mohon pilih gambar berukuran kurang dari 10 MB.')
 );
 
 export type UserForm = v.InferInput<typeof UserSchema>;
