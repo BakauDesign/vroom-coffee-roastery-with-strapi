@@ -24,6 +24,18 @@ export async function uploadFileToBucket(
 export async function deleteFileFromBucket(
     filePath: string,
     bucket: R2Bucket
-) {
-    await bucket.delete(filePath);
+): Promise<{ success: boolean; message: string }> {
+    try {
+        const object = await bucket.head(filePath);
+
+        if (!object) {
+            return { success: true, message: `File not found at ${filePath}.` };
+        }
+
+        await bucket.delete(filePath);
+        return { success: true, message: `File ${filePath} deleted successfully.` };
+
+    } catch (error) {
+        return { success: false, message: `Failed to delete file ${filePath}: ${error instanceof Error ? error.message : String(error)}` };
+    }
 }
