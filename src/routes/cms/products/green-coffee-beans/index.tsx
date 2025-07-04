@@ -32,7 +32,8 @@ import Green_Coffee_Beans from "~/assets/cms/icons/Green Coffee Beans.avif";
 
 import { formatRupiah, isLocalhost } from "~/lib/utils";
 // import { roastedCoffeeBeans } from "~/assets/data/products";
-import { deleteProduct, getProducts, updateProductHighlight, updateProductStatus } from "~/server/services/products";
+import { getProducts, updateProductHighlight, updateProductStatus } from "~/server/services/products";
+import { deleteGreenBeansProduct } from "~/server/services/products/green-coffee-beans";
 // import { SearchBar } from "~/components/cms/search-bar";
 
 export const useFilter = routeLoader$(async () => {
@@ -47,8 +48,7 @@ export const useProducts = routeLoader$(
 
 export const useDeleteProduct = routeAction$(
     async (values, event) => {
-        // console.info(id)
-        return await deleteProduct({ values, event })
+        await deleteGreenBeansProduct({ values, event });
     }
 );
 

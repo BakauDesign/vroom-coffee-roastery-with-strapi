@@ -5,6 +5,7 @@ import {
 } from "../products";
 import { getDB } from "~/lib/db";
 import type { RequestEventAction, RequestEventLoader } from "@builder.io/qwik-city";
+import { deleteFileFromBucket } from "~/lib/r2";
 
 interface ActionParams<T extends any> {
     values: T;
@@ -170,6 +171,74 @@ export async function updateGreenBeansProduct({
         return {
             success: false,
             message: error.message || "Gagal memperbarui Green Beans Product.",
+            errors: {
+                general: (error.meta?.cause || error.message || 'Terjadi kesalahan tidak dikenal.') as string
+            }
+        };
+    } 
+    finally {
+        throw event.redirect(301, "/cms/products/green-coffee-beans");
+    }
+}
+
+export async function deleteGreenBeansProduct({
+    values,
+    event,
+}: ActionParams<any>) {
+    const { platform } = event;
+    const productId = values.id;
+
+    const db = await getDB(platform.env);
+
+    try {
+        const productToDelete = await db.product.findUnique({
+            where: { id: productId },
+            select: {
+                id: true,
+                photo: true,
+                green_beans: {
+                    select: {
+                        id: true,
+                    }
+                },
+            },
+        });
+
+        if (!productToDelete) {
+            return {
+                success: false,
+                message: "Produk tidak ditemukan."
+            };
+        }
+
+        await db.green_Beans_Product.delete({
+            where: { id: productToDelete.green_beans?.id }
+        });
+
+        await db.product.delete({
+            where: { id: productId }
+        });
+
+        if (productToDelete.photo) {
+            await deleteFileFromBucket(productToDelete.photo, platform.env.BUCKET);
+        }
+
+        return {
+            success: true,
+            message: "Green Beans Product berhasil dihapus!"
+        };
+
+    } catch (error: any) {
+        if (error.code === 'P2025') {
+            return {
+                success: false,
+                message: "Produk atau data terkait tidak ditemukan.",
+                errors: { general: "Produk yang ingin dihapus tidak ditemukan." }
+            };
+        }
+        return {
+            success: false,
+            message: error.message || "Gagal menghapus Green Beans Product.",
             errors: {
                 general: (error.meta?.cause || error.message || 'Terjadi kesalahan tidak dikenal.') as string
             }

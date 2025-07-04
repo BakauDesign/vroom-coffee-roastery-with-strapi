@@ -73,7 +73,6 @@ export const useProductFormLoader = routeLoader$<InitialValues<GreenBeansProduct
  
 export const useProductFormAction = formAction$<GreenBeansProductForm>(
     async (values, event) => {
-        console.info(values.green_beans_data)
         await updateGreenBeansProduct({ values, event });
 
         throw event.redirect(301, "/cms/products/green-coffee-beans");
