@@ -232,7 +232,9 @@ export default component$(() => {
  
                                                 <UploadPhoto.FieldFile
                                                     {...props}
-                                                    name={field.name}
+                                                    photoFile="photoFile"
+                                                    photoUrl="photo"
+                                                    photo={loader.value.photo}
                                                 />
  
                                                 <UploadPhoto.Message>
