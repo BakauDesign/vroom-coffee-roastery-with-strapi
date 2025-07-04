@@ -1,5 +1,73 @@
 import * as v from 'valibot';
 
+export const GreenBeansSchema = v.object({
+    elevation: v.pipe(
+        v.number('Mohon masukan ketinggian perkebunan'),
+        v.minValue(1)
+    ),
+    variety: v.nullable(
+        v.pipe(
+            v.string('Mohon masukan varietas biji')
+        )
+    ),
+    origin: v.pipe(
+        v.string(),
+        v.nonEmpty('Mohon masukan asal geografis biji')
+    ),
+    process: v.nullable(
+        v.pipe(
+            v.string('Mohon masukan proses biji')
+        )
+    ),
+    moisture_content: v.nullable(
+        v.pipe(
+            v.number('Mohon masukan moisture content biji')
+        )
+    ),
+    density: v.nullable(
+        v.pipe(
+            v.number('Mohon masukan densitas biji')
+        )
+    ),
+    defect: v.nullable(
+        v.pipe(
+            v.string('Mohon masukan defect biji'),
+        )
+    ),
+    screen_size: v.nullable(
+        v.pipe(
+            v.number('Mohon masukan ukuran saringan biji')
+        )
+    ),
+    
+    roast_level: v.nullable(
+        v.pipe(
+            v.string('Mohon masukan potensi roast')
+        )
+    ),
+    flavor_description: v.nullable(
+        v.pipe(
+            v.string('Mohon masukan deskripsi rasa')
+        )
+    ),
+
+    water_activity: v.nullable(
+        v.pipe(
+            v.number('Mohon masukan water activity')
+        )
+    ),
+    quakers: v.nullable(
+        v.pipe(
+            v.number('Mohon masukan quaker per sample')
+        )
+    ),
+    cupping_potential: v.nullable(
+        v.pipe(
+            v.number('Mohon masukan potensi skor cupping')
+        )
+    )
+});
+
 export const ServingRecomendationSchema = v.object({
     id: v.optional(
         v.nullable(
@@ -86,7 +154,7 @@ export const ProductSchema = v.object({
 export const ProductPhotoSchema = v.pipe(
     v.nullable(
         v.pipe(
-            v.file(),
+            v.file('Mohon pilih gambar dengan format JPEG atau PNG.'),
             v.mimeType(['image/jpeg', 'image/jpg', 'image/png', 'image/avif'], 'Mohon pilih gambar dengan format JPEG atau PNG.'),
             v.maxSize(1024 * 1024 * 10, 'Mohon pilih gambar berukuran kurang dari 5 MB.')
         )
@@ -103,6 +171,14 @@ export const RoastedBeansProductEditSchema = v.object({
     roasted_beans_data: RoastedBeansSchema
 });
 
+export const GreenBeansProductSchema = v.object({
+    ...ProductSchema.entries,
+    green_beans_data: GreenBeansSchema
+});
+
 export type ProductForm = v.InferInput<typeof ProductSchema>;
+
 export type RoastedBeansProductForm = v.InferInput<typeof RoastedBeansProductSchema>;
 export type RoastedBeansProductEditForm = v.InferInput<typeof RoastedBeansProductSchema>
+
+export type GreenBeansProductForm = v.InferInput<typeof GreenBeansProductSchema>;

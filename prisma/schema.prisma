@@ -49,6 +49,7 @@ model Product {
 	review			Review[]
 	purchased_product	Purchased_Product[]
 	roasted_beans   Roasted_Beans_Product?
+	green_beans   	Green_Beans_Product?
 }
 
 model Review {
@@ -82,6 +83,28 @@ model Serving_Recomendation {
 	description					String
 	roasted_beans_product		Roasted_Beans_Product	@relation(fields: [roasted_beans_product_id], references: [id])
 	roasted_beans_product_id	Int
+}
+
+model Green_Beans_Product {
+	id					Int		@id @default(autoincrement())
+	elevation			Int
+	variety				String?
+	origin				String
+	process				String?
+	moisure_content		Int?
+	density				Int?
+	defect				String?
+	screen_size			Int?
+
+	roast_level			String?
+	flavor_description	String?
+
+	water_activity		Int?
+	quakers				Int?
+	cupping_potential	Int?
+
+	product			Product @relation(fields: [product_id], references: [id])
+	product_id		Int		@unique
 }
 
 model Order {
