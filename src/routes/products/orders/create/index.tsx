@@ -330,7 +330,7 @@ export default component$(() => {
                             </h1>
 
                             <section class="grid grid-cols-2 gap-4">
-                                {shippings?.value.map((shipping) => {
+                                {shippings.value.map((shipping) => {
                                     return (
                                         <Shipping.Root
                                             key={shipping.id}

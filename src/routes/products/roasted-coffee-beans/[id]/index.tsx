@@ -71,7 +71,7 @@ export const useProductDetail = routeLoader$(
             options: "Roasted Coffee Beans"
         });
 
-        if (!result?.data) {
+        if (!result.data) {
             throw redirect(302, "/products/roasted-coffee-beans");
         }
 
@@ -88,8 +88,6 @@ export default component$(() => {
     const order = useContext(OrderContext);
 
     const addToOrder = $(() => {
-        if (!product.value) return;
-
         const newItem: PurchasedProductType = {
             product_id: product.value.id,
             name: product.value.name,
