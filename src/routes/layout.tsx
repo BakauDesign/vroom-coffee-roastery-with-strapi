@@ -21,6 +21,7 @@ export default component$(() => {
 
     useContextProvider(OrderContext, orderCartSignal);
 
+	// eslint-disable-next-line qwik/no-use-visible-task
 	useVisibleTask$(({ track }) => {
 		track(() => orderCartSignal.value);
 
