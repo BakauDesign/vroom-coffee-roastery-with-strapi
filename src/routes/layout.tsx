@@ -2,7 +2,11 @@ import { component$, Slot, useContextProvider, useSignal, useVisibleTask$ } from
 import { routeLoader$, useLocation } from "@builder.io/qwik-city";
 import { Footer } from "~/components/main/footer";
 import { Header } from "~/components/main/header";
-import { OrderCartItems, OrderContext } from "~/context/order-context";
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { OrderContext } from "~/context/order-context";
+
+import type { OrderCartItems } from "~/context/order-context";
 
 export const useServerTimeLoader = routeLoader$(() => {
   return {

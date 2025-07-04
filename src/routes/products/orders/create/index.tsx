@@ -29,17 +29,18 @@ import { OrderContext } from "~/context/order-context";
 
 import {
     formAction$,
-    // formAction$,
-    InitialValues,
-    // insert,
     useForm,
     valiForm$,
     setValues
-    // valiForm$
 } from "@modular-forms/qwik";
 
+import type {
+    InitialValues
+} from "@modular-forms/qwik";
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { 
-    CreateOrderForm,
+    CreateOrderForm, 
     CreateOrderSchema
     // OrderForm,
     // OrderSchema
@@ -107,9 +108,7 @@ export const useShipping = routeLoader$(
     async ({ platform }) => {
         const shipping = await getShipping({ ...platform });
 
-        if (shipping.data) {
-            return shipping.data;
-        }
+        return shipping.data;
     }
 )
 
@@ -331,7 +330,7 @@ export default component$(() => {
                             </h1>
 
                             <section class="grid grid-cols-2 gap-4">
-                                {shippings?.value?.map((shipping) => {
+                                {shippings?.value.map((shipping) => {
                                     return (
                                         <Shipping.Root
                                             key={shipping.id}

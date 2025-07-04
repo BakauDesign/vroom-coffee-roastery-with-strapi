@@ -19,7 +19,12 @@ import type {
     InitialValues
 } from "@modular-forms/qwik";
  
-import { UserForm, UserSchema } from "~/schema/user";
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import {
+    UserForm,
+    UserSchema
+} from "~/schema/user";
+
 import { Input } from "~/components/cms/input";
 import { FormBlock } from "~/components/blocks/cms/form-block";
 import { UploadPhoto } from "~/components/cms/upload-photo";

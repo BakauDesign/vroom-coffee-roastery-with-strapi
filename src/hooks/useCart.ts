@@ -1,7 +1,12 @@
 import { $, useComputed$, useTask$ } from '@builder.io/qwik';
+
 import type { Signal } from "@builder.io/qwik";
-import { FormStore, setValues, setValue } from '@modular-forms/qwik';
-import { OrderCartItems } from "~/context/order-context";
+
+import { setValues, setValue } from '@modular-forms/qwik';
+import type { FormStore } from '@modular-forms/qwik';
+
+import type { OrderCartItems } from "~/context/order-context";
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { CreateOrderForm } from '~/schema/order';
 
 interface ShippingItem {
