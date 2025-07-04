@@ -41,31 +41,31 @@ export const useProductFormLoader = routeLoader$<InitialValues<GreenBeansProduct
         const product = await getGreenBeansProductById({ event });
 
         return {
-            name: product?.data?.name,
-            description: product?.data?.description,
-            photo: product?.data?.photo,
+            name: product.data?.name,
+            description: product.data?.description,
+            photo: product.data?.photo,
             photoFile: null,
-            highlight: product?.data?.highlight,
-            stock: product?.data?.stock,
-            price: product?.data?.price,
-            discount: product?.data?.discount,
-            weight: product?.data?.weight,
+            highlight: product.data?.highlight,
+            stock: product.data?.stock,
+            price: product.data?.price,
+            discount: product.data?.discount,
+            weight: product.data?.weight,
             green_beans_data: {
-                elevation: product?.data?.green_beans?.elevation,
-                variety: product?.data?.green_beans?.variety,
-                origin: product?.data?.green_beans?.origin,
-                process: product?.data?.green_beans?.process,
-                moisture_content: product?.data?.green_beans?.moisure_content,
-                density: product?.data?.green_beans?.density,
-                defect: product?.data?.green_beans?.defect,
-                screen_size: product?.data?.green_beans?.screen_size,
+                elevation: product.data?.green_beans?.elevation,
+                variety: product.data?.green_beans?.variety,
+                origin: product.data?.green_beans?.origin,
+                process: product.data?.green_beans?.process,
+                moisture_content: product.data?.green_beans?.moisure_content,
+                density: product.data?.green_beans?.density,
+                defect: product.data?.green_beans?.defect,
+                screen_size: product.data?.green_beans?.screen_size,
 
-                roast_level: product?.data?.green_beans?.roast_level,
-                flavor_description:	product?.data?.green_beans?.flavor_description,
+                roast_level: product.data?.green_beans?.roast_level,
+                flavor_description:	product.data?.green_beans?.flavor_description,
 
-                water_activity: product?.data?.green_beans?.water_activity,
-                quakers: product?.data?.green_beans?.quakers,
-                cupping_potential: product?.data?.green_beans?.cupping_potential,
+                water_activity: product.data?.green_beans?.water_activity,
+                quakers: product.data?.green_beans?.quakers,
+                cupping_potential: product.data?.green_beans?.cupping_potential,
             }
         }
     }

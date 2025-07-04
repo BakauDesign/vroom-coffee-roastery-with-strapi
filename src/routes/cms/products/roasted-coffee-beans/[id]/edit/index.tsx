@@ -48,24 +48,22 @@ export const useProductFormLoader = routeLoader$<InitialValues<EditForm>>(
             options: "Roasted Coffee Beans"
         });
 
-        console.info(product);
-
         return {
-            name: product?.data?.name,
-            description: product?.data?.description,
-            photo: product?.data?.photo,
+            name: product.data?.name,
+            description: product.data?.description,
+            photo: product.data?.photo,
             photoFile: null,
-            highlight: product?.data?.highlight,
-            stock: product?.data?.stock,
-            price: product?.data?.price,
-            discount: product?.data?.discount,
-            weight: product?.data?.weight,
+            highlight: product.data?.highlight,
+            stock: product.data?.stock,
+            price: product.data?.price,
+            discount: product.data?.discount,
+            weight: product.data?.weight,
             roasted_beans_data: {
-                id: product?.data?.roasted_beans?.id,
-                origin: product?.data?.roasted_beans?.origin,
-                process: product?.data?.roasted_beans?.process,
-                testNotes: product?.data?.roasted_beans?.test_notes,
-                packaging: product?.data?.roasted_beans?.packaging,
+                id: product.data?.roasted_beans?.id,
+                origin: product.data?.roasted_beans?.origin,
+                process: product.data?.roasted_beans?.process,
+                testNotes: product.data?.roasted_beans?.test_notes,
+                packaging: product.data?.roasted_beans?.packaging,
                 serving_recomendation: []
             }
         }
