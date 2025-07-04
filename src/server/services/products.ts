@@ -4,15 +4,15 @@ import { getDB } from '~/lib/db';
 
 import { JSONObject, RequestEventAction, RequestEventLoader } from "@builder.io/qwik-city";
 import {
-    RoastedBeansProductEditForm as EditForm,
     ProductPhotoSchema,
     // RoastedBeansProductSchema,
-    RoastedBeansProductForm
+    RoastedBeansProductForm,
+    GreenBeansProductForm
 } from '~/schema/product';
 import { deleteFileFromBucket, uploadFileToBucket } from '~/lib/r2';
 
 // type roastedBeansProductSchema = v.InferInput<typeof RoastedBeansProductSchema>;
-type AllProductForms = RoastedBeansProductForm;
+type AllProductForms = RoastedBeansProductForm | GreenBeansProductForm;
 
 // export type EditProductForms = AllProductForms & {
 //     is_active: true;
@@ -23,7 +23,7 @@ interface LoaderParams {
     event: RequestEventLoader<QwikCityPlatform>
 }
 
-export interface ActionParams<T extends AllProductForms> {
+export interface ActionParams<T extends any> {
     values: T;
     event: RequestEventAction<QwikCityPlatform>;
 }
@@ -38,7 +38,8 @@ export async function getHighlightedProduct ({
         
         const products = await db.product.findMany({
             where: {
-                is_highlight: true
+                is_highlight: true,
+                is_active: true
             }
         });
 
@@ -81,6 +82,7 @@ export async function getProducts({
                             }
                         }
                     },
+                    is_active: true,
                     type: { contains: productType }
                 }
             })
@@ -115,7 +117,7 @@ export async function getProducts({
 export async function getProductById({
     productId,
     event,
-    options
+    // options
 }: { 
     productId: number, 
     event: RequestEventLoader<QwikCityPlatform>;
@@ -125,31 +127,30 @@ export async function getProductById({
     const db = await getDB(platform.env);
 
     try {
-        if (options === "Roasted Coffee Beans") {
-            const product = await db.product.findUnique({
-                where: {
-                    id: productId,
-                },
-                include: {
-                    roasted_beans: {
-                        include: {
-                            serving_recommendation: true
-                        }
+        const product = await db.product.findUnique({
+            where: {
+                id: productId,
+            },
+            include: {
+                roasted_beans: {
+                    include: {
+                        serving_recommendation: true
                     }
-                },
-            });
-            if (!product) {
-                return {
-                    success: true,
-                    data: null,
-                };
-            }
+                }
+            },
+        });
 
+        if (!product) {
             return {
                 success: true,
-                data: product,
+                data: null,
             };
         }
+
+        return {
+            success: true,
+            data: product,
+        };
     } catch (error: any) {
         console.error(`Error fetching product with ID ${productId}:`, error);
         return {
@@ -179,7 +180,7 @@ export async function createBaseProduct({
     const discount_price = originalDiscountPrice ? Math.round(originalDiscountPrice / 500) * 500 : undefined;
 
     try {
-        const uploadedPhoto = await uploadFileToBucket(values.photo, platform.env.BUCKET);
+        const uploadedPhoto = await uploadFileToBucket(values.photoFile, platform.env.BUCKET);
     
         const db = await getDB(platform.env);
 
@@ -211,10 +212,7 @@ export async function createBaseProduct({
 export async function updateBaseProduct({
     values,
     event
-}: {
-    values: EditForm;
-    event: RequestEventAction<QwikCityPlatform>;
-} ) {
+}: ActionParams<AllProductForms>) {
     const { platform, url} = event;
 
     const productId = parseInt(event.params.id);
@@ -287,13 +285,10 @@ export async function updateBaseProduct({
 export async function updateProductStatus({
     values,
     event
-}: {
-    values: JSONObject;
-    event: RequestEventAction<QwikCityPlatform>;
-}) {
+}: ActionParams<JSONObject>) {
     const { platform } = event;
 
-    const validUser = v.safeParse(
+    const validProduct = v.safeParse(
         v.object({
             id: v.number(),
             is_active: v.boolean()
@@ -301,7 +296,7 @@ export async function updateProductStatus({
     ), values);
 
     
-    if (!validUser.success) {
+    if (!validProduct.success) {
         return {
             success: false,
             message: "Status gagal diperbarui!!"
@@ -312,9 +307,9 @@ export async function updateProductStatus({
         const db = await getDB(platform.env);
 
         await db.product.update({
-            where: { id: validUser.output.id},
+            where: { id: validProduct.output.id},
             data: {
-                is_active: !validUser.output.is_active
+                is_active: !validProduct.output.is_active
             }
         });
         
