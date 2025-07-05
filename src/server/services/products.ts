@@ -5,14 +5,14 @@ import { getDB } from '~/lib/db';
 import { JSONObject, RequestEventAction, RequestEventLoader } from "@builder.io/qwik-city";
 import {
     ProductPhotoSchema,
-    // RoastedBeansProductSchema,
     RoastedBeansProductForm,
-    GreenBeansProductForm
+    GreenBeansProductForm,
+    ToolsProductForm
 } from '~/schema/product';
 import { deleteFileFromBucket, uploadFileToBucket } from '~/lib/r2';
 
 // type roastedBeansProductSchema = v.InferInput<typeof RoastedBeansProductSchema>;
-type AllProductForms = RoastedBeansProductForm | GreenBeansProductForm;
+type AllProductForms = RoastedBeansProductForm | GreenBeansProductForm | ToolsProductForm;
 
 // export type EditProductForms = AllProductForms & {
 //     is_active: true;
