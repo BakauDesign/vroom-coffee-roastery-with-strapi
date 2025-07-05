@@ -437,7 +437,7 @@ export async function deleteProduct({
 
 function extractType(pathname: string) {
     const pathSegments = pathname.split('/').filter(segment => segment !== '');
-    const productTypeSlug = pathSegments[2];
+    const productTypeSlug = pathSegments[2] || pathSegments[1];
 
     const spacedType = productTypeSlug.replace(/-/g, ' ');
 
