@@ -108,6 +108,65 @@ export const RoastedBeansSchema = v.object({
     )
 });
 
+export const MainFeatureSchema = v.object({
+    id: v.optional(
+        v.nullable(
+            v.number()
+        )
+    ),
+    emoji: v.pipe(
+        v.string(),
+        v.nonEmpty()
+    ),
+    name: v.pipe(
+        v.string(),
+        v.nonEmpty()
+    ),
+    description: v.pipe(
+        v.string(),
+        v.nonEmpty()
+    )
+});
+
+export const ToolsSchema = v.object({
+    material: v.pipe(
+        v.string(),
+        v.nonEmpty()
+    ),
+    capacity: v.pipe(
+        v.string(),
+        v.nonEmpty()
+    ),
+    dimensions: v.nullable(
+        v.pipe(
+            v.string()
+        )
+    ),
+    compatibility: v.nullable(
+        v.pipe(
+            v.string()
+        )
+    ),
+    settings: v.nullable(
+        v.pipe(
+            v.string()
+        )
+    ),
+    accessories: v.nullable(
+        v.pipe(
+            v.string()
+        )
+    ),
+
+    packaging: v.pipe(
+        v.string()
+    ),
+
+    main_feature: v.array(
+        MainFeatureSchema
+    )
+});
+
 export const ProductSchema = v.object({
     name: v.pipe(
         v.string(),
@@ -176,9 +235,16 @@ export const GreenBeansProductSchema = v.object({
     green_beans_data: GreenBeansSchema
 });
 
+export const ToolsProductSchema = v.object({
+    ...ProductSchema.entries,
+    tools_data: ToolsSchema
+});
+
 export type ProductForm = v.InferInput<typeof ProductSchema>;
 
 export type RoastedBeansProductForm = v.InferInput<typeof RoastedBeansProductSchema>;
 export type RoastedBeansProductEditForm = v.InferInput<typeof RoastedBeansProductSchema>
 
 export type GreenBeansProductForm = v.InferInput<typeof GreenBeansProductSchema>;
+
+export type ToolsProductForm = v.InferInput<typeof ToolsProductSchema>;

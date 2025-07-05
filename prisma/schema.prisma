@@ -46,10 +46,11 @@ model Product {
 	is_active		Boolean		@default(true)
 	is_highlight	Boolean?
 
-	review			Review[]
+	review				Review[]
 	purchased_product	Purchased_Product[]
-	roasted_beans   Roasted_Beans_Product?
-	green_beans   	Green_Beans_Product?
+	roasted_beans   	Roasted_Beans_Product?
+	green_beans   		Green_Beans_Product?
+	tools				Tools_Product?
 }
 
 model Review {
@@ -85,6 +86,16 @@ model Serving_Recomendation {
 	roasted_beans_product_id	Int
 }
 
+model Main_Feature {
+	id							Int		@id @default(autoincrement())
+	emoji						String
+	name						String
+	description					String
+
+	tools_product				Tools_Product			@relation(fields: [tools_product_id], references: [id])
+	tools_product_id			Int
+}
+
 model Green_Beans_Product {
 	id					Int		@id @default(autoincrement())
 	elevation			Int
@@ -105,6 +116,22 @@ model Green_Beans_Product {
 
 	product			Product @relation(fields: [product_id], references: [id])
 	product_id		Int		@unique
+}
+
+model Tools_Product {
+	id					Int		@id @default(autoincrement())
+	material			String
+	capacity			String
+	dimensions			String?
+	compatibility		String?
+	settings			String?
+	accessories			String?
+
+	packaging			String
+
+	product				Product @relation(fields: [product_id], references: [id])
+	product_id			Int		@unique
+	main_feature		Main_Feature[]
 }
 
 model Order {
