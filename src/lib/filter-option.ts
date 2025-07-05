@@ -30,3 +30,25 @@ export const greenFilterOption = {
         { id: 3, label: "Semua Grade" }
     ]
 };
+
+export const toolsFilterOption = {
+    type: [
+        { id: 1, label: "Grinder" },
+        { id: 2, label: "Brewing Equipment" },
+        { id: 3, label: "Accessories" },
+        { id: 5, label: "Paket Bundling" },
+        { id: 6, label: "Semua Jenis Alat" }
+    ],
+    material: [
+        { id: 1, label: "Stainless Steel" },
+        { id: 2, label: "Keramik" },
+        { id: 3, label: "Kaca" },
+        { id: 4, label: "Semua Material" }
+    ],
+    compatibility: [
+        { id: 1, label: "Espresso" },
+        { id: 2, label: "Pour Over" },
+        { id: 3, label: "French Press" },
+        { id: 4, label: "Semua Kompatibilitas" }
+    ]
+};
