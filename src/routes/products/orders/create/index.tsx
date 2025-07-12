@@ -577,6 +577,7 @@ export default component$(() => {
                                     variant="primary"
                                     size="small"
                                     type="submit"
+                                    disabled={!form.invalid}
                                 >
                                     Konfirmasi & Proses Pesanan
                                 </Button>
