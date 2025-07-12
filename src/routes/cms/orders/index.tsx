@@ -3,7 +3,7 @@ import {
     // useSignal
 } from "@builder.io/qwik";
 
-import { 
+import {
     // Link,
     routeAction$,
     routeLoader$,
@@ -31,8 +31,7 @@ import Green_Coffee_Beans from "~/assets/cms/icons/Green Coffee Beans.avif";
 
 // import { formatRupiah, isLocalhost } from "~/lib/utils";
 // import { roastedCoffeeBeans } from "~/assets/data/products";
-import { updateProductHighlight, updateProductStatus } from "~/server/services/products";
-import { deleteOrder, getOrders } from "~/server/orders";
+import { deleteOrder, getOrders, changeOrderStatus } from "~/server/orders";
 import { formatDateTime, formatRupiah } from "~/lib/utils";
 import { DropdownStatus } from "~/components/cms/dropdown-status";
 
@@ -61,17 +60,10 @@ export const useDeleteOrder = routeAction$(
     }
 );
 
-export const useUpdateStatus = routeAction$(
+export const useUpdateOrderStatus = routeAction$(
     async (values, event) => {
-        await updateProductStatus({ values, event });
-        throw event.redirect(302, "/cms/products/green-coffee-beans");
-    }
-);
-
-export const useUpdateHighlight = routeAction$(
-    async (values, event) => {
-        await updateProductHighlight({ values, event });
-        throw event.redirect(302, "/cms/products/green-coffee-beans");
+        await changeOrderStatus({ values, event });
+        throw event.redirect(302, "/cms/orders");
     }
 );
 
@@ -80,7 +72,7 @@ export default component$(() => {
     // const navigate = useNavigate();
 
     const { submit: deleteOrder } = useDeleteOrder();
-    // const { submit: updateStatus } = useUpdateStatus();
+    const { submit: updateOrderStatus } = useUpdateOrderStatus();
     // const { submit: updateHighlight } = useUpdateHighlight();
     
     // const { origin, process, grade } = useFilter().value;
@@ -238,7 +230,7 @@ export default component$(() => {
                                         <Table.Cell class="min-w-[320px]">
                                             <DropdownStatus.Root
                                                 currentValue={order.status}
-                                                // onClick$={()}
+                                                onClickItem$={(value) => updateOrderStatus({ id: order.id, status: value })}
                                             >
                                                 <DropdownStatus.Trigger />
 

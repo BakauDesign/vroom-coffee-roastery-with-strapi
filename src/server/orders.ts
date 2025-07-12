@@ -81,6 +81,45 @@ export async function createOrderCustomer({
     }
 }
 
+export async function changeOrderStatus({
+    values,
+    event,
+}: ActionParams<any>) {
+    const { platform, redirect } = event;
+
+    const db = await getDB(platform.env);
+
+    try {
+        await db.order.update({
+            where: {
+                id: parseInt(values.id)
+            },
+            data: {
+                status: values.status
+            }
+        })
+
+        return {
+            success: true,
+            data: [],
+            message: "Status order berhasil diperbarui!"
+        };
+
+    } catch (error: any) {
+        console.info(error)
+        return {
+            success: false,
+            data: [],
+            message: error.message || "Status order berhasil diperbarui",
+            errors: {
+                general: (error.meta?.cause || error.message || 'Terjadi kesalahan tidak dikenal.') as string
+            }
+        };
+    } finally {
+        redirect(301, "/cms/orders");
+    }
+}
+
 export async function deleteOrder({
     values,
     event,

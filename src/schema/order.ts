@@ -77,6 +77,15 @@ export const CreateOrderSchema = v.omit(OrderSchema, [
     'payment_method'
 ]);
 
+export const ChangeOrderStatusSchema = v.object({
+    id: v.pipe(
+        v.number()
+    ),
+    status: v.pipe(
+        v.string()
+    )
+});
+
 export const ShippingSchema = v.object({
     id: v.pipe(v.number()),
     name: v.pipe(v.string()),
@@ -107,4 +116,7 @@ export const SendOrderMessageSchema = v.object({
 // export type OrderForm = v.InferInput<typeof OrderSchema>;
 export type CreateOrderForm = v.InferInput<typeof CreateOrderSchema>;
 export type CreateOrderCustomerForm = v.InferInput<typeof CreateOrderSchema>;
+
+export type ChangeOrderStatusForm = v.InferInput<typeof ChangeOrderStatusSchema>;
+
 export type SendOrderMessageData = v.InferInput<typeof SendOrderMessageSchema>;
