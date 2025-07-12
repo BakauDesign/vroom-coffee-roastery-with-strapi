@@ -15,7 +15,7 @@ import { Breadcrumb } from "~/components/cms/breadcrumb";
 // import { Button } from "~/components/main/button";
 import { Separator } from "~/components/cms/separator";
 import { Table } from "~/components/cms/table";
-// import { Popover } from "~/components/cms/popover";
+import { Popover } from "~/components/cms/popover";
 
 // import { SearchBarFilterBlock as SearchBarFilter } from "~/components/blocks/cms/search-bar-filter-block";
 import { HeaderBlock as Header } from "~/components/blocks/cms/header-block";
@@ -24,16 +24,15 @@ import { HeaderBlock as Header } from "~/components/blocks/cms/header-block";
 // import { useGreenProductsCMS } from "~/hooks/useGreenProducts";
 import { greenFilterOption } from "~/lib/filter-option";
 
-// import MenuDotsIcon from "~/assets/Icons/Menu Dots.svg";
+import MenuDotsIcon from "~/assets/Icons/Menu Dots.svg";
 // import PenIcon from "~/assets/Icons/Pen.svg";
-// import TrashIcon from "~/assets/Icons/Trash Bin Trash.svg";
+import TrashIcon from "~/assets/Icons/Trash Bin Trash.svg";
 import Green_Coffee_Beans from "~/assets/cms/icons/Green Coffee Beans.avif";
 
 // import { formatRupiah, isLocalhost } from "~/lib/utils";
 // import { roastedCoffeeBeans } from "~/assets/data/products";
 import { updateProductHighlight, updateProductStatus } from "~/server/services/products";
-import { deleteGreenBeansProduct } from "~/server/services/products/green-coffee-beans";
-import { getOrders } from "~/server/orders";
+import { deleteOrder, getOrders } from "~/server/orders";
 import { formatDateTime, formatRupiah } from "~/lib/utils";
 import { DropdownStatus } from "~/components/cms/dropdown-status";
 
@@ -56,9 +55,9 @@ export const useOrders = routeLoader$(
     }
 );
 
-export const useDeleteProduct = routeAction$(
+export const useDeleteOrder = routeAction$(
     async (values, event) => {
-        await deleteGreenBeansProduct({ values, event });
+        await deleteOrder({ values, event });
     }
 );
 
@@ -80,7 +79,7 @@ export default component$(() => {
     // const loc = useLocation();
     // const navigate = useNavigate();
 
-    // const { submit: deleteProduct } = useDeleteProduct();
+    const { submit: deleteOrder } = useDeleteOrder();
     // const { submit: updateStatus } = useUpdateStatus();
     // const { submit: updateHighlight } = useUpdateHighlight();
     
@@ -300,7 +299,7 @@ export default component$(() => {
                                             )}
                                         </Table.Cell> */}
 
-                                        {/* <Table.Cell class="w-fill min-w-[200px]">
+                                        <Table.Cell class="w-fill min-w-[200px]">
                                             <Popover.Root>
                                                 <Popover.Trigger>
                                                     <img
@@ -312,22 +311,22 @@ export default component$(() => {
                                                 </Popover.Trigger>
 
                                                 <Popover.Content class="flex flex-col gap-y-4 text-cms-label-small *:cursor-pointer *:flex *:gap-2 *:items-center">
-                                                    <Link 
+                                                    {/* <Link 
                                                         href={`/cms/products/green-coffee-beans/${product.id}/edit`}
                                                     >
                                                         <img src={PenIcon} alt="Pen Icon" height={16} width={16} />
                                                         <p>Edit produk</p>
-                                                    </Link>
+                                                    </Link> */}
 
                                                     <div
-                                                        onClick$={() => deleteProduct({ id: product.id })}
+                                                        onClick$={() => deleteOrder({ id: order.id })}
                                                     >
                                                         <img src={TrashIcon} alt="Trash Icon" height={16} width={16} />
                                                         <p>Hapus produk</p>
                                                     </div>
                                                 </Popover.Content>
                                             </Popover.Root>
-                                        </Table.Cell> */}
+                                        </Table.Cell>
                                     </Table.Row>     
                                 )
                             })}                   
