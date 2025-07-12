@@ -136,7 +136,8 @@ export async function getProductById({
                     include: {
                         serving_recommendation: true
                     }
-                }
+                },
+                review: true
             },
         });
 
