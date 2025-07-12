@@ -302,7 +302,7 @@
 
 @layer components {  
   .container {
-    @apply w-full min-w-full flex flex-col gap-y-[150px] py-12 px-4 sm:py-[60px] sm:px-9 lg:py-[100px] lg:px-[60px] overflow-hidden relative;
+    @apply min-h-[800px] w-full min-w-full flex flex-col gap-y-[150px] py-12 px-4 sm:py-[60px] sm:px-9 lg:py-[100px] lg:px-[60px] overflow-hidden relative;
     @apply bg-primary-base rounded-l-[36px] rounded-br-[0px] rounded-bl-[0px] rounded-tr-[36px] md:rounded-tl-[36px] md:rounded-tr-[36px] border-[3px] border-solid border-primary-100;
   }
 

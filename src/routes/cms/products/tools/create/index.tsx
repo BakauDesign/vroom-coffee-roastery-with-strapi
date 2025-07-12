@@ -22,9 +22,8 @@ import { Input } from "~/components/cms/input";
 import { FormBlock } from "~/components/blocks/cms/form-block";
 import { UploadPhoto } from "~/components/cms/upload-photo";
 
-// eslint-disable-line @typescript-eslint/consistent-type-imports
-import { 
-    ToolsProductForm,
+import {
+    ToolsProductForm, // eslint-disable-line @typescript-eslint/consistent-type-imports
     ToolsProductSchema,
 } from '~/schema/product';
 

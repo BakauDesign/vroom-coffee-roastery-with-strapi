@@ -16,10 +16,8 @@ export const PurchasedProductSchema = v.object({
     quantity: v.pipe(
         v.number()
     ),
-    product_id: v.optional(
-        v.nullable(
-            v.number()
-        )
+    product_id: v.pipe(
+        v.number()
     )
 });
 
@@ -47,6 +45,11 @@ export const OrderSchema = v.object({
     tracking_number: v.pipe(
         v.string()
     ),
+    total_cost: v.nullable(
+        v.pipe(
+            v.number()
+        )
+    ),
     shipping: v.object({
         id: v.pipe(
             v.number(),
@@ -68,10 +71,40 @@ export const OrderSchema = v.object({
 });
 
 export const CreateOrderSchema = v.omit(OrderSchema, [
+    'total_cost',
     'status',
     'tracking_number',
     'payment_method'
 ]);
 
+export const ShippingSchema = v.object({
+    id: v.pipe(v.number()),
+    name: v.pipe(v.string()),
+    cost: v.pipe(v.number())
+});
+
+// Schema for WhatsApp message data
+export const SendOrderMessageSchema = v.object({
+    id: v.pipe(v.number()),
+    buyer_name: v.pipe(v.string()),
+    whatsapp_number: v.pipe(v.number()), // Changed from number to string for formatting
+    address: v.pipe(v.string()),
+    courier_notes: v.nullable(v.string()),
+    status: v.pipe(v.string()),
+    tracking_number: v.pipe(v.string()),
+    shipping_cost: v.pipe(v.number()),
+    total_cost: v.nullable(v.number()),
+    date: v.pipe(v.date()), // DateTime as string
+    payment_method: v.pipe(v.string()),
+    
+    // Include purchased products
+    purchasedProduct: v.array(PurchasedProductSchema),
+    
+    // Include shipping data (flattened from relation)
+    shipping_data: ShippingSchema
+});
+
 // export type OrderForm = v.InferInput<typeof OrderSchema>;
 export type CreateOrderForm = v.InferInput<typeof CreateOrderSchema>;
+export type CreateOrderCustomerForm = v.InferInput<typeof CreateOrderSchema>;
+export type SendOrderMessageData = v.InferInput<typeof SendOrderMessageSchema>;

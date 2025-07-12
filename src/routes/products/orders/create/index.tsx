@@ -2,7 +2,8 @@ import {
     component$,
     useContext,
     useSignal,
-    useTask$
+    useTask$,
+    // useVisibleTask$
     // isDev
 } from "@builder.io/qwik";
 // import type { RequestHandler } from "@builder.io/qwik-city";
@@ -14,7 +15,7 @@ import { Separator } from "~/components/main/separator";
 // import InfoIcon from "~/assets/Icons/Info.png"
 // import { Button } from "~/components/main/button";
 import {
-    routeLoader$,
+    routeLoader$
     // routeLoader$,
     // useLocation
 } from "@builder.io/qwik-city";
@@ -50,6 +51,7 @@ import { IncreaseQuantity } from "~/assets/Icons/IncreaseQuantity";
 import { DecreaseQuantity } from "~/assets/Icons/DecreaseQuantity";
 import { Trash } from "~/assets/cms/icons/Trash";
 import { Button } from "~/components/main/button";
+import { createOrderCustomer } from "~/server/orders";
 
 // export const useProductDetail = routeLoader$(
 //     async (event) => {
@@ -87,8 +89,9 @@ export const useOrderFormLoader = routeLoader$<InitialValues<CreateOrderForm>>((
 });
 
 export const useOrderFormAction = formAction$<CreateOrderForm>(
-    async (values) => {
-        console.info(values)
+    async (values, event) => {
+        await createOrderCustomer({ values, event })
+        // console.info(values)
     },
     {
         validate: valiForm$(CreateOrderSchema),
@@ -217,7 +220,7 @@ export default component$(() => {
                                     {(field: any, props: any) => (
                                         <Input.Root>
                                             <Input.Header>
-                                                <Input.Label>Nomor Whatsapp Aktif</Input.Label>
+                                                <Input.Label>Nomor Whatsapp Aktif (Tanpa Nol)</Input.Label>
                                             </Input.Header>
                                                             
                                             <Input.FieldText
@@ -225,7 +228,7 @@ export default component$(() => {
                                                 id={field.name}
                                                 name={field.name}
                                                 value={field.value}
-                                                placeholder="081212345678"
+                                                placeholder="contoh: 81212345678"
                                             />
 
                                             <Input.Message>

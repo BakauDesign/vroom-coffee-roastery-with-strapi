@@ -42,8 +42,7 @@
 	"r2_buckets": [
 		{
 			"binding": "BUCKET",
-			"bucket_name": "vroom-coffee-roastery",
-			"preview_bucket_name": "vroom-coffee-roastery-dev"
+			"bucket_name": "vroom-coffee-roastery"
 		}
 	]
 	/**

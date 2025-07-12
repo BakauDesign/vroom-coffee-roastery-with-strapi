@@ -45,6 +45,7 @@ export function useCart(
             return item;
         });
         order.value = updatedItems; // Ganti seluruh array Signal
+        localStorage.setItem('vroom-cart', JSON.stringify(updatedItems));
     });
 
     // Fungsi untuk mengurangi kuantitas
@@ -63,6 +64,7 @@ export function useCart(
             .filter(item => item.quantity > 0); // Hapus item jika kuantitas <= 0
 
         order.value = updatedItems; // Ganti seluruh array Signal
+        localStorage.setItem('vroom-cart', JSON.stringify(updatedItems));
     });
 
     // Fungsi untuk menghapus item

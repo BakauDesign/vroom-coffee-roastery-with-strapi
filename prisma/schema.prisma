@@ -143,6 +143,7 @@ model Order {
 	status			String
 	tracking_number	String
 	shipping_cost	Int
+	total_cost		Int?
 	date			DateTime	@default(now())
 	payment_method	String
 

@@ -26,7 +26,7 @@ interface DropdownStatusProps extends
 	VariantProps<typeof dropdownStatusVariants> {
 		variant?: "default";
 		size?: "default";
-		currentValue?: Signal<any>;
+		currentValue?: any;
 		onClickItem$?: QRL<(value: any) => void>;
 }
 
@@ -49,6 +49,11 @@ interface DropdownStatusComponent extends Component {
 	Item: Component<ItemProps>;
 }
 
+interface DropdownContext
+	extends DropdownStatusProps {
+		state: Signal<any>;
+}
+
 const dropdownStatusVariants = cva(
 	"font-inter",
 	{
@@ -67,7 +72,8 @@ const dropdownStatusVariants = cva(
 	}
 );
 
-const DropdownStatusContext = createContextId<DropdownStatusProps>('dropdown.context');
+const DropdownStatusContext = createContextId<DropdownContext>('dropdown.context');
+
 const DropdownContentContext = createContextId<{ isOpened: Signal<boolean> }>('dropdown-content.context');
 
 export const DropdownStatus = component$<DropdownStatusProps>(() => {
@@ -76,9 +82,10 @@ export const DropdownStatus = component$<DropdownStatusProps>(() => {
 
 DropdownStatus.Root = component$<DropdownStatusProps>((
 	{ class: className, variant, size, ...props }) => {
+	const state = useSignal(props.currentValue);
 	const isOpened = useSignal(false);
 
-	useContextProvider(DropdownStatusContext, props);
+	useContextProvider(DropdownStatusContext, { ...props, state });
 	useContextProvider(DropdownContentContext, { isOpened });
 	
 	return (
@@ -105,7 +112,7 @@ DropdownStatus.Root = component$<DropdownStatusProps>((
 
 DropdownStatus.Trigger = component$<TriggerProps>((
 	{ ...props }) => {
-	const rootProps = useContext(DropdownStatusContext);
+	const { state } = useContext(DropdownStatusContext);
 	const { isOpened } = useContext(DropdownContentContext);
 
 	return (
@@ -120,7 +127,7 @@ DropdownStatus.Trigger = component$<TriggerProps>((
 			<img src={sortVerticalIcons} alt="sortVerticalIcons" height={24} width={24} />
 
 			<p>
-				{rootProps.currentValue?.value}
+				{ state.value }
 			</p>
 		</label>
 	);
@@ -134,7 +141,7 @@ DropdownStatus.Items = component$<ItemsProps>((
 	return (
 		<div
 			class={`
-				overflow-x-hidden overflow-y-scroll transition-all duration-300 relative z-10 top-4 p-3 rounded-2xl flex flex-wrap gap-4 w-[360px] bg-neutral-custom-base border-neutral-100
+				overflow-x-hidden overflow-y-scroll transition-all duration-300 absolute z-10 top-8 p-3 rounded-2xl flex flex-wrap gap-4 w-[360px] bg-neutral-custom-base border-neutral-100
 				${isOpened.value ? "border-[1.5px] opacity-100" : "opacity-0"}
 				${cn(dropdownStatusVariants({ className }))}
 			`}
@@ -154,7 +161,7 @@ DropdownStatus.Items = component$<ItemsProps>((
 
 DropdownStatus.Item = component$<ItemProps>((
 	{ class: className, value }) => {
-	const { currentValue, onClickItem$ } = useContext(DropdownStatusContext);
+	const { currentValue, onClickItem$, state } = useContext(DropdownStatusContext);
 	const { isOpened } = useContext(DropdownContentContext);
 
 	return (
@@ -162,13 +169,15 @@ DropdownStatus.Item = component$<ItemProps>((
 			aria-value={value}
 			onClick$={() => {
 				if (value !== currentValue?.value) {
+					state.value = value;
 					onClickItem$ && onClickItem$(value);
 					isOpened.value = false;
 				}
 			}}
 			class={`
-				w-fit py-2 px-3 rounded-[12px] flex flex-wrap gap-3 items-center select-none cursor-pointer
+				w-fit py-2 px-3 rounded-[12px] flex-wrap gap-3 items-center select-none cursor-pointer
 				${cn(dropdownStatusVariants({ className }))}
+				${state.value === value ? "hidden" : "flex"}
 				text-label-small sm:text-label-medium font-medium
 			`}
 		>

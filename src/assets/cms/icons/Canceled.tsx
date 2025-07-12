@@ -1,0 +1,18 @@
+import { type PropsOf } from '@builder.io/qwik';
+
+export function Canceled(props: PropsOf<'svg'>, key: string) {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="none"
+            viewBox="0 0 24 24"
+            {...props}
+            key={key}
+        >
+            <circle cx="12" cy="12" r="10" stroke="#EF4444" stroke-width="1.5"/>
+            <path d="M14.5 9.50002L9.5 14.5M9.49998 9.5L14.5 14.5" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+    );
+}
