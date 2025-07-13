@@ -27,7 +27,7 @@ export const Review = component$<ReviewsProps>((
             <Toggle
                 class="absolute top-6 right-6"
                 size='large'
-                value={state}
+                value={state.value}
                 onClick$={(value) => {
                     state.value = value;
                     onActivatedReview$?.(value);
