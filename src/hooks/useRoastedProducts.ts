@@ -10,6 +10,8 @@ type roastedProducts = {
     products: Array<RoastedBeansProduct>;
 }
 
+const SCROLL_POSITION_KEY = 'qwik_scroll_pos';
+
 export function useRoastedProducts({
     totalItems,
     initialPerPage,
@@ -54,15 +56,15 @@ export function useRoastedProducts({
 }
 
 export function useRoastedProductsCMS() {
-    const brewingMethod = useSignal("Semua Metode");
-    const searchKeyword = useSignal("");
-
     const nav = useNavigate();
     const loc = useLocation();
+
+    const brewingMethod = useSignal(loc.url.searchParams.get('brewingMethod') || 'Semua Metode');
+    const searchKeyword = useSignal("");
     const currentSearchParams = new URLSearchParams(loc.url.searchParams);
 
     // eslint-disable-next-line qwik/no-use-visible-task
-    useVisibleTask$(({ track }) => {
+    useTask$(({ track }) => {
         track(() => brewingMethod.value);
         track(() => searchKeyword.value);
 
@@ -72,14 +74,44 @@ export function useRoastedProductsCMS() {
             currentSearchParams.delete('search');
         }
 
-        if (brewingMethod.value && brewingMethod.value !== "Semua Metode") {
+        if (brewingMethod.value !== "Semua Metode") {
             currentSearchParams.set('brewingMethod', brewingMethod.value);
         } else {
             currentSearchParams.delete('brewingMethod');
         }
 
         const newUrl = `${loc.url.pathname}?${currentSearchParams.toString()}`;
-        nav(newUrl, { replaceState: true });
+        // nav(newUrl, { replaceState: true });
+
+        if (loc.url.toString() !== newUrl) {
+            // Simpan posisi scroll sebelum navigasi (akan dipulihkan oleh useTask$ lain)
+            if (typeof window !== 'undefined' && window.scrollY > 0) {
+                sessionStorage.setItem(SCROLL_POSITION_KEY, window.scrollY.toString());
+            }
+            nav(newUrl, { replaceState: true });
+        }
+    });
+
+    useVisibleTask$(({ track }) => {
+        // Track perubahan URL secara keseluruhan atau filter, untuk memastikan ini berjalan
+        track(() => loc.url.searchParams.toString());
+
+        // Pastikan ini hanya berjalan di browser
+        if (typeof window !== 'undefined') {
+            const storedScrollY = sessionStorage.getItem(SCROLL_POSITION_KEY);
+            if (storedScrollY) {
+                const scrollY = parseInt(storedScrollY, 10);
+                // Gunakan setTimeout kecil untuk memberi waktu DOM diperbarui
+                // atau tunggu sampai Qwik selesai me-render
+                requestAnimationFrame(() => {
+                    window.scrollTo({
+                        top: scrollY,
+                        behavior: 'instant' // Hindari animasi scroll yang terlihat
+                    });
+                    sessionStorage.removeItem(SCROLL_POSITION_KEY); // Hapus setelah digunakan
+                });
+            }
+        }
     });
 
     return {
