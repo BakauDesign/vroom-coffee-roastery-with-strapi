@@ -4,17 +4,16 @@ import {
 } from "@builder.io/qwik";
 // import type { RequestHandler } from "@builder.io/qwik-city";
 
-// import { Button } from "~/components/main/button";
 import { Gradient } from "~/components/main/gradient";
 import { Separator } from "~/components/main/separator";
-
-// import Keberlanjutan from "~/assets/Icons/Keberlanjutan.png";
-// import Transparansi from "~/assets/Icons/Transparansi.png";
-// import Inovasi from "~/assets/Icons/Inovasi.png";
+import { SearchBarFilterBlock } from "~/components/blocks/main/search-bar-filter-block";
 
 import HeroImage_1 from "~/assets/main/products/roasted-coffee-beans/Hero image 1.avif";
 import HeroImage_2 from "~/assets/main/products/roasted-coffee-beans/Hero image 2.avif";
 import HeroImage_3 from "~/assets/main/products/roasted-coffee-beans/Hero image 3.avif";
+
+import { useRoastedProductsCMS } from "~/hooks/useRoastedProducts";
+import { roastedFilterOption as filterOption } from "~/lib/filter-option";
 
 import { routeLoader$ } from "@builder.io/qwik-city";
 import { getProducts } from "~/server/services/products";
@@ -30,10 +29,21 @@ export const useProducts = routeLoader$(
     async ( event ) => {
         return await getProducts({ event });
     }
-)
+);
+
+export const useFilter = routeLoader$(async () => {
+    return filterOption;        
+});
 
 export default component$(() => {
     const { value: products } = useProducts();
+
+    const { brewingMethod: brewingMethodFilter } = useFilter().value;
+
+    const {
+        brewingMethod,
+        searchKeyword
+    } = useRoastedProductsCMS();
 
     return (
         <>
@@ -63,6 +73,27 @@ export default component$(() => {
             <div class="container">
                 <Gradient position="top" />
                 <Gradient position="bottom" />
+
+                <SearchBarFilterBlock.Root>
+                    <SearchBarFilterBlock.SearchBar
+                        class="w-full sm:max-w-[400px]"
+                        placeholder="Cari Produk..."
+                        onValueChange$={(value) => searchKeyword.value = value}
+                    />
+
+                    <section class="flex flex-col gap-6">
+                        <p class="font-lora text-h3-small sm:text-h3-medium lg:text-h3-large font-medium text-neutral-custom-950">
+                            Filter sesuai kebutuhan Anda:
+                        </p>
+
+                        <SearchBarFilterBlock.Filter
+                            label="Metode Brewing:"
+                            currentValue={brewingMethod}
+                            values={brewingMethodFilter}
+                            onClickOption$={(value) => brewingMethod.value = value}
+                        />
+                    </section>
+                </SearchBarFilterBlock.Root>
 
                 <section class="general-section gap-y-[60px] items-center">
                     <section class="grid gap-9 overflow-scroll grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
