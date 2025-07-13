@@ -20,4 +20,14 @@ export const ReviewSchema = v.object({
     )
 });
 
+export const ChangeReviewStatusSchema = v.object({
+    id: v.pipe(
+        v.number()
+    ),
+    is_hidden: v.pipe(
+        v.boolean(),
+    )
+});
+
 export type CreateReviewForm = v.InferInput<typeof ReviewSchema>;
+export type ChangeReviewStatus = v.InferInput<typeof ChangeReviewStatusSchema>;

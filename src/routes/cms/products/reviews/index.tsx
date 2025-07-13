@@ -153,7 +153,7 @@ export default component$(() => {
 
                                         <Table.Cell class="min-w-[150px]">
                                             <Link 
-                                                // href={`/cms/products/reviews/${product.id}`}
+                                                href={`/cms/products/reviews/${product.id}`}
                                                 class="font-work-sans font-medium text-label-small sm:text-label-medium text-primary-400 cursor-pointer"
                                             >
                                                 Lihat
