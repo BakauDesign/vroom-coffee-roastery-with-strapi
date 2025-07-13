@@ -52,3 +52,21 @@ export const toolsFilterOption = {
         { id: 4, label: "Semua Kompatibilitas" }
     ]
 };
+
+
+export const reviewsFilterOption = {
+    category: [
+        { id: 1, label: "Roasted Coffee Beans" },
+        { id: 2, label: "Green Coffee Beans" },
+        { id: 3, label: "Tools" },
+        { id: 4, label: "Semua Kategori" },
+    ],
+    rating: [
+        { id: 1, label: "1" },
+        { id: 2, label: "2" },
+        { id: 3, label: "3" },
+        { id: 4, label: "4" },
+        { id: 4, label: "5" },
+        { id: 4, label: "Semua Rating" }
+    ]
+};
