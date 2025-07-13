@@ -137,7 +137,12 @@ export async function getProductById({
                         serving_recommendation: true
                     }
                 },
-                review: true
+                review: {
+                    where: {
+                        product_id: productId,
+                        is_hidden: false
+                    }
+                }
             },
         });
 

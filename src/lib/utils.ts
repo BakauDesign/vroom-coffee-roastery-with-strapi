@@ -31,15 +31,15 @@ export function toSlug(text: string): string {
         .replace(/--+/g, '-');
 }
 
-export function formatDateTime(isoString: string) {
+export function formatDateTime(isoString: string, options?: Intl.DateTimeFormatOptions) {
     const date = new Date(isoString);
 
     const formattedDate = new Intl.DateTimeFormat('id-ID', {
         day: '2-digit',
         month: 'long',
         year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
+        hour:  options?.hour,
+        minute: options?.minute,
         hour12: false,
         timeZone: 'Asia/Jakarta'
     }).format(date);
