@@ -22,7 +22,7 @@ import { HeaderBlock as Header } from "~/components/blocks/cms/header-block";
 import { useReviewProductsCMS } from "~/hooks/useReviewProducts";
 import { reviewsFilterOption } from "~/lib/filter-option";
 
-import Green_Coffee_Beans from "~/assets/cms/icons/Green Coffee Beans.avif";
+import Review_Illustration from "~/assets/cms/icons/Review.avif";
 
 // import { roastedCoffeeBeans } from "~/assets/data/products";
 import { getReviews } from "~/server/services/reviews";
@@ -77,8 +77,8 @@ export default component$(() => {
                     <Header.Root>
                         <Header.Content>
                             <Header.Illustration 
-                                src={Green_Coffee_Beans}
-                                alt="Green Coffee Beans"
+                                src={Review_Illustration}
+                                alt="Review Illustration"
                             />
 
                             <Header.Detail>
