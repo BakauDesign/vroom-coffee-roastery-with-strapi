@@ -47,3 +47,69 @@ export async function createReviewCustomer({
         };
     }
 }
+
+export async function getReviews({
+    event,
+}: LoaderParams) {
+    const { platform, url } = event;
+    
+    const keyword = url.searchParams.get('search');
+    const category = url.searchParams.get('category');
+    const rating = url.searchParams.get('rating');
+
+    const db = await getDB(platform.env);
+
+    try {
+        if (keyword || category || rating) {
+            const reviews = await db.product.findMany({
+                where: {
+                    name: { contains: keyword || "" },
+                    type: { contains: category || "" },
+                    review: {
+                        some: { rating: (rating && parseInt(rating)) || undefined }
+                    }
+                },
+                select: {
+                    id: true,
+                    name: true,
+                    review: {
+                        select: {
+                            rating: true,
+                            content: true
+                        }
+                    }
+                }
+            });
+
+            return {
+                success: true,
+                data: reviews,
+                message: "Review berhasil diambil!"
+            };
+        }
+        const reviews = await db.product.findMany({
+            select: {
+                id: true,
+                name: true,
+                review: {
+                    select: {
+                        rating: true,
+                        content: true
+                    }
+                }
+            }
+        });
+
+        return {
+            success: true,
+            data: reviews,
+            message: "Review berhasil diambil!"
+        };
+    } catch (error: any) {
+        return {
+            success: false,
+            data: [],
+            message: error.message || "Gagal mengambil review"
+        };
+    }
+}
