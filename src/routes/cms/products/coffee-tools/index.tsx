@@ -32,7 +32,8 @@ import Coffee_Tools from "~/assets/cms/icons/Coffee Tools.avif";
 
 import { formatRupiah, isLocalhost } from "~/lib/utils";
 // import { roastedCoffeeBeans } from "~/assets/data/products";
-import { deleteProduct, getProducts, updateProductHighlight, updateProductStatus } from "~/server/services/products";
+import { deleteProduct, updateProductHighlight, updateProductStatus } from "~/server/services/products";
+import { getToolsProduct } from "~/server/services/products/tools";
 // import { SearchBar } from "~/components/cms/search-bar";
 
 export const useFilter = routeLoader$(async () => {
@@ -41,7 +42,7 @@ export const useFilter = routeLoader$(async () => {
 
 export const useProducts = routeLoader$(
     async (event) => {
-        return await getProducts({ event });
+        return await getToolsProduct({ event });
     }
 );
 
@@ -73,14 +74,14 @@ export default component$(() => {
     const { submit: updateStatus } = useUpdateStatus();
     const { submit: updateHighlight } = useUpdateHighlight();
 
-    const { type, material, compatibility } = useFilter().value;
+    const { material, compatibility } = useFilter().value;
     
     const { value: products } = useProducts();
 
     // const perPage = useSignal(10);
 
     const {
-        typeFilter,
+        // typeFilter,
         materialFilter,
         compatibilityFilter,
         searchKeyword
@@ -150,12 +151,12 @@ export default component$(() => {
                         />
 
                         <div class="flex flex-wrap gap-8">
-                            <SearchBarFilter.Filter
+                            {/* <SearchBarFilter.Filter
                                 label="Jenis Alat"
                                 currentValue={typeFilter.value}
                                 values={type}
                                 onClick$={(value) => typeFilter.value = value}
-                            />
+                            /> */}
 
                             <SearchBarFilter.Filter
                                 label="Material"

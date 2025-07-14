@@ -1,6 +1,7 @@
 import { ToolsProductForm } from "~/schema/product";
 import {
     createBaseProduct,
+    extractType,
     updateBaseProduct
 } from "../products";
 import { getDB } from "~/lib/db";
@@ -13,6 +14,66 @@ interface ActionParams<T extends any> {
 
 interface LoaderParams {
     event: RequestEventLoader<QwikCityPlatform>
+}
+
+export async function getToolsProduct({
+    event
+}: LoaderParams) {
+    const { platform, url } = event;
+
+    const productType = extractType(url.pathname);
+
+    const keyword = url.searchParams.get("search");
+    // const type = url.searchParams.get("type");
+    const material = url.searchParams.get("material");
+    const compatibility = url.searchParams.get("compatibility");
+
+    try {
+        const db = await getDB(platform.env);
+        
+        if (
+            keyword ||
+            // type ||
+            material ||
+            compatibility
+        ) {
+            const products = await db.product.findMany({
+                where: {
+                    name: { contains: keyword || "" },
+                    type: { contains: productType },
+                    is_active: true,
+                    tools: {
+                        material: { contains: material || "" },
+                        compatibility: { contains: compatibility || "" }
+                    }
+                }
+            })
+
+            return {
+                data: products,
+                success: true,
+                message: "Success retrieved product tools" 
+            };
+        }
+        const products = await db.product.findMany({
+            where: {
+                type: { contains: productType }
+            }
+        });
+
+        return {
+            data: products,
+            success: true,
+            message: "Success retrieved user" 
+        };
+
+    } catch (error) {
+        return {
+            data: [],
+            success: false,
+            message: "Error in server" 
+        };   
+    }
 }
 
 export async function getToolsProductById({

@@ -441,7 +441,7 @@ export async function deleteProduct({
     throw redirect(301, "/cms/products/roasted-coffee-beans");
 }
 
-function extractType(pathname: string) {
+export function extractType(pathname: string) {
     const pathSegments = pathname.split('/').filter(segment => segment !== '');
     const productTypeSlug = pathSegments[2] || pathSegments[1];
 
