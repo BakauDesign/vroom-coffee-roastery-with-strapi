@@ -1,19 +1,92 @@
-import { component$, isDev } from "@builder.io/qwik";
-import type { RequestHandler } from "@builder.io/qwik-city";
+import {
+    component$,
+    // isDev
+} from "@builder.io/qwik";
+// import type { RequestHandler } from "@builder.io/qwik-city";
 
-// import { Header } from "~/components/main/header";
+// import { Button } from "~/components/main/button";
+import { Gradient } from "~/components/main/gradient";
+import { Separator } from "~/components/main/separator";
 
-export const onGet: RequestHandler = async ({ redirect }) => {
-    if (!isDev) {
-        throw redirect(302, "/coming-soon");		
+// import Keberlanjutan from "~/assets/Icons/Keberlanjutan.png";
+// import Transparansi from "~/assets/Icons/Transparansi.png";
+// import Inovasi from "~/assets/Icons/Inovasi.png";
+
+import HeroImage_1 from "~/assets/main/products/coffee-tools/Hero image 1.avif";
+import HeroImage_2 from "~/assets/main/products/coffee-tools/Hero image 2.avif";
+import HeroImage_3 from "~/assets/main/products/coffee-tools/Hero image 3.avif";
+
+import { routeLoader$ } from "@builder.io/qwik-city";
+import { getProducts } from "~/server/services/products";
+import { Product } from "~/components/main/product";
+
+// export const onGet: RequestHandler = async ({ redirect }) => {
+// 	if (!isDev) {
+// 		throw redirect(302, "/coming-soon");		
+// 	}
+// };
+
+export const useProducts = routeLoader$(
+    async ( event ) => {
+        return await getProducts({ event });
     }
-};
+)
+
 export default component$(() => {
+    const { value: products } = useProducts();
+
     return (
         <>
-            <div>
-                {/* <Header /> */}
+            <figure class="hero-section ">
+                <figcaption class="content">
+                    <article class="headline-and-supporting-headline grid grid-cols-1 items-center gap-4 lg:gap-6">
+                        <h1>
+                            Brew Seperti Profesional<br />Dengan Tools yang Kami Kurasi
+                        </h1>
+
+                        <p>
+                            Dari grinder hingga peralatan V60—semuanya untuk meningkatkan kenikmatan kopi Anda.
+                        </p>
+                    </article>
+                </figcaption>
+
+                <section class="hero-image grid-cols-2 lg:grid-cols-4 *:aspect-square">
+                    <div class="hidden lg:block" />
+                    <img src={HeroImage_1} alt="Hero image 1" height={500} width={500} />
+                    <img src={HeroImage_2} alt="Hero image 2" height={500} width={500} />
+                    <img src={HeroImage_3} alt="Hero image 3" height={500} width={500} />
+                </section>
+            </figure>
+
+            <Separator />
+
+            <div class="container">
+                <Gradient position="top" />
+                <Gradient position="bottom" />
+
+                <section class="general-section gap-y-[60px] items-center">
+                    <section class="grid gap-9 overflow-scroll grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
+                        {products.data.map((product) => {
+                            return (
+                                <Product
+                                    key={product.id}
+                                    id={product.id}
+                                    name={product.name}
+                                    description={product.description}
+                                    type={product.type}
+                                    price={product.price}
+                                    discount={product.discount}
+                                    discountPrice={product.discount_price}
+                                    photo={product.photo}
+                                    weight={product.weight}
+                                />
+                            )
+                        })}
+                    </section>
+                </section>
             </div>
+
+            <Separator />
         </>
     );
 });
