@@ -1,4 +1,5 @@
 import { component$ } from "@builder.io/qwik";
+import { RequestHandler } from "@builder.io/qwik-city";
 
 // import { Gradient } from "~/components/main/gradient";
 // import { Separator } from "~/components/main/separator";
@@ -7,9 +8,9 @@ import { component$ } from "@builder.io/qwik";
 // import { TextField } from "~/components/main/text-field";
 // import { Shipping } from "~/components/main/shipping";
 
-// export const onGet: RequestHandler = async ({ redirect }) => {
-//     throw redirect(302, "/coming-soon");
-// };
+export const onGet: RequestHandler = async ({ redirect }) => {
+    throw redirect(302, "/cms/dashboard");
+};
 
 export default component$(() => {
     return (
