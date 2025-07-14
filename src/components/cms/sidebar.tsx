@@ -97,7 +97,7 @@ export const Sidebar = component$<SidebarProps>(({ onClickLogout$, user }) => {
                                     Biji Mentah (Green Beans)
                                 </Dropdown.Item>
 
-                                <Dropdown.Item href="/cms/products/tools">
+                                <Dropdown.Item href="/cms/products/coffee-tools">
                                     Alat-alat
                                 </Dropdown.Item>
 
