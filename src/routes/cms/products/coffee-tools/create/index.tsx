@@ -3,7 +3,6 @@ import {
 } from "@builder.io/qwik";
  
 import {
-    routeAction$,
     routeLoader$,
     useNavigate
 } from '@builder.io/qwik-city';
@@ -24,8 +23,7 @@ import { FormBlock } from "~/components/blocks/cms/form-block";
 import { UploadPhoto } from "~/components/cms/upload-photo";
 
 import {
-    // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-    ToolsProductForm,
+    ToolsProductForm, // eslint-disable-line @typescript-eslint/consistent-type-imports
     ToolsProductSchema,
 } from '~/schema/product';
 
@@ -37,63 +35,33 @@ import { useDiscount } from "~/hooks/useDiscount";
 import { useMainFeature } from "~/hooks/useMainFeature";
 
 import { Trash } from "~/assets/cms/icons/Trash";
+import { createToolsProduct } from "~/server/services/products/tools";
 
-import {
-    updateToolsProduct,
-    deleteMainFeature,
-    getMainFeature,
-    getToolsProductById
-} from "~/server/services/products/tools";
-
-export const useProductFormLoader = routeLoader$<InitialValues<ToolsProductForm>>(
-    async (event) => {
-        const product = await getToolsProductById({ event });
-
-        return {
-            name: product.data?.name,
-            description: product.data?.description,
-            photo: product.data?.photo,
-            photoFile: null,
-            highlight: product.data?.highlight,
-            stock: product.data?.stock,
-            price: product.data?.price,
-            discount: product.data?.discount,
-            weight: product.data?.weight,
-            tools_data: {
-                material: product.data?.tools?.material,
-                capacity: product.data?.tools?.capacity,
-                dimensions: product.data?.tools?.dimensions,
-                compatibility: product.data?.tools?.compatibility,
-                settings: product.data?.tools?.settings,
-                accessories: product.data?.tools?.accessories,
-                packaging: product.data?.tools?.packaging,
-                main_feature: []
-            }
-        }
+export const useProductFormLoader = routeLoader$<InitialValues<ToolsProductForm>>(() => ({
+    name: '',
+    description: '',
+    photo: null,
+    photoFile: null,
+    highlight: '',
+    stock: 0,
+    price: 0,
+    discount: null,
+    weight: 0,
+    tools_data: {
+        material: '',
+        capacity: '',
+        dimensions: null,
+        compatibility: null,
+        settings: null,
+        accessories: null,
+        packaging: '',
+        main_feature: []
     }
-);
-
-export const useMainFeatureLoader = routeLoader$(
-    async (event) => {
-        return await getMainFeature({ event });
-    }
-)
-
-export const useDeleteMainFeature = routeAction$(
-    async (values, event) => {
-        const { params } = event;
-        const id = params.id;
-
-        await deleteMainFeature({ values, event });
-        throw event.redirect(301, `/cms/products/tools/${id}/edit`)
-    }
-)
+}));
  
 export const useProductFormAction = formAction$<ToolsProductForm>(
     async (values, event) => {
-        await updateToolsProduct({ values, event });
-
-        throw event.redirect(301, "/cms/products/tools");
+        return await createToolsProduct({ values, event });
     },
     {
         validate: valiForm$(ToolsProductSchema),
@@ -103,9 +71,6 @@ export const useProductFormAction = formAction$<ToolsProductForm>(
 );
 
 export default component$(() => {
-    const mainFeatures = useMainFeatureLoader();
-    const { submit: deleteMainFeature } = useDeleteMainFeature();
-
     const loader = useProductFormLoader();
     const action = useProductFormAction();
  
@@ -145,16 +110,16 @@ export default component$(() => {
                 {/* <section> */}
                 <section class="no-scrollbar">
                     <Breadcrumb.Root>
-                        <Breadcrumb.Item href="/cms/products/tools">
+                        <Breadcrumb.Item href="/cms/products/coffee-tools">
                             Products
                         </Breadcrumb.Item>
 
-                        <Breadcrumb.Item href="/cms/products/tools">
+                        <Breadcrumb.Item href="/cms/products/coffee-tools">
                             Coffee Tools
                         </Breadcrumb.Item>
  
                         <Breadcrumb.Item visited>
-                            Edit Product
+                            Add New Product
                         </Breadcrumb.Item>
                     </Breadcrumb.Root>
  
@@ -162,7 +127,7 @@ export default component$(() => {
                         <Header.Content>
                             <Header.Detail>
                                 <Header.Headline>
-                                    Perbarui Produk Coffee Tools
+                                    Tambah Alat Kopi Baru
                                 </Header.Headline>
  
                                 <Header.SupportingHeadline>
@@ -174,7 +139,7 @@ export default component$(() => {
                                 <Button
                                     variant="secondary"
                                     size="large"
-                                    onClick$={() => navigate("/cms/products/tools")}
+                                    onClick$={() => navigate("/cms/products/coffee-tools")}
                                     type="button"
                                 >
                                     Batal
@@ -185,7 +150,7 @@ export default component$(() => {
                                     size="large"
                                     type="submit"
                                 >
-                                    Perbarui Produk
+                                    Tambahkan Produk
                                 </Button>
                             </Header.Actions>
                         </Header.Content>
@@ -533,7 +498,6 @@ export default component$(() => {
                         </FormBlock.Content>
                     </FormBlock.Root>
 
-
                     <FormBlock.Root isOpened>
                         <FormBlock.Header>
                             <FormBlock.Headline>
@@ -784,60 +748,11 @@ export default component$(() => {
                         </FormBlock.Header>
  
                         <FormBlock.Content>
-                            <section class="pb-6 flex flex-col gap-y-8">
-                                {mainFeatures.value.data.length ? (
-                                    <article class="flex flex-col gap-y-2 text-cms-label-small sm:text-cms-label-medium">
-                                        <h1 class="text-neutral-custom-800 font-medium">
-                                            Serving Recommendation Saat Ini
-                                        </h1>
-
-                                        <p class="text-neutral-custom-700">
-                                            Menekan Icon Hapus akan langsung berdampak pada data saat ini
-                                        </p>
-                                    </article>
-                                ) : null}
-
-                                <ul class="flex gap-4 *:w-[360px] *:max-w-[360px] *:flex *:flex-col *:gap-y-3 *:py-3 *:px-4 *:bg-neutral-custom-base *:border-[1.5px] *:border-neutral-custom-100 *:rounded-2xl">                               
-                                    {mainFeatures.value.data.map((feature) => (
-                                        <li
-                                            key={feature.id}
-                                            class="text-cms-label-small sm:text-cms-label-medium *:first:font-medium"
-                                        >
-                                            <div class="flex items-center justify-between gap-2 text-neutral-custom-800">
-                                                <p>
-                                                    {`${feature.emoji} ${feature.name}`}
-                                                </p>
-                                                <Trash
-                                                    class="cursor-pointer"
-                                                    onClick$={() => deleteMainFeature(feature)}
-                                                />
-                                            </div>
-                                                    
-                                            <p class="text-neutral-custom-700">{feature.description}</p>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </section>
-
-                            <Separator />
-
                             <FieldArray
                                 name="tools_data.main_feature"
                             >
                                 {(fieldArray) => (
-                                    <section class="pt-6 flex flex-col gap-y-8">
-                                        {fieldArray.items.length ? (
-                                            <article class="flex flex-col gap-y-2">
-                                                <h1 class="text-neutral-custom-800 font-medium text-cms-label-small sm:text-cms-label-medium">
-                                                    Serving Recommendation Baru
-                                                </h1>
-
-                                                <p class="text-yellow-400">
-                                                    Menekan Icon Hapus tidak akan langsung berdampak pada data saat ini
-                                                </p>
-                                            </article>
-                                        ): null}
-
+                                    <section class="flex flex-col gap-y-8">
                                         <ul class="flex gap-4 *:w-[360px] *:max-w-[360px] *:flex *:flex-col *:gap-y-3 *:py-3 *:px-4 *:bg-neutral-custom-base *:border-[1.5px] *:border-neutral-custom-100 *:rounded-2xl">
                                         {fieldArray.items.map((item, index) => (
                                             <li

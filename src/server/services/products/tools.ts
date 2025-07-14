@@ -108,7 +108,7 @@ export async function createToolsProduct({
         };
     }
     finally {
-        throw redirect(301, "/cms/products/tools");
+        throw redirect(301, "/cms/products/coffee-tools");
     }
 }
 
@@ -141,7 +141,7 @@ export async function updateToolsProduct({
             dimensions: values.tools_data.dimensions,
             compatibility: values.tools_data.compatibility,
             settings: values.tools_data.settings,
-            accesories: values.tools_data.accessories,
+            accessories: values.tools_data.accessories,
             packaging: values.tools_data.packaging,
             product_id: updatedProduct.id
         };
@@ -184,7 +184,7 @@ export async function updateToolsProduct({
         };
     }
     finally {
-        throw redirect(301, "/cms/products/tools");
+        throw redirect(301, "/cms/products/coffee-tools");
     }
 }
 

@@ -103,7 +103,7 @@ export default component$(() => {
                 <section class="h-full w-full *:h-full *:w-full overflow-hidden *:overflow-y-scroll *:overflow-x-hidden bg-neutral-custom-base pt-[124px] px-4 sm:px-6 lg:px-9 pb-6 sm:pb-9 lg:pb-12 lg:pt-12 *:flex *:flex-col *:gap-9">
                 <section class="no-scrollbar">
                     <Breadcrumb.Root>
-                        <Breadcrumb.Item href="/cms/products/tools">
+                        <Breadcrumb.Item href="/cms/products/coffee-tools">
                             Products
                         </Breadcrumb.Item>
 
@@ -134,7 +134,7 @@ export default component$(() => {
                             <Button
                                 variant="primary"
                                 size="large"
-                                onClick$={() => navigate("/cms/products/tools/create")}
+                                onClick$={() => navigate("/cms/products/coffee-tools/create")}
                             >
                                 Tambah Produk Baru
                             </Button>
@@ -244,7 +244,7 @@ export default component$(() => {
 
                                                 <Popover.Content class="flex flex-col gap-y-4 text-cms-label-small *:cursor-pointer *:flex *:gap-2 *:items-center">
                                                     <Link 
-                                                        href={`/cms/products/tools/${product.id}/edit`}
+                                                        href={`/cms/products/coffee-tools/${product.id}/edit`}
                                                     >
                                                         <img src={PenIcon} alt="Pen Icon" height={16} width={16} />
                                                         <p>Edit produk</p>
