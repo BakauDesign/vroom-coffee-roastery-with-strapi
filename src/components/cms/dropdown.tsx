@@ -10,22 +10,29 @@ import {
 import type {
     QRL,
     Signal,
-    Component
+    Component,
+    HTMLAttributes,
+    ClassList
 } from '@builder.io/qwik';
 
 import Chevron from "~/assets/Icons/chevron-down-cms.svg";
 import Plus from "~/assets/Icons/plus.svg";
 import Minus from "~/assets/Icons/dash.svg";
 import { Link, useLocation } from '@builder.io/qwik-city';
+import { cn } from '~/lib/utils';
 
 interface DropdownProps {
     variant?: "option" | "menu";
+    position?: "floating" | "block";
     disabled?: boolean;
     currentValue?: any;
     isOpened?: boolean;
     fillContainer?: boolean;
     onClickOption$?: QRL<(value?: any) => void>;
+    class?: ClassList;
 }
+
+interface ItemsProps extends HTMLAttributes<HTMLElement> {}
 
 interface ItemProps {
     value?: any;
@@ -37,7 +44,7 @@ interface DropdownComponent extends Component {
     Root: Component<DropdownProps>;
     Label: Component;
     Icon: Component<{ src: string; }>;
-    Items: Component;
+    Items: Component<ItemsProps>;
     Item: Component<ItemProps>;
 }
 
@@ -48,22 +55,24 @@ export const Dropdown = component$(() => {
     return <Slot />;
 }) as DropdownComponent;
 
-Dropdown.Root = component$((props) => {
+Dropdown.Root = component$(({ position, ...props}) => {
     const contentRef = useSignal<HTMLElement>();
     const isOpened = useSignal(false);
 
-    useContextProvider(DropdownContext, props);
+    useContextProvider(DropdownContext, { position, ...props });
     useContextProvider(DropdownContentContext, { isOpened });
 
     return (
         <div 
             class={`
                 ${props.fillContainer ? "w-full" : "w-fit"}
-                flex flex-col gap-y-2 font-inter text-label-small sm:text-label-medium select-none relative transition-all duration-500 ease-in-out overflow-hidden
+                flex flex-col gap-y-2 font-inter text-label-small sm:text-label-medium select-none relative transition-all duration-500 ease-in-out
+                ${position === "block" && "overflow-hidden"}
+                ${cn(props.class)}
             `}
             
             style={{
-                height: isOpened.value 
+                height: (isOpened.value && position === "block")
                     ? `${contentRef.value?.scrollHeight}px` 
                     : '40px'
             }}
@@ -86,7 +95,7 @@ Dropdown.Label = component$(() => {
                 flex gap-x-3 items-center bg-neutral-custom-base border-[1.5px] rounded-[4px] cursor-pointer
                 ${props.disabled ? "text-neutral-custom-400" : "text-neutral-custom-800"}
                 ${props.variant === "option" ? "pl-3 pr-2 border-neutral-custom-100" : "pl-4 pr-3"} py-1
-                ${(props.variant === "menu" && isOpened.value) ? "border-neutral-custom-100" : "border-neutral-custom-base"}
+                ${(props.variant === "menu") && `${isOpened.value ? "border-neutral-custom-100" : "border-neutral-custom-base" }` }
             `}
             onClick$={() => isOpened.value = !isOpened.value}
         >
@@ -121,20 +130,35 @@ Dropdown.Icon = component$(({ src }) => {
     );
 });
 
-Dropdown.Items = component$(() => {
+Dropdown.Items = component$(({ class: className }) => {
+    const { isOpened } = useContext(DropdownContentContext);
     const rootProps = useContext(DropdownContext);
+
+    const contentRef = useSignal<HTMLElement>();
 
     return (
         <div class={`
-                flex bg-neutral-custom-base
+                flex bg-neutral-custom-base transition-all duration-500 ease-in-out cursor-pointer
                 ${rootProps.fillContainer ? "w-full" : "w-fit"}
                 ${
-                    rootProps.variant === "option" ? 
+                    rootProps.variant === "option" ?
                         "flex-col gap-y-3 py-2 px-3 rounded-[4px] border-[1.5px] border-neutral-custom-100" : 
                         "gap-x-6 px-4 py-3"
                 }
-                ${rootProps.variant === "option" && "z-10 absolute top-12"}
+                ${(rootProps.variant === "option" && rootProps.position !== "floating") ? "z-10 absolute top-12" : "absolute top-12"}
+                
+                ${rootProps.position === "floating" && "overflow-hidden absolute"}
+
+                ${(rootProps.position === "floating") && `${isOpened.value ? "opacity-100 z-10" : "opacity-0 -z-20" }`}
+                ${cn(className)}
             `}
+
+            style={{
+                height: (rootProps.position === "floating")
+                    ? isOpened.value ? `${contentRef.value?.scrollHeight}px` : "0px"
+                    : "auto" // pr: opacity
+            }}
+            ref={contentRef}
         >
             {rootProps.variant === "option" ? (
                 <Slot />
