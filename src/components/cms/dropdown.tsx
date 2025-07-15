@@ -26,6 +26,7 @@ interface DropdownProps {
     position?: "floating" | "block";
     disabled?: boolean;
     currentValue?: any;
+    signalValue?: Signal<any>;
     isOpened?: boolean;
     fillContainer?: boolean;
     onClickOption$?: QRL<(value?: any) => void>;
@@ -58,8 +59,9 @@ export const Dropdown = component$(() => {
 Dropdown.Root = component$(({ position, ...props}) => {
     const contentRef = useSignal<HTMLElement>();
     const isOpened = useSignal(false);
+    const signalValue = useSignal(props.currentValue);
 
-    useContextProvider(DropdownContext, { position, ...props });
+    useContextProvider(DropdownContext, { position, signalValue, ...props });
     useContextProvider(DropdownContentContext, { isOpened });
 
     return (
@@ -177,18 +179,25 @@ Dropdown.Items = component$(({ class: className }) => {
 Dropdown.Item = component$((props) => {
     const location = useLocation();
     const pathname = location.url.pathname.replace(/\/+$/, '') || '/';
+    
     const rootProps = useContext(DropdownContext);
+    const { isOpened } = useContext(DropdownContentContext);
 
     if (rootProps.variant === "option") {
         return (
             <p
                 class={`
                     p-1 text-neutral-custom-600 text-label-small sm:text-label-medium cursor-pointer rounded-[4px]
-                    ${props.value === rootProps.currentValue ? "bg-neutral-custom-50" : "hover:font-medium"}    
+                    ${props.value === rootProps.signalValue?.value ? "bg-neutral-custom-50" : "hover:font-medium"}    
                 `}
                 onClick$={() => {
+                    if (rootProps.signalValue) {
+                        rootProps.signalValue.value = props.value;
+                    }
+
                     rootProps.onClickOption$ && rootProps.onClickOption$(props.value);
                     props.onClick$ && props.onClick$(props.value);
+                    isOpened.value = false;
                 }}
             >
                 <Slot />
