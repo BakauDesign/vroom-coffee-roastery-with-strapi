@@ -196,3 +196,107 @@ export async function getOrders({
         };
     }
 }
+
+
+export async function getTotalOrder({
+    event,
+}: LoaderParams) {
+    const { platform } = event;
+
+    const db = await getDB(platform.env);
+
+    const today = new Date();
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999);
+
+    try {
+        const totalOrderCount = await db.order.count({
+            where: {
+                date: {
+                    gte: startOfMonth,
+                    lte: endOfMonth
+                }
+            }
+        });
+
+        return totalOrderCount;
+
+    } catch (error) {
+        console.error("Error fetching total orders:", error);
+        throw error;
+    }
+}
+
+
+export async function getOrderRevenue({
+    event,
+}: LoaderParams) {
+    const { platform } = event;
+
+    const db = await getDB(platform.env);
+
+    const today = new Date();
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999);
+
+    try {
+        const revenue = await db.order.aggregate({
+            _sum: {
+                total_cost: true
+            },
+            where: {
+                date: {
+                    gte: startOfMonth,
+                    lte: endOfMonth
+                },
+                status: "Selesai"
+            }
+        });
+
+        return revenue._sum.total_cost || 0;
+
+    } catch (error) {
+        console.error("Error fetching total orders:", error);
+        throw error;
+    }
+}
+
+interface OrdersTotal extends LoaderParams {
+    status: Array<string>;
+}
+
+export async function getOrderTotalByStatus({
+    event,
+    status
+}: OrdersTotal) {
+    const { platform } = event;
+
+    const db = await getDB(platform.env);
+
+    const today = new Date();
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999);
+
+    try {
+        const ordersToProcess = await db.order.count({
+            where: {
+                status: {
+                    notIn: status
+                },
+                date: {
+                    gte: startOfMonth,
+                    lte: endOfMonth
+                }
+            },
+            orderBy: {
+                date: 'asc'
+            }
+        });
+
+        return ordersToProcess;
+
+    } catch (error) {
+        console.error("Error fetching orders to process:", error);
+        throw error;
+    }
+}
