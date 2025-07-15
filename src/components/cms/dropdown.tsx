@@ -56,7 +56,7 @@ export const Dropdown = component$(() => {
     return <Slot />;
 }) as DropdownComponent;
 
-Dropdown.Root = component$(({ position, ...props}) => {
+Dropdown.Root = component$(({ position = "block", ...props}) => {
     const contentRef = useSignal<HTMLElement>();
     const isOpened = useSignal(false);
     const signalValue = useSignal(props.currentValue);
@@ -64,12 +64,14 @@ Dropdown.Root = component$(({ position, ...props}) => {
     useContextProvider(DropdownContext, { position, signalValue, ...props });
     useContextProvider(DropdownContentContext, { isOpened });
 
+    console.info(contentRef.value?.scrollHeight)
+
     return (
         <div 
             class={`
                 ${props.fillContainer ? "w-full" : "w-fit"}
                 flex flex-col gap-y-2 font-inter text-label-small sm:text-label-medium select-none relative transition-all duration-500 ease-in-out
-                ${position === "block" && "overflow-hidden"}
+                ${(position === "block" || props.variant === "menu") && "overflow-hidden"}
                 ${cn(props.class)}
             `}
             
@@ -156,7 +158,7 @@ Dropdown.Items = component$(({ class: className }) => {
             `}
 
             style={{
-                height: (rootProps.position === "floating")
+                height: ((rootProps.variant === "option") && (rootProps.position === "floating"))
                     ? isOpened.value ? `${contentRef.value?.scrollHeight}px` : "0px"
                     : "auto" // pr: opacity
             }}
