@@ -197,8 +197,11 @@ Dropdown.Item = component$((props) => {
                         rootProps.signalValue.value = props.value;
                     }
 
-                    rootProps.onClickOption$ && rootProps.onClickOption$(props.value);
-                    props.onClick$ && props.onClick$(props.value);
+                    if (rootProps.signalValue?.value !== props.value) {
+                        rootProps.onClickOption$ && rootProps.onClickOption$(props.value);
+                        props.onClick$ && props.onClick$(props.value);
+                    }
+
                     isOpened.value = false;
                 }}
             >
