@@ -149,9 +149,11 @@ export const AnnualSalesChart = component$((props: AnnualSalesChartProps) => {
                 </Dropdown.Root>
             </section>
 
-            <div class="relative" style={{ height: '400px' }}>
-                <canvas ref={canvasRef} />
-            </div>
+            <section class="overflow-scroll no-scrollbar">
+                <div class="relative" style={{ height: '400px', minWidth: '400px' }}>
+                    <canvas ref={canvasRef} />
+                </div>
+            </section>
         </div>
     );
 });
