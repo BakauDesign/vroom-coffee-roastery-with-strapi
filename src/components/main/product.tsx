@@ -1,5 +1,6 @@
 import { 
     component$,
+    isDev,
 } from '@builder.io/qwik';
 
 import type {
@@ -7,21 +8,23 @@ import type {
     HTMLAttributes
 } from '@builder.io/qwik';
 
-import { useLocation, useNavigate } from '@builder.io/qwik-city';
-
-import type { Products } from "~/interfaces";
+import { useNavigate } from '@builder.io/qwik-city';
 
 import { Button } from './button';
 
-import { formatRupiah, isLocalhost, toSlug } from '~/lib/utils';
+import { formatRupiah, toSlug } from '~/lib/utils';
 
-interface ProductsProps 
-    extends Omit<Products,
-        "highlight" |
-        "stock" |
-        "reviewId"
-    > {
-
+interface ProductsProps {
+    documentId: string;
+    nama: string;
+    deskripsi: string;
+    slug: string;
+    foto: { url: string; };
+    harga?: string;
+    diskon?: number;
+    harga_diskon?: string;
+    berat?: string;
+    type: string;
 }
 
 interface ChildProps
@@ -29,31 +32,29 @@ interface ChildProps
 
 interface PricePackagingBlockProps
     extends Omit<HTMLAttributes<HTMLElement>, "id">,
-            Omit<Products, 
-                "id" |
-                "name" |
-                "description" |
-                "photo" |
-                "highlight" |
-                "stock" |
-                "reviewId" |
+            Omit<ProductsProps,
+                "documentId" |
+                "nama" |
+                "deskripsi" |
+                "slug" |
+                "foto" |
                 "type"
-            > {}
+            >
+    {}
 
 interface NameDescriptionBlockProps
     extends Omit<HTMLAttributes<HTMLElement>, "id">,
-            Omit<Products, 
-                "id" |
-                "price" |
-                "discount" |
-                "discountPrice" |
-                "photo" |
-                "highlight" |
-                "stock" |
-                "weight" |
-                "reviewId" |
-                "type"
-            > {}
+            Omit<ProductsProps,
+                "documentId" |
+                "harga" |
+                "harga_diskon" |
+                "diskon" |
+                "slug" |
+                "foto" |
+                "type" |
+                "berat"
+            >
+    {}
 
 interface NameDescriptionBlockComponent 
     extends Component<HTMLAttributes<HTMLElement>>
@@ -68,9 +69,17 @@ interface ProductComponent extends Component<ProductsProps> {
     Actions: Component;
 }
 
-export const Product: ProductComponent = component$((
-    { id, name, description, type, price, discount, discountPrice, photo, weight }) => {
-    const loc = useLocation();
+export const Product: ProductComponent = component$(({
+    nama,
+    deskripsi,
+    slug,
+    foto,
+    harga,
+    harga_diskon,
+    diskon,
+    berat,
+    type
+}) => {
     const navigate = useNavigate();
 
     return (
@@ -79,21 +88,23 @@ export const Product: ProductComponent = component$((
                 class="h-[300px] w-full object-cover"
                 height={400}
                 width={400}
-                src={isLocalhost(loc.url) ? `http://127.0.0.1:8788/media/${photo}` : `https://vroom-coffee-roastery.pages.dev/media/${photo}`}
-                alt={name}
+                src={isDev ? `http://localhost:1337${foto.url}` : `${foto.url}`}
+                alt={nama}
             />
 
             <section class="h-full px-5 pb-6 flex flex-col gap-y-6">
-                <PricePackagingBlock
-                    price={price}
-                    weight={weight}
-                    discount={discount}
-                    discountPrice={discountPrice}
-                />
+                {harga ? (
+                    <PricePackagingBlock
+                        harga={harga}
+                        diskon={diskon}
+                        harga_diskon={harga_diskon}
+                        berat={berat}
+                    />
+                ) : null}
 
                 <NameDescriptionBlock
-                    name={name}
-                    description={description}
+                    nama={nama}
+                    deskripsi={deskripsi}
                 />
 
                 <Button
@@ -102,7 +113,7 @@ export const Product: ProductComponent = component$((
                     fillContainer
                     onClick$={() => {
                         navigate(`
-                            /products/${toSlug(type)}/${id}
+                            /products/${toSlug(type)}/${slug}
                         `)
                     }}
                 >
@@ -114,45 +125,45 @@ export const Product: ProductComponent = component$((
 }) as ProductComponent;
 
 const PricePackagingBlock: Component<PricePackagingBlockProps> = component$((
-    { price, discount, discountPrice, weight }) => {
-
+    { harga, diskon, harga_diskon, berat }) => {
     return (
         <section class="h-[48px] flex justify-between gap-x-6">
             <section class="flex flex-col">
                 <h1 class="font-lora text-primary-700 font-bold text-h3-medium sm:text-h3-large">
-                    {discount ? formatRupiah(discountPrice as number) : formatRupiah(price)}
+                    {(harga && !diskon) ? formatRupiah(parseInt(harga)) : null}
+                    {(diskon && harga_diskon) ? formatRupiah(parseInt(harga_diskon)) : null}
                 </h1>
 
-                {(discount) ? (
+                {(diskon) ? (
                     <section class="flex items-center gap-x-2">
                         <h1 class="font-lora line-through">
-                            { formatRupiah(price) }
+                            { formatRupiah(parseInt(harga || "0")) }
                         </h1>
 
                         <p class="py-0.5 px-1 font-open-sans font-semibold text-small-text-small sm:text-label-medium bg-red-50 text-red-700 rounded h-fit">
-                            { discount }%
+                            { diskon }%
                         </p>
                     </section>
                 ) : null}
             </section>
 
             <p class="py-1 px-3 font-work-sans font-medium text-label-small sm:text-label-medium text-primary-base bg-primary-700 rounded h-fit">
-                { weight }gr
+                { berat }gr
             </p>
         </section>
     );
 }) as Component<PricePackagingBlockProps>;
 
 const NameDescriptionBlock: Component<NameDescriptionBlockProps> = component$((
-    { name, description }) => {
+    { nama, deskripsi }) => {
     return (
         <article class="flex flex-col gap-y-4 overflow-hidden">
             <h1 class="whitespace-nowrap text-clip line-clamp-1 font-lora font-medium text-neutral-custom-800 text-h3-medium sm:text-h3-large">
-                { name }
+                { nama }
             </h1>
 
             <p class="text-ellipsis line-clamp-2 font-work-sans text-neutral-custom-700 text-body-small sm:text-body-medium">
-                { description }
+                { deskripsi }
             </p>
         </article>
     );

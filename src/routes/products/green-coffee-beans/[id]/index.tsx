@@ -1,71 +1,28 @@
 import {
-    $,
     component$,
-    useContext
-    // useContextProvider
-    // isDev
+    isDev
 } from "@builder.io/qwik";
-// import type { RequestHandler } from "@builder.io/qwik-city";
 
-// import { Button } from "~/components/main/button";
 import { Gradient } from "~/components/main/gradient";
 import { Separator } from "~/components/main/separator";
 
 import InfoIcon from "~/assets/Icons/Info.png"
 import { Button } from "~/components/main/button";
-import {
-    routeLoader$,
-    useLocation,
-    useNavigate
-} from "@builder.io/qwik-city";
-import { formatRupiah, isLocalhost } from "~/lib/utils";
-import { OrderContext } from "~/context/order-context";
-import type { PurchasedProductType } from "~/context/order-context";
-import { getGreenBeansProductById } from "~/server/services/products/green-coffee-beans";
-
-// import {
-//     // formAction$,
-//     InitialValues,
-//     insert,
-//     useForm,
-//     // valiForm$
-// } from "@modular-forms/qwik";
-
-// import { 
-//     CreateOrderForm,
-//     // OrderForm,
-//     // OrderSchema
-// } from "~/schema/order";
-
-// import Keberlanjutan from "~/assets/Icons/Keberlanjutan.png";
-// import Transparansi from "~/assets/Icons/Transparansi.png";
-// import Inovasi from "~/assets/Icons/Inovasi.png";
-
-// export const onGet: RequestHandler = async ({ redirect }) => {
-// 	if (!isDev) {
-// 		throw redirect(302, "/coming-soon");		
-// 	}
-// };
-
-// export const useOrderFormLoader = routeLoader$<InitialValues<CreateOrderForm>>(() => ({
-//     buyer_name: '',
-//     whatsapp_number: '',
-//     address: '',
-//     courier_notes: '',
-//     status: '',
-//     tracking_number: '',
-//     shipping_cost: 0,
-//     payment_method: '',
-//     purchasedProduct: []
-// }));
+import { routeLoader$ } from "@builder.io/qwik-city";
+import { formatDateTime } from "~/lib/utils";
+import { getGreenBeansProductById } from "~/server/services/products";
+import { Star } from "~/assets/Icons/Star";
 
 export const useProductDetail = routeLoader$(
     async (event) => {
         const { redirect } = event;
 
-        const result = await getGreenBeansProductById({ event });
+        const result = await getGreenBeansProductById({
+			is_active: true,
+            event
+        });
 
-        if (!result.data) {
+        if (result.data.length === 0) {
             throw redirect(302, "/products/green-coffee-beans");
         }
 
@@ -75,24 +32,6 @@ export const useProductDetail = routeLoader$(
 
 export default component$(() => {
     const product = useProductDetail();
-    
-    const loc = useLocation();
-    const nav = useNavigate();
-
-    const order = useContext(OrderContext);
-
-    const addToOrder = $(() => {
-        const newItem: PurchasedProductType = {
-            product_id: product.value.id,
-            name: product.value.name,
-            type: product.value.type,
-            price: product.value.price,
-            weight: product.value.weight,
-            quantity: 1
-        };
-
-        order.value = [...order.value, newItem];
-    });
 
     return (
         <>
@@ -102,42 +41,42 @@ export default component$(() => {
                     <section class="detail">
                         <article class="headline-and-supporting-headline grid grid-cols-1 items-center gap-4 lg:gap-6">
                             <h1>
-                                { product.value.name }
+                                { product.value[0].informasi_produk.nama }
                             </h1>
 
                             <p>
-                                { product.value.description.slice(0, 107) }
+                                { product.value[0].informasi_produk.deskripsi.slice(0, 107) }
                             </p>
                         </article>
 
                         <article class="price-stock">
-                            <section class="price-weight-wrapper">
-                                { product.value.discount ? (
+                            {/* <section class="price-weight-wrapper">
+                                { product.value.packagingVariants[0].discount_price ? (
                                     <section class="price-discount">
                                         <h1>
-                                            {formatRupiah(product.value.price)}
+                                            {formatRupiah(product.value.packagingVariants[0].price)}
                                         </h1>
 
                                         <p>
-                                            {product.value.discount}%
+                                            {product.value.packagingVariants[0].discount}%
                                         </p>
                                     </section>
                                 ) : null}
                                 
                                 <h1 class="price-weight">
-                                    { product.value.discount_price ? (
-                                        `${formatRupiah(product.value.discount_price)}/${product.value.weight}gr`
+                                    { product.value.packagingVariants[0].discount_price ? (
+                                        `${formatRupiah(product.value.packagingVariants[0].discount_price)}/${product.value.packagingVariants[0].weight}gr`
                                     ) : (
-                                        `${formatRupiah(product.value.price)}/${product.value.weight}gr`
+                                        `${formatRupiah(product.value.packagingVariants[0].price)}/${product.value.packagingVariants[0].weight}gr`
                                     )}
                                 </h1>
                             </section>
 
                             <section class="stock">
                                 <p>
-                                    SISA {product.value.stock} PCS
+                                    SISA {product.value.packagingVariants[0].stock} PCS
                                 </p>
-                            </section>
+                            </section> */}
                         </article>
 
                     </section>
@@ -147,27 +86,10 @@ export default component$(() => {
                             variant="primary"
                             size="large"
                             onClick$={() => {
-                                // insert(form, 'purchasedProduct', {
-                                //     value: {
-                                //         name: product.value.name,
-                                //         type: product.value.type,
-                                //         price: product.value.price,
-                                //         weight: product.value.weight,
-                                //         quantity: 1
-                                //     }
-                                // })
-                                addToOrder();
-                                nav("/products/orders/create");
+                                window.open(`https://api.whatsapp.com/send/?phone=+62-812-9333-1050&text=Halo%2C%20nama%20saya%20[Nama%20Pembeli]%2C%20saya%20ingin%20memesan%20produk%20green%20coffee%20beans%20${product.value[0].informasi_produk.nama}.`)
                             }}
                         >
                             Beli Sekarang
-                        </Button>
-
-                        <Button
-                            variant="secondary"
-                            size="large"
-                        >
-                            Beli di Tokopedia
                         </Button>
                     </section>
                 </figcaption>
@@ -175,13 +97,13 @@ export default component$(() => {
                 <section class="product-image max-h-[500px]">
                     <div class="hidden lg:block" />
                     <img 
-                        src={`${isLocalhost(loc.url) ? `http://127.0.0.1:8788/media/${product.value.photo}` : `https://vroom-coffee-roastery.pages.dev/media/${product.value.photo}`}`}
+                        src={`${isDev ? `http://localhost:1337${product.value[0].informasi_produk.foto.url}` : `${product.value[0].informasi_produk.foto.url}`}`}
                         alt="Product image"
                         height={500}
                         width={500}
                     />
 
-                    {product.value.highlight ? (
+                    {product.value[0].informasi_produk.highlight ? (
                         <article class="higlight">
                             <img
                                 src={InfoIcon}
@@ -190,7 +112,7 @@ export default component$(() => {
                                 width={100}
                             />
                             <p>
-                                { product.value.highlight }
+                                { product.value[0].informasi_produk.highlight }
                             </p>
                         </article>
                     ) : (
@@ -221,7 +143,7 @@ export default component$(() => {
                         </h1>
 
                         <p class="font-work-sans text-body-small sm:text-body-medium text-neutral-custom-600 max-w-[800px]">
-                            { product.value.description }
+                            { product.value[0].informasi_produk.deskripsi }
                         </p>
                     </article>
                     
@@ -239,43 +161,43 @@ export default component$(() => {
                             <li>
                                 <p>Asal</p>
                                 <p>:</p>
-                                <p>{ product.value.green_beans?.origin }</p>
+                                <p>{ product.value[0].asal }</p>
                             </li>
 
                             <li>
                                 <p>Ketinggian</p>
                                 <p>:</p>
-                                <p>{ product.value.green_beans?.elevation }</p>
+                                <p>{ product.value[0].ketinggian }</p>
                             </li>
 
                             <li>
                                 <p>Varietas</p>
                                 <p>:</p>
-                                <p>{ product.value.green_beans?.variety || '-' }</p>
+                                <p>{ product.value[0].varietas || '-' }</p>
                             </li>
 
                             <li>
-                                <p>Moisture Content</p>
+                                <p>Proses</p>
                                 <p>:</p>
-                                <p>{ product.value.green_beans?.process || '-' }</p>
+                                <p>{ product.value[0].proses || '-' }</p>
                             </li>
 
                             <li>
                                 <p>Density</p>
                                 <p>:</p>
-                                <p>{ product.value.green_beans?.density || '-' }</p>
+                                <p>{ product.value[0].densitas || '-' }</p>
                             </li>
 
                             <li>
                                 <p>Defect</p>
                                 <p>:</p>
-                                <p>{ product.value.green_beans?.defect || '-' }</p>
+                                <p>{ product.value[0].cacat || '-' }</p>
                             </li>
 
                             <li>
                                 <p>Screen Size</p>
                                 <p>:</p>
-                                <p>{ product.value.green_beans?.screen_size || '-' }</p>
+                                <p>{ product.value[0].ukuran_lubang_saringan || '-' }</p>
                             </li>
                         </ul>
 
@@ -285,13 +207,13 @@ export default component$(() => {
                             <li>
                                 <p>Roast Level</p>
                                 <p>:</p>
-                                <p>{ product.value.green_beans?.roast_level || '-' }</p>
+                                <p>{ product.value[0].level_roast || '-' }</p>
                             </li>
 
                             <li>
                                 <p>Deskripsi Rasa</p>
                                 <p>:</p>
-                                <p>{ product.value.green_beans?.flavor_description || '-' }</p>
+                                <p>{ product.value[0].deskripsi_rasa || '-' }</p>
                             </li>
                         </ul>
 
@@ -301,24 +223,73 @@ export default component$(() => {
                             <li>
                                 <p>Water Activity</p>
                                 <p>:</p>
-                                <p>{ product.value.green_beans?.water_activity || '-' }</p>
+                                <p>{ product.value[0].aktivitas_air || '-' }</p>
                             </li>
 
                             <li>
                                 <p>Quakers</p>
                                 <p>:</p>
-                                <p>{ product.value.green_beans?.quakers || '-' }</p>
+                                <p>{ product.value[0].quaker || '-' }</p>
                             </li>
 
                             <li>
                                 <p>Cupping Potential</p>
                                 <p>:</p>
-                                <p>{ product.value.green_beans?.cupping_potential || '-' }</p>
+                                <p>{ product.value[0].potensi_cupping || '-' }</p>
                             </li>
                         </ul>
                     </section>
 
                     <div class="bg-primary-100 h-[1.5px] w-full" />
+
+                    
+                                        <section class="flex flex-col gap-y-6">
+                                            {product.value[0].ulasan_produk_green_beans.length ? (
+                                                <h1 class="font-lora font-medium text-h3-small sm:text-h3-medium lg:text-h3-large text-neutral-custom-950">
+                                                    Ulasan Pelanggan
+                                                </h1>
+                                            ) : null}
+                    
+                                            <ul 
+                                                class={`
+                                                    grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8
+                                                    *:p-6 *:bg-primary-base *:border-[3px] *:border-solid *:border-primary-50 *:rounded-[12px]
+                                                    *:flex *:flex-col *:gap-y-6 *:*:flex *:*:flex-col *:*:gap-y-4 *:*:*:flex *:*:*:flex-col *:*:*:gap-y-2 *:*:*:*:flex *:*:*:*:gap-2
+                                                `}
+                                            >
+                                                {product.value[0].ulasan_produk_green_beans.map((review) => (
+                                                    <li key={review.informasi_ulasan.id}>
+                                                        <article>
+                                                            <section>
+                                                                <h1 class="font-lora text-h3-small text-neutral-custom-900">
+                                                                    {review.informasi_ulasan.nama}, {review.informasi_ulasan.lokasi}
+                                                                </h1>
+                    
+                                                                <section>
+                                                                    {[...Array(review.informasi_ulasan.rating)].map((_, index) => (
+                                                                        <Star
+                                                                            key={index + 1}
+                                                                            height={16}
+                                                                            width={16}
+                                                                            class="text-yellow-400"
+                                                                        />
+                                                                    ))}
+                                                                </section>
+                                                            </section>
+                    
+                                                            <p class="font-work-sans text-body-small sm:text-body-medium text-neutral-custom-700">
+                                                                {review.informasi_ulasan.konten}
+                                                            </p>
+                                                        </article>
+                    
+                                                        <p class="font-work-sans font-medium text-right text-label-small sm:text-label-medium text-neutral-custom-600">
+                                                            {formatDateTime(review.createdAt)}
+                                                        </p>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </section>
+                    
                 </section>
             </div>
 

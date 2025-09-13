@@ -108,6 +108,7 @@ RadioButtonGroup.Item = component$<RadioButtonProps>((
 export const RadioButton = component$<RadioButtonProps>(({
     name,
     type = "circle",
+    currentValue,
     value,
     disabled,
     onClickOption$
@@ -115,14 +116,16 @@ export const RadioButton = component$<RadioButtonProps>(({
     return (
         <div
             class={`flex items-center gap-x-2.5 font-work-sans font-medium text-neutral-700 text-label-small sm:text-label-medium select-none ${disabled ? "cursor-default *:cursor-default" : "cursor-pointer *:cursor-pointer"}`}
-            onClick$={() => onClickOption$ && onClickOption$()}
+            onClick$={() => {
+                (onClickOption$ && !(disabled || disabled)) && onClickOption$(value);
+            }}
         >
             <div class={`
                 h-[24px] w-[24px] flex items-center justify-center gap-x-2.5 bg-primary-base border-[1px] border-solid
                 *:h-[12px] *:w-[12px]
                 ${type === "circle" ? "rounded-full *:rounded-full" : "rounded-[4px] *:rounded-[4px]"}
-                ${(value && !disabled) && "*:bg-primary-400 border-primary-400"} 
-                ${(!value && !disabled) && "*:bg-primary-50 border-primary-400"} 
+                ${((value === currentValue?.value) && !disabled) && "*:bg-primary-400 border-primary-400"}
+                ${((!(value === currentValue?.value)) && !disabled) && "*:bg-primary-50 border-primary-400"}
                 ${disabled && "*:bg-neutral-200 border-neutral-custom-100"}
             `}>
                 <span />

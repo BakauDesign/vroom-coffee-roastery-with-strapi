@@ -1,9 +1,9 @@
 import {
     $,
     component$,
-    useContext
-    // useContextProvider
-    // isDev
+    isDev,
+    useContext,
+    useSignal
 } from "@builder.io/qwik";
 // import type { RequestHandler } from "@builder.io/qwik-city";
 
@@ -15,81 +15,29 @@ import InfoIcon from "~/assets/Icons/Info.png"
 import { Button } from "~/components/main/button";
 import {
     routeLoader$,
-    useLocation,
     useNavigate
 } from "@builder.io/qwik-city";
-import { getProductById } from "~/server/services/products";
-import { formatDateTime, formatRupiah, isLocalhost } from "~/lib/utils";
-import { OrderContext } from "~/context/order-context";
-import type { PurchasedProductType } from "~/context/order-context";
-import { Modal } from "~/components/main/modal";
+import { getRoastedBeansProductById } from "~/server/services/products";
+import { formatDateTime, formatRupiah } from "~/lib/utils";
+import { OrderRoastedBeanContext } from "~/context/order-context";
+import type { RoastedBeanProductType } from "~/context/order-context";
 
-import {
-    formAction$,
-    InitialValues,
-    setValue,
-    useForm,
-    valiForm$
-} from "@modular-forms/qwik";
-
-import { CreateReviewForm, ReviewSchema } from "~/schema/review";
-import { createReviewCustomer } from "~/server/services/reviews";
-
-import { Input } from "~/components/main/input";
-import { TextField } from "~/components/main/text-field";
 import { Star } from "~/assets/Icons/Star";
-
-// import { 
-//     CreateOrderForm,
-//     // OrderForm,
-//     // OrderSchema
-// } from "~/schema/order";
-
-// import Keberlanjutan from "~/assets/Icons/Keberlanjutan.png";
-// import Transparansi from "~/assets/Icons/Transparansi.png";
-// import Inovasi from "~/assets/Icons/Inovasi.png";
-
-// export const onGet: RequestHandler = async ({ redirect }) => {
-// 	if (!isDev) {
-// 		throw redirect(302, "/coming-soon");		
-// 	}
-// };
-
-export const useReviewFormLoader = routeLoader$<InitialValues<CreateReviewForm>>(() => {
-    return {
-        name: '',
-        location: '',
-        rating: 5,
-        content: ''
-    }
-});
- 
-export const useReviewFormAction = formAction$<CreateReviewForm>(
-    async (values, event) => {
-        await createReviewCustomer({ values, event });
-        event.redirect(301, `/products/roasted-coffee-beans/${event.params.id}`);
-    },
-    {
-        validate: valiForm$(ReviewSchema),
-        numbers: [
-            'rating'
-        ]
-    }
-);
+import type { PackageVariant } from "~/interfaces";
+import { RadioButton } from "~/components/main/radio-button";
 
 export const useProductDetail = routeLoader$(
     async (event) => {
-        const { params, redirect } = event;
+        const { redirect } = event;
 
-        const productId = parseInt(params.id);
+        // const productId = parseInt(params.id);
 
-        const result = await getProductById({
-            productId,
-            event,
-            options: "Roasted Coffee Beans"
+        const result = await getRoastedBeansProductById({
+            is_active: true,
+            event
         });
 
-        if (!result.data) {
+        if (!result.data.length) {
             throw redirect(302, "/products/roasted-coffee-beans");
         }
 
@@ -99,29 +47,30 @@ export const useProductDetail = routeLoader$(
 
 export default component$(() => {
     const product = useProductDetail();
+    const selectedPackageVariant = useSignal<PackageVariant>(product.value[0].daftar_varian_kemasan[0]);
+    const packageVariants = useSignal<Array<PackageVariant>>(product.value[0].daftar_varian_kemasan);
 
-    const [form, { Form, Field }] = useForm<CreateReviewForm>({
-        loader: useReviewFormLoader(),
-        action: useReviewFormAction(),
-        validateOn: 'submit',
-    });
-    
-    const loc = useLocation();
     const nav = useNavigate();
 
-    const order = useContext(OrderContext);
+    const order = useContext(OrderRoastedBeanContext);
 
     const addToOrder = $(() => {
-        const newItem: PurchasedProductType = {
-            product_id: product.value.id,
-            name: product.value.name,
-            type: product.value.type,
-            price: product.value.price,
-            weight: product.value.weight,
-            quantity: 1
+        const newItem: RoastedBeanProductType = {
+            documentId: product.value[0].documentId,
+            nama_produk: product.value[0].informasi_produk.nama,
+            varian_harga: selectedPackageVariant.value.diskon ? selectedPackageVariant.value.harga_diskon : selectedPackageVariant.value.harga,
+            varian_kemasan: selectedPackageVariant.value.kemasan,
+            varian_berat: selectedPackageVariant.value.berat,
+            kuantitas: 1
         };
 
-        order.value = [...order.value, newItem];
+        const updatedItems = order.value.filter(
+            (item) => item.documentId !== newItem.documentId
+        );
+
+        updatedItems.push(newItem);
+
+        order.value = updatedItems;
     });
 
     return (
@@ -132,72 +81,76 @@ export default component$(() => {
                     <section class="detail">
                         <article class="headline-and-supporting-headline grid grid-cols-1 items-center gap-4 lg:gap-6">
                             <h1>
-                                { product.value.name }
+                                { product.value[0].informasi_produk.nama }
                             </h1>
 
                             <p>
-                                { product.value.description.slice(0, 107) }
+                                { product.value[0].informasi_produk.deskripsi.slice(0, 107) }
                             </p>
                         </article>
 
                         <article class="price-stock">
                             <section class="price-weight-wrapper">
-                                { product.value.discount ? (
+                                { selectedPackageVariant.value.diskon ? (
                                     <section class="price-discount">
                                         <h1>
-                                            {formatRupiah(product.value.price)}
+                                            {formatRupiah(parseInt(selectedPackageVariant.value.harga))}
                                         </h1>
 
                                         <p>
-                                            {product.value.discount}%
+                                            {(selectedPackageVariant.value.diskon) ? (
+                                                `${selectedPackageVariant.value.diskon}%`
+                                            ) : null}
                                         </p>
                                     </section>
                                 ) : null}
                                 
                                 <h1 class="price-weight">
-                                    { product.value.discount_price ? (
-                                        `${formatRupiah(product.value.discount_price)}/${product.value.weight}gr`
+                                    { selectedPackageVariant.value.diskon ? (
+                                        `${formatRupiah(parseInt(selectedPackageVariant.value.harga_diskon))}/${selectedPackageVariant.value.berat}gr`
                                     ) : (
-                                        `${formatRupiah(product.value.price)}/${product.value.weight}gr`
+                                        `${formatRupiah(parseInt(selectedPackageVariant.value.harga))}/${selectedPackageVariant.value.berat}gr`
                                     )}
                                 </h1>
                             </section>
 
                             <section class="stock">
                                 <p>
-                                    SISA {product.value.stock} PCS
+                                    SISA {selectedPackageVariant.value.stok} PCS
                                 </p>
                             </section>
                         </article>
 
                     </section>
 
+                    <section class="flex gap-4 items-center">
+                        {packageVariants.value.map((variant) => ( 
+                            <RadioButton
+                                key={variant.documentId}
+                                name="varian kemasan"
+                                currentValue={selectedPackageVariant}
+                                value={variant}
+                                onClickOption$={() => {
+                                    selectedPackageVariant.value = variant;
+                                }}
+                                class="flex items-center gap-x-1"
+                                >
+                                    {variant.kemasan}
+                            </RadioButton>
+                        ))}
+                    </section>
+
+
                     <section class="actions">
                         <Button
                             variant="primary"
                             size="large"
                             onClick$={() => {
-                                // insert(form, 'purchasedProduct', {
-                                //     value: {
-                                //         name: product.value.name,
-                                //         type: product.value.type,
-                                //         price: product.value.price,
-                                //         weight: product.value.weight,
-                                //         quantity: 1
-                                //     }
-                                // })
                                 addToOrder();
-                                nav("/products/orders/create");
+                                nav("/products/roasted-coffee-beans/orders/create");
                             }}
                         >
                             Beli Sekarang
-                        </Button>
-
-                        <Button
-                            variant="secondary"
-                            size="large"
-                        >
-                            Beli di Tokopedia
                         </Button>
                     </section>
                 </figcaption>
@@ -205,13 +158,13 @@ export default component$(() => {
                 <section class="product-image max-h-[500px]">
                     <div class="hidden lg:block" />
                     <img 
-                        src={`${isLocalhost(loc.url) ? `http://127.0.0.1:8788/media/${product.value.photo}` : `https://vroom-coffee-roastery.pages.dev/media/${product.value.photo}`}`}
+                        src={`${isDev ? `http://localhost:1337${product.value[0].informasi_produk.foto.url}` : `${product.value[0].informasi_produk.foto.url}`}`}
                         alt="Product image"
                         height={500}
                         width={500}
                     />
 
-                    {product.value.highlight ? (
+                    {product.value[0].informasi_produk.highlight ? (
                         <article class="higlight">
                             <img
                                 src={InfoIcon}
@@ -220,7 +173,7 @@ export default component$(() => {
                                 width={100}
                             />
                             <p>
-                                { product.value.highlight }
+                                { product.value[0].informasi_produk.highlight }
                             </p>
                         </article>
                     ) : (
@@ -251,7 +204,7 @@ export default component$(() => {
                         </h1>
 
                         <p class="font-work-sans text-body-small sm:text-body-medium text-neutral-custom-600 max-w-[800px]">
-                            { product.value.description }
+                            { product.value[0].informasi_produk.deskripsi }
                         </p>
                     </article>
                     
@@ -269,13 +222,13 @@ export default component$(() => {
                             <li>
                                 <p>Asal</p>
                                 <p>:</p>
-                                <p>{ product.value.roasted_beans?.origin }</p>
+                                <p>{ product.value[0].asal }</p>
                             </li>
 
                             <li>
                                 <p>Proses</p>
                                 <p>:</p>
-                                <p>{ product.value.roasted_beans?.process }</p>
+                                <p>{ product.value[0].proses }</p>
                             </li>
                         </ul>
 
@@ -283,19 +236,19 @@ export default component$(() => {
                             <li>👃 Test Notes</li>
                             
                             <li>
-                                <p>{ product.value.roasted_beans?.test_notes || "Tidak ada test notes" }</p>
+                                <p>{ product.value[0].catatan_tes || "Tidak ada test notes" }</p>
                             </li>
                         </ul>
 
                         <ul>
                             <li>⚡ Rekomendasi Penyajian</li>
                             
-                            {product.value.roasted_beans?.serving_recommendation.map((serving) => {
+                            {product.value[0]?.daftar_rekomendasi_penyajian.map((serving) => {
                                 return (
                                     <li key={serving.id}>
-                                        <p>{serving.name}</p>
+                                        <p>{serving.nama}</p>
                                         <p>:</p>
-                                        <p>{serving.description}</p>
+                                        <p>{serving.deskripsi}</p>
                                     </li>
                                 );
                             })}
@@ -307,7 +260,7 @@ export default component$(() => {
                             <li>
                                 <p>Kemasan</p>
                                 <p>:</p>
-                                <p>{product.value.weight}gr + {product.value.roasted_beans?.packaging}</p>
+                                <p>{product.value[0].daftar_varian_kemasan[0].harga}gr + {product.value[0].kemasan}</p>
                             </li>
                         </ul>
                     </section>
@@ -315,7 +268,7 @@ export default component$(() => {
                     <div class="bg-neutral-custom-200 h-[1.5px] w-full" />
 
                     <section class="flex flex-col gap-y-6">
-                        {product.value.review.length ? (
+                        {product.value[0].ulasan_produk_roasted_beans.length ? (
                             <h1 class="font-lora font-medium text-h3-small sm:text-h3-medium lg:text-h3-large text-neutral-custom-950">
                                 Ulasan Pelanggan
                             </h1>
@@ -328,16 +281,16 @@ export default component$(() => {
                                 *:flex *:flex-col *:gap-y-6 *:*:flex *:*:flex-col *:*:gap-y-4 *:*:*:flex *:*:*:flex-col *:*:*:gap-y-2 *:*:*:*:flex *:*:*:*:gap-2
                             `}
                         >
-                            {product.value.review.map((review) => (
-                                <li key={review.id}>
+                            {product.value[0].ulasan_produk_roasted_beans.map((review) => (
+                                <li key={review.informasi_ulasan.id}>
                                     <article>
                                         <section>
                                             <h1 class="font-lora text-h3-small text-neutral-custom-900">
-                                                {review.name}, {review.location}
+                                                {review.informasi_ulasan.nama}, {review.informasi_ulasan.lokasi}
                                             </h1>
 
                                             <section>
-                                                {[...Array(review.rating)].map((_, index) => (
+                                                {[...Array(review.informasi_ulasan.rating)].map((_, index) => (
                                                     <Star
                                                         key={index + 1}
                                                         height={16}
@@ -349,12 +302,12 @@ export default component$(() => {
                                         </section>
 
                                         <p class="font-work-sans text-body-small sm:text-body-medium text-neutral-custom-700">
-                                            {review.content}
+                                            {review.informasi_ulasan.konten}
                                         </p>
                                     </article>
 
                                     <p class="font-work-sans font-medium text-right text-label-small sm:text-label-medium text-neutral-custom-600">
-                                        {formatDateTime(review.date.toISOString())}
+                                        {formatDateTime(review.createdAt)}
                                     </p>
                                 </li>
                             ))}
@@ -362,7 +315,7 @@ export default component$(() => {
                     </section>
 
 
-                    <section class="flex flex-col gap-y-6 items-center">
+                    {/* <section class="flex flex-col gap-y-6 items-center">
                         <article class="text-center flex flex-col gap-y-4 items-center">
                             <h1 class="font-lora text-primary-700 font-semibold text-h2-small sm:text-h2-medium lg:text-h2-large max-w-[800px]">
                                 Apa Pendapatmu Tentang {product.value.name}?
@@ -510,7 +463,7 @@ export default component$(() => {
                                 </section>
                             </Modal.Content>
                         </Modal.Root>
-                    </section>
+                    </section> */}
                 </section>
             </div>
 

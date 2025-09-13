@@ -37,20 +37,29 @@ model Product {
 	description		String
 	photo			String
 	highlight		String?
-	stock			Int
-	price			Int
-	discount		Int?
-	discount_price	Int?
-	weight			Int
 	type			String
 	is_active		Boolean		@default(true)
 	is_highlight	Boolean?
 
+	packagingVariants   PackagingVariant[]
 	review				Review[]
 	purchased_product	Purchased_Product[]
 	roasted_beans   	Roasted_Beans_Product?
 	green_beans   		Green_Beans_Product?
 	tools				Tools_Product?
+}
+
+model PackagingVariant {
+    id                  Int                 @id @default(autoincrement())
+    size                String
+    price               Int
+    discount            Int?
+    discount_price      Int?
+    stock               Int
+    weight              Int
+
+    product             Product             @relation(fields: [productId], references: [id])
+    productId           Int
 }
 
 model Review {
@@ -155,10 +164,11 @@ model Order {
 
 model Purchased_Product {
 	id				Int		@id @default(autoincrement())
-	name			String
-	type			String
-	price			Int
-	weight			Int
+	product_name        String
+    product_type        String
+    variant_size        String
+    variant_price       Int
+    variant_weight      Int
 	quantity		Int
 
 	order_data		Order		@relation(fields: [order_id], references: [id])

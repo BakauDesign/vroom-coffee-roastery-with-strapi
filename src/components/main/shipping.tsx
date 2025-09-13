@@ -40,7 +40,7 @@ Shipping.Root = component$((props) => {
 
 Shipping.Logo = component$(({ src }) => {
     const loc = useLocation();
-    return <img src={isLocalhost(loc.url) ? `http://127.0.0.1:8788/media/${src}` : `https://vroom-coffee-roastery.pages.dev/media/${src}`} alt="Logo" height={60} width={60} class="h-[60px] w-[60px] object-contain" />;
+    return <img src={isLocalhost(loc.url) ? `http://localhost:1337${src}` : `https://vroom-coffee-roastery.pages.dev/media/${src}`} alt="Logo" height={60} width={60} class="h-[60px] w-[60px] object-contain" />;
 });
 
 Shipping.Detail = component$(() => {

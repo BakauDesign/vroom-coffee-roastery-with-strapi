@@ -167,6 +167,33 @@ export const ToolsSchema = v.object({
     )
 });
 
+export const PackagingVariantSchema = v.object({
+    kemasan: v.pipe(
+        v.string(),
+        v.nonEmpty('Mohon masukan ukuran kemasan')
+    ),
+    diskon: v.optional(
+        v.nullable(
+            v.pipe(
+                v.number('Mohon masukan persentase diskon'),
+                v.minValue(1, 'Persetase diskon minimal 1%')
+            )
+        )
+    ),
+    harga: v.pipe(
+        v.number('Mohon masukan harga produk'),
+        v.minValue(1, 'Harga produk minimal 1')
+    ),
+    stok: v.pipe(
+        v.number('Mohon masukan stok produk'),
+        v.minValue(1, 'Stok produk minimal 1')
+    ),
+    berat: v.pipe(
+        v.number('Mohon masukan berat produk'),
+        v.minValue(1, 'Berat produk minimal 1')
+    )
+});
+
 export const ProductSchema = v.object({
     name: v.pipe(
         v.string(),
@@ -188,37 +215,10 @@ export const ProductSchema = v.object({
             )
         )
     ),
-    stock: v.pipe(
-        v.number('Mohon masukan stok produk'),
-        v.minValue(1, 'Stok produk minimal 1')
-    ),
-    discount: v.optional(
-        v.nullable(
-            v.pipe(
-                v.number('Mohon masukan persentase diskon'),
-                v.minValue(1, 'Persetase diskon minimal 1%')
-            )
-        )
-    ),
-    price: v.pipe(
-        v.number('Mohon masukan harga produk'),
-        v.minValue(1, 'Harga produk minimal 1')
-    ),
-    weight: v.pipe(
-        v.number('Mohon masukan berat produk'),
-        v.minValue(1, 'Berat produk minimal 1')
-    )    
-});
-
-export const ProductPhotoSchema = v.pipe(
-    v.nullable(
-        v.pipe(
-            v.file('Mohon pilih gambar dengan format JPEG atau PNG.'),
-            v.mimeType(['image/jpeg', 'image/jpg', 'image/png', 'image/avif'], 'Mohon pilih gambar dengan format JPEG atau PNG.'),
-            v.maxSize(1024 * 1024 * 10, 'Mohon pilih gambar berukuran kurang dari 5 MB.')
-        )
+    packaging_variant: v.array(
+        PackagingVariantSchema
     )
-);
+});
 
 export const RoastedBeansProductSchema = v.object({
     ...ProductSchema.entries,

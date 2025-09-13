@@ -102,7 +102,6 @@ export async function getAnnualSalesData(event: RequestEventLoader<QwikCityPlatf
                 purchasedProduct: {
                     select: {
                         quantity: true,
-                        price: true
                     }
                 }
             }
@@ -244,24 +243,31 @@ export async function getSingleLowStockProduct({
     const db = await getDB(platform.env);
 
     try {
-        const lowStockProduct = await db.product.findFirst({
+        const lowStockProduct = await db.packagingVariant.findFirst({
             where: {
                 stock: {
                     lt: 10
                 },
-                is_active: true
+                product: {
+                    is_active: true
+                }
             },
             orderBy: {
                 stock: 'asc'
             },
             select: {
-                name: true,
-                stock: true
+                product: {
+                    select: {
+                        name: true,
+                        packagingVariants: {
+                            select: { stock: true }
+                        }
+                    }
+                }
             }
         });
 
         return lowStockProduct;
-
     } catch (error) {
         console.error("Error fetching single low stock product:", error);
         throw error;

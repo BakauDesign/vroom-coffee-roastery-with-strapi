@@ -2,7 +2,7 @@ import { component$ } from '@builder.io/qwik';
 
 import type { HTMLAttributes } from '@builder.io/qwik';
 
-import type { Reviews } from "~/interfaces";
+import type { Review as Reviews } from "~/interfaces";
 
 import { Star } from '~/assets/Icons/Star';
 
@@ -15,8 +15,10 @@ interface ReviewsProps
     > {}
 
 
-export const Review = component$<ReviewsProps>((
-    { name, location, rating, content, date }) => {
+export const Review = component$<ReviewsProps>(({
+    informasi_ulasan: { nama, lokasi, rating, konten },
+    createdAt
+}) => {
 
     return (
         <section
@@ -25,7 +27,7 @@ export const Review = component$<ReviewsProps>((
             <section class="flex flex-col gap-y-2">
                 <article class="flex flex-col gap-y-3">
                     <h1 class="font-lora text-h3-small text-neutral-custom-900">
-                        { name }, { location }
+                        { nama }, { lokasi }
                     </h1>
 
                     <ul class="flex gap-x-2">
@@ -36,12 +38,12 @@ export const Review = component$<ReviewsProps>((
                 </article>
 
                 <p class="font-work-sans text-body-small sm:text-body-medium text-neutral-custom-700">
-                    { content }
+                    { konten }
                 </p>
             </section>
 
             <p class="font-work-sans font-medium text-right text-label-small sm:text-label-medium text-neutral-custom-600">
-                { date }
+                { createdAt }
             </p>
         </section>
     );

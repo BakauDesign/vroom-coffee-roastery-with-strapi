@@ -17,7 +17,7 @@ import HeroImage_2 from "~/assets/main/products/green-coffee-beans/Hero image 2.
 import HeroImage_3 from "~/assets/main/products/green-coffee-beans/Hero image 3.avif";
 
 import { routeLoader$ } from "@builder.io/qwik-city";
-import { getProducts } from "~/server/services/products";
+import { getGreenBeansProducts } from "~/server/services/products";
 import { Product } from "~/components/main/product";
 
 // export const onGet: RequestHandler = async ({ redirect }) => {
@@ -28,7 +28,10 @@ import { Product } from "~/components/main/product";
 
 export const useProducts = routeLoader$(
     async ( event ) => {
-        return await getProducts({ event });
+        return await getGreenBeansProducts({
+			is_active: true,
+			event
+        });
     }
 )
 
@@ -69,16 +72,13 @@ export default component$(() => {
                         {products.data.map((product) => {
                             return (
                                 <Product
-                                    key={product.id}
-                                    id={product.id}
-                                    name={product.name}
-                                    description={product.description}
-                                    type={product.type}
-                                    price={product.price}
-                                    discount={product.discount}
-                                    discountPrice={product.discount_price}
-                                    photo={product.photo}
-                                    weight={product.weight}
+                                    key={product.documentId}
+                                    slug={product.slug}
+                                    type="Green Coffee Beans"
+                                    documentId={product.documentId}
+									nama={product.informasi_produk.nama}
+									deskripsi={product.informasi_produk.deskripsi}
+									foto={product.informasi_produk.foto}
                                 />
                             )
                         })}

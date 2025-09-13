@@ -17,8 +17,9 @@ import HeroImage_2 from "~/assets/main/products/coffee-tools/Hero image 2.avif";
 import HeroImage_3 from "~/assets/main/products/coffee-tools/Hero image 3.avif";
 
 import { routeLoader$ } from "@builder.io/qwik-city";
-import { getProducts } from "~/server/services/products";
+import { getToolsProducts } from "~/server/services/products";
 import { Product } from "~/components/main/product";
+import { Button } from "~/components/main/button";
 
 // export const onGet: RequestHandler = async ({ redirect }) => {
 // 	if (!isDev) {
@@ -28,7 +29,7 @@ import { Product } from "~/components/main/product";
 
 export const useProducts = routeLoader$(
     async ( event ) => {
-        return await getProducts({ event });
+        return await getToolsProducts({ event });
     }
 )
 
@@ -65,20 +66,48 @@ export default component$(() => {
                 <Gradient position="bottom" />
 
                 <section class="general-section gap-y-[60px] items-center">
+                    <figure class="flex flex-col gap-y-4 max-w-[400px] self-center">
+                        <picture>
+                            <img src="" alt="" />
+                        </picture>
+
+                        <figcaption class="flex flex-col gap-y-3">
+                            <article class="flex flex-col gap-y-4">
+                                <h1 class="font-lora font-medium text-neutral-custom-800 text-h3-medium sm:text-h3-large">
+                                    Kami Juga Menyediakan Layanan Roasting Kustom
+                                </h1>
+
+                                <p class="font-work-sans text-neutral-custom-700 text-body-small sm:text-body-medium">
+                                    Layanan roasting profesional untuk biji kopi mentah Anda. Kami menawarkan kontrol penuh atas profil roasting untuk menonjolkan karakteristik rasa terbaik dari biji kopi Anda. Cocok untuk kafe, bisnis kopi, atau penggemar rumahan yang ingin membuat signature roast mereka sendiri.
+                                </p>
+                            </article>
+                        </figcaption>
+
+                        <Button
+                            variant="primary"
+                            size="large"
+                            onClick$={() => {
+                                window.open('https://api.whatsapp.com/send/?phone=+62-812-9333-1050&text=Halo%2C%20Vroom%20Coffee%20Roastery.%20Saya%20tertarik%20dengan%20jasa%20roasting%20kustom.%0A%0AApakah%20saya%20bisa%20berkonsultasi%20tentang%20profil%20roasting%20yang%20cocok%20untuk%20biji%20kopi%20saya%3F%20Mohon%20info%20detail%20prosesnya.%0A%0ATerima%20kasih.')
+                            }}
+                        >
+                            Pesan Roasting Sekarang!
+                        </Button>
+                    </figure>
                     <section class="grid gap-9 overflow-scroll grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
                         {products.data.map((product) => {
                             return (
                                 <Product
-                                    key={product.id}
-                                    id={product.id}
-                                    name={product.name}
-                                    description={product.description}
-                                    type={product.type}
-                                    price={product.price}
-                                    discount={product.discount}
-                                    discountPrice={product.discount_price}
-                                    photo={product.photo}
-                                    weight={product.weight}
+                                    key={product.documentId}
+                                    slug={product.slug}
+                                    type="Coffee Tools"
+                                    documentId={product.documentId}
+                                    nama={product.informasi_produk.nama}
+                                    deskripsi={product.informasi_produk.deskripsi}
+                                    foto={product.informasi_produk.foto}
+                                    harga={product.harga}
+                                    diskon={product.diskon}
+                                    harga_diskon={product.harga_diskon}
+                                    berat={product.berat}
                                 />
                             )
                         })}

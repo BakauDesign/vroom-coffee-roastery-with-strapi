@@ -13,13 +13,19 @@ import HeroImage_2 from "~/assets/main/about-us/Hero image 2.avif";
 import HeroImage_3 from "~/assets/main/about-us/Hero image 3.avif";
 import HeroImage_4 from "~/assets/main/about-us/Hero image 4.avif";
 
-import ProcessImage_1 from "~/assets/main/about-us/Process image 1.avif";
-import ProcessImage_2 from "~/assets/main/about-us/Process image 2.avif";
-import ProcessImage_3 from "~/assets/main/about-us/Process image 3.avif";
+// import ProcessImage_1 from "~/assets/main/about-us/Process image 1.avif";
+// import ProcessImage_2 from "~/assets/main/about-us/Process image 2.avif";
+// import ProcessImage_3 from "~/assets/main/about-us/Process image 3.avif";
 
-import SustainabilityFirst from "~/assets/main/about-us/icons/Sustainability First.avif";
-import ConsistencyIsKey from "~/assets/main/about-us/icons/Consistency is Key.avif";
-import CommunityDriven from "~/assets/main/about-us/icons/Community Driven.avif";
+import Pengalaman_8_Tahun from "~/assets/main/about-us/icons/Pengalaman 8 Tahun.avif";
+import Custom_Roasting from "~/assets/main/about-us/icons/Custom Roasting.avif";
+import Harga_Kompetitif from "~/assets/main/about-us/icons/Harga Kompetitif.avif";
+import Kepercayaan_Café from "~/assets/main/about-us/icons/Kepercayaan Café.avif";
+import Kualitas_Terjamin from "~/assets/main/about-us/icons/Kualitas Terjamin.avif";
+
+import Video_1 from "~/assets/main/about-us/Video 1.mp4";
+import Video_2 from "~/assets/main/about-us/Video 2.mp4";
+import Video_3 from "~/assets/main/about-us/Video 3.mp4";
 // import { getMedia } from "~/lib/media";
 
 // export const onGet: RequestHandler = async ({ redirect }) => {
@@ -54,11 +60,11 @@ export default component$(() => {
                 <figcaption class="content">
                     <article class="headline-and-supporting-headline grid grid-cols-1 lg:grid-cols-2 items-center gap-4 lg:gap-6">
                         <h1>
-                            Lebih dari Sekadar Kopi <br class="hidden md:block lg:hidden" />- Ini adalah Perjalanan Rasa
+                            Vroom Coffee Roastery <br class="hidden md:block lg:hidden" />Supply Your Coffee Needs
                         </h1>
 
                         <p>
-                            Sejak 2015, Vroom Coffee Roastery berdedikasi untuk menghadirkan biji kopi spesialti terbaik dari kebun lokal Indonesia, disangrai dengan  presisi untuk cita rasa yang konsisten dan memukau.
+                            Selamat datang di VROOM Coffee Roastery - supplier terpercaya roast bean dan green bean asal Tangerang yang telah melayani pecinta kopi selama 8 tahun. Kami hadir dengan komitmen untuk menyediakan kopi berkualitas premium dengan harga terjangkau.
                         </p>
                     </article>
                 </figcaption>
@@ -92,13 +98,21 @@ export default component$(() => {
 
                     <ul class="flex flex-col gap-y-8 *:grid *:grid-cols-1 *:sm:grid-cols-2 *:sm:items-center *:gap-6 *:*:flex *:*:flex-col *:*:gap-y-4">
                         <li>
-                            <img 
+                            <video 
+                                loop muted autoplay
+                                height={500}
+                                width={500}
+                                class="rounded-[12px] w-full max-h-[400px] max-w-[300px] min-[400px]:max-w-none object-cover"
+                            >
+                                <source src={Video_1} type="video/mp4"/>
+                            </video> 
+                            {/* <img 
                                 src={ProcessImage_1}
                                 alt="Hero image" 
                                 height={500}
                                 width={500}
                                 class="rounded-[12px] w-full max-h-[400px] max-w-[300px] min-[400px]:max-w-none object-cover"
-                            />
+                            /> */}
                             
                             <article>
                                 <h1 class="font-lora font-medium text-primary-700 text-h2-small sm:text-h2-medium lg:text-h2-large">
@@ -124,25 +138,41 @@ export default component$(() => {
                                 </p>
                             </article>
 
-                            <img 
+                             <video 
+                                loop muted autoplay
+                                height={500}
+                                width={500}
+                                class="rounded-[12px] w-full max-h-[400px] max-w-[300px] min-[400px]:max-w-none object-cover"
+                            >
+                                <source src={Video_2} type="video/mp4"/>
+                            </video> 
+                            {/* <img 
                                 src={ProcessImage_2}
                                 alt="Hero image"
                                 height={500}
                                 width={500}
                                 class="rounded-[12px] w-full max-h-[400px] max-w-[300px] min-[400px]:max-w-none object-cover place-self-end"
-                            />
+                            /> */}
                         </li>
 
                         <li class="h-[2px] w-full max-w-[250px] bg-primary-200 self-end"><br /></li>
 
                         <li>
-                            <img 
+                            {/* <img 
                                 src={ProcessImage_3}
                                 alt="Hero image"
                                 height={500}
                                 width={500}
                                 class="rounded-[12px] w-full max-h-[400px] max-w-[300px] min-[400px]:max-w-none object-cover" 
-                            />
+                            /> */}
+                             <video 
+                                loop muted autoplay
+                                height={500}
+                                width={500}
+                                class="rounded-[12px] w-full max-h-[400px] max-w-[300px] min-[400px]:max-w-none object-cover"
+                            >
+                                <source src={Video_3} type="video/mp4"/>
+                            </video> 
                             
                             <article>
                                 <h1 class="font-lora font-medium text-primary-700 text-h2-small sm:text-h2-medium lg:text-h2-large">
@@ -157,11 +187,11 @@ export default component$(() => {
                     </ul>
                 </section>
 
-                <section class="general-section grid-cols-1 xl:grid-cols-2 gap-8 lg:gap-12">
+                <section class="general-section grid-cols-1 gap-8 lg:gap-12">
                     <section class="content">
                         <article class="headline-and-supporting-headline flex-col gap-y-4 vertical">
                             <h1>
-                                Lebih dari Bisnis, Ini <br />adalah Filosofi Kami
+                                Keunggulan VROOM Coffee Roastery
                             </h1>
 
                             <p>
@@ -170,45 +200,73 @@ export default component$(() => {
                         </article>
                     </section>
 
-                    <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-2 gap-4 *:items-center *:text-center *:p-6 *:bg-primary-base *:border-[3px] *:border-solid *:border-primary-50 *:rounded-[12px] *:flex *:flex-col *:gap-y-6 *:*:flex *:*:flex-col *:*:gap-y-4">
+                    <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-3 gap-4 *:items-center *:text-center *:p-6 *:bg-primary-base *:border-[3px] *:border-solid *:border-primary-50 *:rounded-[12px] *:flex *:flex-col *:gap-y-6 *:*:flex *:*:flex-col *:*:gap-y-4">
                         <li>
-                            <img src={SustainabilityFirst} alt="Keberlanjutan" class="h-[60px] w-[60px] bg-primary-50 rounded-[6px]" height={60} width={60} />
+                            <img src={Pengalaman_8_Tahun} alt="Keberlanjutan" class="h-[60px] w-[60px] bg-primary-50 rounded-[6px]" height={60} width={60} />
 
                             <article>
                                 <h1 class="font-lora font-semibold text-h3-medium sm:text-h3-large text-primary-700">
-                                    Sustainability First
+                                    Pengalaman 8 Tahun
                                 </h1>
 
                                 <p class="font-work-sans text-body-small sm:text-body-medium text-neutral-custom-700">
-                                    Kemasan biodegradable & sistem bagi hasil yang adil untuk petani
+                                    Kepercayaan yang teruji waktu
                                 </p>
                             </article>
                         </li>
 
                         <li>
-                            <img src={ConsistencyIsKey} alt="Transparansi" class="h-[60px] w-[60px] rounded-[6px]" height={60} width={60}  />
+                            <img src={Custom_Roasting} alt="Transparansi" class="h-[60px] w-[60px] rounded-[6px]" height={60} width={60}  />
 
                             <article>
                                 <h1 class="font-lora font-semibold text-h3-medium sm:text-h3-large text-primary-700">
-                                    Consistency is Key
+                                    Custom Roasting
                                 </h1>
 
                                 <p class="font-work-sans text-body-small sm:text-body-medium text-neutral-custom-700">
-                                    Logbook roasting detail untuk memastikan cita rasa sama setiap batch
+                                    Request rasa, profil roast, dan blend sesuai kebutuhan
                                 </p>
                             </article>
                         </li>
 
                         <li>
-                            <img src={CommunityDriven} alt="Inovasi" class="h-[60px] w-[60px] rounded-[6px]" height={60} width={60}  />
+                            <img src={Harga_Kompetitif} alt="Inovasi" class="h-[60px] w-[60px] rounded-[6px]" height={60} width={60}  />
 
                             <article>
                                 <h1 class="font-lora font-semibold text-h3-medium sm:text-h3-large text-primary-700">
-                                    Community Driven
+                                    Harga Kompetitif
                                 </h1>
 
                                 <p class="font-work-sans text-body-small sm:text-body-medium text-neutral-custom-700">
-                                    Workshop bulanan untuk berbagi ilmu dengan komunitas pecinta kopi
+                                    Harga terendah di Tangerang, bahkan untuk Arabika Luwak
+                                </p>
+                            </article>
+                        </li>
+
+                        <li>
+                            <img src={Kepercayaan_Café} alt="Inovasi" class="h-[60px] w-[60px] rounded-[6px]" height={60} width={60}  />
+
+                            <article>
+                                <h1 class="font-lora font-semibold text-h3-medium sm:text-h3-large text-primary-700">
+                                    Kepercayaan Café
+                                </h1>
+
+                                <p class="font-work-sans text-body-small sm:text-body-medium text-neutral-custom-700">
+                                    Banyak coffee shop berlangganan dengan kami
+                                </p>
+                            </article>
+                        </li>
+
+                        <li>
+                            <img src={Kualitas_Terjamin} alt="Inovasi" class="h-[60px] w-[60px] rounded-[6px]" height={60} width={60}  />
+
+                            <article>
+                                <h1 class="font-lora font-semibold text-h3-medium sm:text-h3-large text-primary-700">
+                                    Kualitas Terjamin
+                                </h1>
+
+                                <p class="font-work-sans text-body-small sm:text-body-medium text-neutral-custom-700">
+                                    Roasting sendiri dengan kontrol kualitas ketat
                                 </p>
                             </article>
                         </li>

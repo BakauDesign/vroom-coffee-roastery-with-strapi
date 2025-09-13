@@ -16,7 +16,7 @@ import { useRoastedProductsCMS } from "~/hooks/useRoastedProducts";
 import { roastedFilterOption as filterOption } from "~/lib/filter-option";
 
 import { routeLoader$ } from "@builder.io/qwik-city";
-import { getProducts } from "~/server/services/products";
+import { getRoastedBeansProducts } from "~/server/services/products";
 import { Product } from "~/components/main/product";
 
 // export const onGet: RequestHandler = async ({ redirect }) => {
@@ -27,7 +27,11 @@ import { Product } from "~/components/main/product";
 
 export const useProducts = routeLoader$(
     async ( event ) => {
-        return await getProducts({ event });
+        return await getRoastedBeansProducts({
+			is_active: true,
+			highlighted: true,
+            event
+        });
     }
 );
 
@@ -100,16 +104,17 @@ export default component$(() => {
                         {products.data.map((product) => {
                             return (
                                 <Product
-                                    key={product.id}
-                                    id={product.id}
-                                    name={product.name}
-                                    description={product.description}
-                                    type={product.type}
-                                    price={product.price}
-                                    discount={product.discount}
-                                    discountPrice={product.discount_price}
-                                    photo={product.photo}
-                                    weight={product.weight}
+                                    type="Roasted Coffee Beans"
+                                    key={product.documentId}
+                                    slug={product.slug}
+                                    documentId={product.documentId}
+                                    nama={product.informasi_produk.nama}
+                                    deskripsi={product.informasi_produk.deskripsi}
+                                    foto={product.informasi_produk.foto}
+                                    harga={product.daftar_varian_kemasan[0].harga}
+                                    diskon={product.daftar_varian_kemasan[0].diskon}
+                                    harga_diskon={product.daftar_varian_kemasan[0].harga_diskon}
+                                    berat={product.daftar_varian_kemasan[0].berat}
                                 />
                             )
                         })}

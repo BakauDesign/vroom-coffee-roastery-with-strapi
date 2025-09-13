@@ -1,32 +1,40 @@
-import * as v from 'valibot';
-
 import { getDB } from '~/lib/db';
 
-import { JSONObject, RequestEventAction, RequestEventLoader } from "@builder.io/qwik-city";
-import {
-    ProductPhotoSchema,
-    RoastedBeansProductForm,
-    GreenBeansProductForm,
-    ToolsProductForm
-} from '~/schema/product';
-import { deleteFileFromBucket, uploadFileToBucket } from '~/lib/r2';
+import { RequestEventAction, RequestEventLoader } from "@builder.io/qwik-city";
+import { isDev } from '@builder.io/qwik';
+import { GreenBeansProduct, GreenBeansProductWithReviews, Products, RoastedBeansProduct, RoastedBeansProductWithReviews, ToolsProduct, ToolsProductWithReviews } from '~/interfaces';
 
-// type roastedBeansProductSchema = v.InferInput<typeof RoastedBeansProductSchema>;
-type AllProductForms = RoastedBeansProductForm | GreenBeansProductForm | ToolsProductForm;
+const API = `${isDev ? "http://localhost:1337/api/" : "https://tranquil-birds-0d2a5de0f5.strapiapp.com/api/"}`;
 
-// export type EditProductForms = AllProductForms & {
-//     is_active: true;
-//     roasted_beans_id: number;
-// }
-
-interface LoaderParams {
-    event: RequestEventLoader<QwikCityPlatform>
+export interface LoaderParams {
+    event: RequestEventLoader<QwikCityPlatform>;
 }
 
 export interface ActionParams<T extends any> {
     values: T;
     event: RequestEventAction<QwikCityPlatform>;
 }
+
+type ProductsQuery = {
+    type?: string;
+    is_active?: boolean;
+    highlighted?: boolean;
+    event: RequestEventLoader<QwikCityPlatform>;
+}
+
+type Meta = {
+    pagination: {
+        page: number,
+        pageSize: number,
+        pageCount: number,
+        total: number
+    }
+}
+
+// type ProductsResponse<T> = {
+//     data: T;
+//     meta: Meta;
+// }
 
 export async function getHighlightedProduct ({
     event
@@ -58,387 +66,346 @@ export async function getHighlightedProduct ({
     }
 }
 
-export async function getProducts({
-    event
-}: LoaderParams) {
-    const { platform, url } = event;
+// export async function getProducts({
+//     is_active = true,
+//     highlighted = false,
+//     type,
+//     // event
+// }: ProductsQuery) {
+//     // const productType = extractType(event.url.pathname);
 
-    const productType = extractType(url.pathname);
+//     // const keyword = event.url.searchParams.get("search");
+//     // const brewingMethod = event.url.searchParams.get("brewingMethod");
 
-    const keyword = url.searchParams.get("search");
-    const brewingMethod = url.searchParams.get("brewingMethod");
+//     try {
+//         // const type_filter = `${type ? `&filters[jenis][$eq]=${type}` : ``}`;
+//         const is_active_filter = `${is_active ? `&filters[informasi_produk][aktif][$eq]=${is_active || true}` : ``}`;
+//         const highlighted_filter = `${highlighted ? `&filters[informasi_produk][highlighted][$eq]=${highlighted}`: ``}`;
+
+//         const request = await fetch(`${API}${type || 'produk-green-beans'}?populate=all${is_active_filter}${highlighted_filter}`, {
+//             method: 'GET',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//         });
+
+//         const response: {
+//             data: Array<Products>;
+//         } = await request.json();
+
+//         return {
+//             ...response,
+//             success: false,
+//             message: "Success fetching products"
+//         };
+//     } catch (e) {
+//         if (isDev) {
+//             console.info(e);
+//         }
+//         return {
+//             success: false,
+//             message: "Error fetching products",
+//             data: []
+//         };
+//     }
+// }
+
+export async function getRoastedBeansProducts({
+    is_active = true,
+    highlighted = false
+}: ProductsQuery) {
+    try {
+        // const type_filter = `${type ? `&filters[jenis][$eq]=${type}` : ``}`;
+        const is_active_filter = `${is_active ? `&filters[informasi_produk][aktif][$eq]=${is_active || true}` : ``}`;
+        const highlighted_filter = `${highlighted ? `&filters[informasi_produk][highlighted][$eq]=${highlighted}`: ``}`;
+        const populate_field = `
+            &populate[0]=informasi_produk.foto
+            &populate[1]=daftar_varian_kemasan
+            &populate[3]=daftar_rekomendasi_penyajian
+        `.replace(/\s/g, '');
+
+        const request = await fetch(`${API}produk-roasted-beans?${populate_field}${is_active_filter}${highlighted_filter}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        const response: {
+            data: Array<RoastedBeansProduct>;
+        } = await request.json();
+
+        return {
+            ...response,
+            success: false,
+            message: "Success fetching products"
+        };
+    } catch (e) {
+        if (isDev) {
+            console.info(e);
+        }
+        return {
+            success: false,
+            message: "Error fetching products",
+            data: []
+        };
+    }
+}
+
+export async function getGreenBeansProducts({
+    is_active = true,
+    highlighted = false,
+    // event
+}: ProductsQuery) {
+    // const productType = extractType(event.url.pathname);
+
+    // const keyword = event.url.searchParams.get("search");
+    // const brewingMethod = event.url.searchParams.get("brewingMethod");
 
     try {
-        const db = await getDB(platform.env);
-        
-        if (keyword || brewingMethod) {
-            const products = await db.product.findMany({
-                where: {
-                    name: { contains: keyword || "" },
-                    roasted_beans: {
-                        serving_recommendation: {
-                            some: { 
-                                name: { contains: brewingMethod || '' }
-                            }
-                        }
-                    },
-                    is_active: true,
-                    type: { contains: productType }
-                }
-            })
+        // const type_filter = `${type ? `&filters[jenis][$eq]=${type}` : ``}`;
+        const is_active_filter = `${is_active ? `&filters[informasi_produk][aktif][$eq]=${is_active || true}` : ``}`;
+        const highlighted_filter = `${highlighted ? `&filters[informasi_produk][highlighted][$eq]=${highlighted}`: ``}`;
 
-            return {
-                data: products,
-                success: true,
-                message: "Success retrieved user" 
-            };
-        }
-        const products = await db.product.findMany({
-            where: {
-                type: { contains: productType }
-            }
-        })
+        const request = await fetch(`${API}produk-green-beans?populate=all${is_active_filter}${highlighted_filter}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        const response: {
+            data: Array<GreenBeansProduct>;
+        } = await request.json();
 
         return {
-            data: products,
-            success: true,
-            message: "Success retrieved user" 
-        };
-
-    } catch (error) {
-        return {
-            data: [],
+            ...response,
             success: false,
-            message: "Error in server" 
-        };   
+            message: "Success fetching products"
+        };
+    } catch (e) {
+        if (isDev) {
+            console.info(e);
+        }
+        return {
+            success: false,
+            message: "Error fetching products",
+            data: []
+        };
+    }
+}
+
+export async function getToolsProducts({
+    is_active = true,
+    highlighted = false
+}: ProductsQuery) {
+    try {
+        const is_active_filter = `${is_active ? `&filters[informasi_produk][aktif][$eq]=${is_active || true}` : ``}`;
+        const highlighted_filter = `${highlighted ? `&filters[informasi_produk][highlighted][$eq]=${highlighted}`: ``}`;
+        const populate_field = `
+            &populate[0]=informasi_produk.foto
+            &populate[1]=daftar_fitur_utama
+        `.replace(/\s/g, '');
+
+        const request = await fetch(`${API}produk-tools?${populate_field}${is_active_filter}${highlighted_filter}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        const response: {
+            data: Array<ToolsProduct>;
+            meta: Meta;
+        } = await request.json();
+
+        return {
+            ...response,
+            success: false,
+            message: "Success fetching products"
+        };
+    } catch (e) {
+        if (isDev) {
+            console.info(e);
+        }
+        return {
+            success: false,
+            message: "Error fetching products",
+            data: []
+        };
     }
 }
 
 export async function getProductById({
-    productId,
-    event,
-    // options
-}: { 
-    productId: number, 
-    event: RequestEventLoader<QwikCityPlatform>;
-    options: "Roasted Coffee Beans" | "Green Coffee Beans" | "Coffee Tools";
-}) {
-    const { platform } = event;
-    const db = await getDB(platform.env);
+    type,
+    is_active = true,
+    highlighted = false,
+    event
+}: ProductsQuery) {
 
     try {
-        const product = await db.product.findUnique({
-            where: {
-                id: productId,
-            },
-            include: {
-                roasted_beans: {
-                    include: {
-                        serving_recommendation: true
-                    }
-                },
-                review: {
-                    where: {
-                        product_id: productId,
-                        is_hidden: false
-                    }
-                }
+        // const type_filter = `${type ? `&filters[jenis][$eq]=${type}` : ``}`;
+        const id_filter = `${event.params.id ? `&filters[id][$eq]=${event.params.id}`: ``}`;
+        const is_active_filter = `${is_active ? `&filters[informasi_produk][aktif][$eq]=${is_active || true}` : ``}`;
+        const highlighted_filter = `${highlighted ? `&filters[informasi_produk][highlighted][$eq]=${highlighted}`: ``}`;
+
+        const request = await fetch(`${API}${type || 'produk-green-beans'}?populate=all${id_filter}${is_active_filter}${highlighted_filter}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
             },
         });
 
-        if (!product) {
-            return {
-                success: true,
-                data: null,
-            };
-        }
+        const response: {
+            data: Array<Products>;
+        } = await request.json();
 
         return {
-            success: true,
-            data: product,
+            ...response,
+            success: false,
+            message: "Success fetching products"
         };
-    } catch (error: any) {
-        console.error(`Error fetching product with ID ${productId}:`, error);
+    } catch (e) {
+        if (isDev) {
+            console.info(e);
+        }
         return {
             success: false,
-            message: error.message || "Gagal mengambil detail produk."
+            message: "Error fetching products",
+            data: []
         };
     }
 }
 
-export async function createBaseProduct({
-    values,
+export async function getGreenBeansProductById({
+    is_active = true,
+    highlighted = false,
     event
-}: ActionParams<AllProductForms>) {
-    const { platform, url } = event;
-    // const validPhoto = v.safeParse(ProductPhotoSchema, values.photo);
-    
-    // if (!validPhoto.success) {
-    //     return {
-    //         errors: { photo: validPhoto.issues[0].message }
-    //     }
-    // }
-
-    const productType = extractType(url.pathname);
-
-    const originalDiscountPrice = values.discount ? values.price - (values.price * values.discount / 100) : undefined;
-
-    const discount_price = originalDiscountPrice ? Math.round(originalDiscountPrice / 500) * 500 : undefined;
+}: ProductsQuery) {
 
     try {
-        const uploadedPhoto = await uploadFileToBucket(values.photoFile, platform.env.BUCKET);
-    
-        const db = await getDB(platform.env);
+        const slug_filter = `${event.params.id ? `&filters[slug][$eq]=${event.params.id}`: ``}`;
+        const is_active_filter = `${is_active ? `&filters[informasi_produk][aktif][$eq]=${is_active || true}` : ``}`;
+        const highlighted_filter = `${highlighted ? `&filters[informasi_produk][highlighted][$eq]=${highlighted}`: ``}`;
+        const populate_field = `
+            &populate[0]=informasi_produk.foto
+            &populate[1]=ulasan_produk_green_beans.informasi_ulasan
+        `.replace(/\s/g, '');
 
-        const productData = {
-            name: values.name,
-            description: values.description,
-            photo: uploadedPhoto.path,
-            highlight: values.highlight,
-            stock: values.stock,
-            price: values.price,
-            discount: values.discount,
-            discount_price,
-            weight: values.weight,
-            type: productType,
-            is_active: true,
-            is_highlight: false
-        };
-
-        const product = await db.product.create({ data: productData });
-
-        if (product) {
-            return product;
-        }
-    } catch (error) {
-        console.error("Error creating product");
-    }
-}
-
-export async function updateBaseProduct({
-    values,
-    event
-}: ActionParams<AllProductForms>) {
-    const { platform, url} = event;
-
-    const productId = parseInt(event.params.id);
-
-    const productType = extractType(url.pathname);
-
-    const originalDiscountPrice = values.discount ? values.price - (values.price * values.discount / 100) : undefined;
-
-    const discount_price = originalDiscountPrice ? Math.round(originalDiscountPrice / 500) * 500 : undefined;
-    
-    const photoChanged = v.safeParse(ProductPhotoSchema, values.photoFile);
-    
-    try {
-        const db = await getDB(platform.env);
-
-        if (photoChanged.success) {
-            await deleteFileFromBucket(values.photo, platform.env.BUCKET);
-            const { path } = await uploadFileToBucket(values.photoFile, platform.env.BUCKET);
-
-            const data: any = {
-                name: values.name,
-                description: values.description,
-                photo: path,
-                highlight: values.highlight || null,
-                stock: values.stock,
-                price: values.price,
-                discount: values.discount || null,
-                discount_price: discount_price || null,
-                weight: values.weight,
-                type: productType
-            };
-
-            Object.keys(data).forEach(key => data[key] === undefined && delete data[key]);
-
-            const updatedProduct = await db.product.update({
-                where: { id: productId },
-                data: data,
-            });    
-
-            return updatedProduct;
-        } else {
-            const data: any = {
-                name: values.name,
-                description: values.description,
-                photo: values.photo,
-                highlight: values.highlight || null,
-                stock: values.stock,
-                price: values.price,
-                discount: values.discount || null,
-                discount_price: discount_price || null,
-                weight: values.weight,
-                type: productType
-            };
-
-            Object.keys(data).forEach(key => data[key] === undefined && delete data[key]);
-
-            const updatedProduct = await db.product.update({
-                where: { id: productId },
-                data: data,
-            });    
-
-            return updatedProduct;
-        }
-    } catch (error) {
-       console.info("Error updating product")
-    }
-    
-}
-
-export async function updateProductStatus({
-    values,
-    event
-}: ActionParams<JSONObject>) {
-    const { platform } = event;
-
-    const validProduct = v.safeParse(
-        v.object({
-            id: v.number(),
-            is_active: v.boolean()
-        }
-    ), values);
-
-    
-    if (!validProduct.success) {
-        return {
-            success: false,
-            message: "Status gagal diperbarui!!"
-        };
-    }
-    
-    try {
-        const db = await getDB(platform.env);
-
-        await db.product.update({
-            where: { id: validProduct.output.id},
-            data: {
-                is_active: !validProduct.output.is_active
-            }
-        });
-        
-        return {
-            success: true,
-            message: "Status Product berhasil diperbarui!!"
-        };
-    } catch (error) {
-        return {
-            success: true,
-            message: "Status Product gagal diperbarui!!"
-        };
-    }
-}
-
-export async function updateProductHighlight({
-    values,
-    event
-}: {
-    values: JSONObject;
-    event: RequestEventAction<QwikCityPlatform>;
-}) {
-    const { platform } = event;
-
-    const validUser = v.safeParse(
-        v.object({
-            id: v.number(),
-            is_highlight: v.nullable(v.boolean())
-        }
-    ), values);
-
-    if (!validUser.success) {
-        return {
-            success: false,
-            message: "Highlight gagal diperbarui!!"
-        };
-    }
-    
-    try {
-        const db = await getDB(platform.env);
-
-        await db.product.update({
-            where: { id: validUser.output.id },
-            data: {
-                is_highlight: !validUser.output.is_highlight
-            }
-        });
-        
-        return {
-            success: true,
-            message: "Highlight Product berhasil diperbarui!!"
-        };
-    } catch (error) {
-        return {
-            success: false,
-            message: "Highlight Product gagal diperbarui!!"
-        };
-    }
-}
-
-export async function deleteProduct({
-    values,
-    event
-}: {
-    values: JSONObject;
-    event: RequestEventAction<QwikCityPlatform>;
-}) {
-    const { platform, redirect } = event;
-    const id = parseInt(values.id as string);
-
-    try {
-        const db = await getDB(platform.env);
-
-        const productToDelete = await db.product.findUnique({
-            where: { id: id },
-            select: {
-                id: true,
-                type: true,
-                photo: true,
-                roasted_beans: {
-                    select: {
-                        id: true,
-                    }
-                },
+        const request = await fetch(`${API}produk-green-beans?${populate_field}${slug_filter}${is_active_filter}${highlighted_filter}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
             },
         });
 
-        if (!productToDelete) {
-            return {
-                success: false,
-                message: "Produk tidak ditemukan."
-            };
-        }
-
-        if (
-            productToDelete.type === 'Roasted Coffee Beans' &&
-            productToDelete.roasted_beans
-        ) {
-            await db.serving_Recomendation.deleteMany({
-                    where: { roasted_beans_product_id: productToDelete.roasted_beans.id }
-            });
         
-            await db.roasted_Beans_Product.delete({
-                where: { id: productToDelete.roasted_beans.id }
-            });
-        }
-
-        await db.product.delete({
-            where: { id: id }
-        });
-
-        if (productToDelete.photo) {
-            await deleteFileFromBucket(productToDelete.photo, platform.env.BUCKET);
-        }
+        const response: {
+            data: Array<GreenBeansProductWithReviews>;
+        } = await request.json();
 
         return {
-            success: true,
-            message: "Produk berhasil dihapus!"
+            ...response,
+            success: false,
+            message: "Success fetching products"
         };
-    } catch (error) {
-        console.error("Error deleting product");
+    } catch (e) {
+        if (isDev) {
+            console.info(e);
+        }
+        return {
+            success: false,
+            message: "Error fetching products",
+            data: []
+        };
     }
-    throw redirect(301, "/cms/products/roasted-coffee-beans");
+}
+
+export async function getRoastedBeansProductById({
+    is_active = true,
+    highlighted = false,
+    event
+}: ProductsQuery) {
+
+    try {
+        const slug_filter = `${event.params.id ? `&filters[slug][$eq]=${event.params.id}`: ``}`;
+        const is_active_filter = `${is_active ? `&filters[informasi_produk][aktif][$eq]=${is_active || true}` : ``}`;
+        const highlighted_filter = `${highlighted ? `&filters[informasi_produk][highlighted][$eq]=${highlighted}`: ``}`;
+        const populate_field = `
+            &populate[0]=informasi_produk.foto
+            &populate[1]=daftar_varian_kemasan
+            &populate[3]=daftar_rekomendasi_penyajian
+            &populate[4]=ulasan_produk_roasted_beans.informasi_ulasan
+        `.replace(/\s/g, '');
+
+        const request = await fetch(`${API}produk-roasted-beans?${populate_field}${slug_filter}${is_active_filter}${highlighted_filter}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        
+        const response: {
+            data: Array<RoastedBeansProductWithReviews>;
+        } = await request.json();
+
+        return {
+            ...response,
+            success: false,
+            message: "Success fetching products"
+        };
+    } catch (e) {
+        if (isDev) {
+            console.info(e);
+        }
+        return {
+            success: false,
+            message: "Error fetching products",
+            data: []
+        };
+    }
+}
+
+export async function getToolsProductById({
+    is_active = true,
+    highlighted = false,
+    event
+}: ProductsQuery) {
+    try {
+        const slug_filter = `${event.params.id ? `&filters[slug][$eq]=${event.params.id}`: ``}`;
+        const is_active_filter = `${is_active ? `&filters[informasi_produk][aktif][$eq]=${is_active || true}` : ``}`;
+        const highlighted_filter = `${highlighted ? `&filters[informasi_produk][highlighted][$eq]=${highlighted}`: ``}`;
+        const populate_field = `
+            &populate[0]=informasi_produk.foto
+            &populate[1]=daftar_fitur_utama
+        `.replace(/\s/g, '');
+
+        const request = await fetch(`${API}produk-tools?${populate_field}${slug_filter}${is_active_filter}${highlighted_filter}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        
+        const response: {
+            data: Array<ToolsProductWithReviews>;
+        } = await request.json();
+
+        return {
+            ...response,
+            success: false,
+            message: "Success fetching products"
+        };
+    } catch (e) {
+        if (isDev) {
+            console.info(e);
+        }
+        return {
+            success: false,
+            message: "Error fetching products",
+            data: []
+        };
+    }
 }
 
 export function extractType(pathname: string) {

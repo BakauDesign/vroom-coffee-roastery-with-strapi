@@ -1,302 +1,96 @@
-import { CreateOrderCustomerForm } from "~/schema/order";
+import { RequestEventAction, RequestEventLoader } from "@builder.io/qwik-city";
+import { isDev } from '@builder.io/qwik';
+import { CreateRoastedBeanOrderForm, CreateToolOrderForm } from '~/schema/order';
 
-import { getDB } from "~/lib/db";
-import type { RequestEventAction, RequestEventLoader } from "@builder.io/qwik-city";
+const API = `${isDev ? "http://localhost:1337/api/" : "https://cms.js-helmet.com/api/"}`;
 
-interface ActionParams<T extends any> {
+export interface LoaderParams {
+    event: RequestEventLoader<QwikCityPlatform>;
+}
+
+export interface ActionParams<T extends any> {
     values: T;
     event: RequestEventAction<QwikCityPlatform>;
 }
 
-interface LoaderParams {
-    event: RequestEventLoader<QwikCityPlatform>
-}
-
-export async function createOrderCustomer({
+export async function createRoastedBeansOrder({
     values,
-    event,
-}: ActionParams<CreateOrderCustomerForm>) {
-    const { platform, redirect } = event;
-
-    const db = await getDB(platform.env);
-
+    event: { redirect }
+}: ActionParams<CreateRoastedBeanOrderForm>) {
     try {
-        const totalCost = values.purchasedProduct.reduce((accumulator, currentProduct) => {
-            return accumulator + (currentProduct.price * currentProduct.quantity);
-        }, 0);
+        const cleanedValues = {
+            ...values,
+            produk_yang_dibeli: values.produk_yang_dibeli.map((item) => {
+                const { documentId, ...rest } = item;
+                return rest;
+            }),
+        };
 
-        const orderData = {
-            buyer_name: values.buyer_name,
-            whatsapp_number: parseInt(values.whatsapp_number),
-            address: values.address,
-            courier_notes: values.courier_notes,
-            status: "Menunggu Konfirmasi",
-            tracking_number: '',
-            payment_method: "Transfer Bank",
-            shipping_cost: values.shipping.cost,
-            total_cost: totalCost,
+        const request = await fetch(`${API}pesanan-produk-roasted-beans`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ data: cleanedValues })
+        });
 
-            shipping_id: values.shipping.id
+        if (isDev) {
+            const response = await request.json();
+            console.info(response);
         }
 
-        const newOrder = await db.order.create({
-            data: orderData
-        });
-
-        if (!newOrder) {
-            return;
+        if (request.ok) {
+            return redirect(301, '/products/roasted-coffee-beans/orders/success',);
+        } else {
+            return redirect(301, '/products/roasted-coffee-beans/orders/error',);
         }
-
-        const purchasedProductsData = values.purchasedProduct.map(pr => ({
-            name: pr.name,
-            type: pr.type,
-            price: pr.price,
-            weight: pr.weight,
-            quantity: pr.quantity,
-            order_id: newOrder.id,
-            product_id: pr.product_id
-        }));
-
-        if (purchasedProductsData.length > 0) {
-            await db.purchased_Product.createMany({ data: purchasedProductsData });
+    } catch (e) {
+        if (isDev) {
+            console.info(e);
         }
-
-        redirect(301, "/products/orders/success");
-
-        return {
-            success: true,
-            message: "Order berhasil ditambahkan!"
-        };
-
-    } catch (error: any) {
-        redirect(301, "/products/orders/error");
-
-        return {
-            success: false,
-            message: error.message || "Gagal menambahkan Order",
-            errors: {
-                general: (error.meta?.cause || error.message || 'Terjadi kesalahan tidak dikenal.') as string
-            }
-        };
+        throw redirect(301, '/products/roasted-coffee-beans/orders/error',);
     }
 }
 
-export async function changeOrderStatus({
+
+export async function createToolsOrder({
     values,
-    event,
-}: ActionParams<any>) {
-    const { platform, redirect } = event;
-
-    const db = await getDB(platform.env);
-
+    event: { redirect }
+}: ActionParams<CreateToolOrderForm>) {
     try {
-        await db.order.update({
-            where: {
-                id: parseInt(values.id)
+        const cleanedValues = {
+            ...values,
+            produk_yang_dibeli: values.produk_yang_dibeli.map((item) => {
+                const { documentId, ...rest } = item;
+                return rest;
+            }),
+        };
+
+        console.info(cleanedValues)
+
+        const request = await fetch(`${API}pesanan-produk-tools`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
             },
-            data: {
-                status: values.status
-            }
-        })
-
-        return {
-            success: true,
-            data: [],
-            message: "Status order berhasil diperbarui!"
-        };
-
-    } catch (error: any) {
-        console.info(error)
-        return {
-            success: false,
-            data: [],
-            message: error.message || "Status order berhasil diperbarui",
-            errors: {
-                general: (error.meta?.cause || error.message || 'Terjadi kesalahan tidak dikenal.') as string
-            }
-        };
-    } finally {
-        redirect(301, "/cms/orders");
-    }
-}
-
-export async function deleteOrder({
-    values,
-    event,
-}: ActionParams<any>) {
-    const { platform, redirect } = event;
-    const orderId = parseInt(values.id);
-
-    const db = await getDB(platform.env);
-
-    try {
-        await db.purchased_Product.deleteMany({
-            where: {
-                order_id: orderId
-            }
+            body: JSON.stringify({ data: cleanedValues })
         });
 
-        await db.order.delete({
-            where: {
-                id: orderId
-            }
-        })
+        if (isDev) {
+            const response = await request.json();
+            console.info(response);
+        }
+        console.info(request.ok, request.status)
 
-        return {
-            success: true,
-            data: [],
-            message: "Order berhasil dihapus!"
-        };
-
-    } catch (error: any) {
-        console.info(error)
-        return {
-            success: false,
-            data: [],
-            message: error.message || "Gagal menghapus Order",
-            errors: {
-                general: (error.meta?.cause || error.message || 'Terjadi kesalahan tidak dikenal.') as string
-            }
-        };
-    } finally {
-        redirect(301, "/cms/orders");
-    }
-}
-
-export async function getOrders({
-    event,
-}: LoaderParams) {
-    const { platform } = event;
-
-    const db = await getDB(platform.env);
-
-    try {
-        const orders = await db.order.findMany({
-            include: {
-                purchasedProduct: true,
-                shipping_data: true
-            }
-        });
-
-        return {
-            success: true,
-            data: orders,
-            message: "Order berhasil diambil!"
-        };
-
-    } catch (error: any) {
-        console.error("Error creating Order", error);
-        return {
-            success: false,
-            orders: [],
-            message: error.message || "Gagal menambahkan Order",
-            errors: {
-                general: (error.meta?.cause || error.message || 'Terjadi kesalahan tidak dikenal.') as string
-            }
-        };
-    }
-}
-
-
-export async function getTotalOrder({
-    event,
-}: LoaderParams) {
-    const { platform } = event;
-
-    const db = await getDB(platform.env);
-
-    const today = new Date();
-    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999);
-
-    try {
-        const totalOrderCount = await db.order.count({
-            where: {
-                date: {
-                    gte: startOfMonth,
-                    lte: endOfMonth
-                }
-            }
-        });
-
-        return totalOrderCount;
-
-    } catch (error) {
-        console.error("Error fetching total orders:", error);
-        throw error;
-    }
-}
-
-
-export async function getOrderRevenue({
-    event,
-}: LoaderParams) {
-    const { platform } = event;
-
-    const db = await getDB(platform.env);
-
-    const today = new Date();
-    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999);
-
-    try {
-        const revenue = await db.order.aggregate({
-            _sum: {
-                total_cost: true
-            },
-            where: {
-                date: {
-                    gte: startOfMonth,
-                    lte: endOfMonth
-                },
-                status: "Selesai"
-            }
-        });
-
-        return revenue._sum.total_cost || 0;
-
-    } catch (error) {
-        console.error("Error fetching total orders:", error);
-        throw error;
-    }
-}
-
-interface OrdersTotal extends LoaderParams {
-    status: Array<string>;
-}
-
-export async function getOrderTotalByStatus({
-    event,
-    status
-}: OrdersTotal) {
-    const { platform } = event;
-
-    const db = await getDB(platform.env);
-
-    const today = new Date();
-    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999);
-
-    try {
-        const ordersToProcess = await db.order.count({
-            where: {
-                status: {
-                    notIn: status
-                },
-                date: {
-                    gte: startOfMonth,
-                    lte: endOfMonth
-                }
-            },
-            orderBy: {
-                date: 'asc'
-            }
-        });
-
-        return ordersToProcess;
-
-    } catch (error) {
-        console.error("Error fetching orders to process:", error);
-        throw error;
+        if (request.ok) {
+            return redirect(301, '/products/coffee-tools/orders/success',);
+        } else {
+            return redirect(301, '/products/coffee-tools/orders/error',);
+        }
+    } catch (e) {
+        if (isDev) {
+            console.info(e);
+        }
+        throw redirect(301, '/products/coffee-tools/orders/error',);
     }
 }

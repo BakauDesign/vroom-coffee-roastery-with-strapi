@@ -1,7 +1,7 @@
 import { component$ } from '@builder.io/qwik';
 import { Link } from '@builder.io/qwik-city';
 
-import Logo from "~/assets/logo/Logo Primary Dark.avif";
+import Logo from "~/assets/logo/Main Logo.avif";
 
 export const Footer = component$(() => { 
     return (
@@ -10,7 +10,7 @@ export const Footer = component$(() => {
             <div class="flex flex-col lg:flex-row lg:justify-between gap-[60px]">
 
                 <figure class="flex flex-col gap-y-6 max-w-[400px]">
-                    <img alt="Logo" src={Logo} class="h-[100px] max-w-[120px] flex items-center justify-center bg-primary-50 rounded-[4px] object-cover" height={150} width={150} />
+                    <img alt="Logo" src={Logo} class="object-contain h-[100px] max-w-[120px] flex items-center justify-center rounded-[4px]" height={150} width={150} />
 
                     <figcaption class="flex flex-col gap-y-3 text-neutral-custom-900">
                         <h1 class="font-medium text-label-small sm:text-label-medium">
@@ -42,7 +42,7 @@ export const Footer = component$(() => {
 
                         <ul class="*:text-neutral-700">
                             <li><Link href='/' class="py-1">📍 Jl. Kisamaun No.77, Tangerang</Link></li>
-                            <li><Link href='/products/roasted-coffee-beans' class="py-1">📞 +62 123 4567 890</Link></li>
+                            <li><Link href='/products/roasted-coffee-beans' class="py-1">📞 +62 812-9333-1050</Link></li>
                             <li><Link href='/about-us' class="py-1">✉️ hello@vroomcoffee.id</Link></li>
                         </ul>
                     </li>

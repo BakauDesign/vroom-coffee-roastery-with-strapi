@@ -1,6 +1,7 @@
 import {
     $,
     component$,
+    isDev,
     useContext
     // useContextProvider
     // isDev
@@ -15,13 +16,11 @@ import InfoIcon from "~/assets/Icons/Info.png"
 import { Button } from "~/components/main/button";
 import {
     routeLoader$,
-    useLocation,
     useNavigate
 } from "@builder.io/qwik-city";
-import { formatRupiah, isLocalhost } from "~/lib/utils";
-import { OrderContext } from "~/context/order-context";
-import type { PurchasedProductType } from "~/context/order-context";
-import { getToolsProductById } from "~/server/services/products/tools";
+import { formatRupiah } from "~/lib/utils";
+import { getToolsProductById } from "~/server/services/products";
+import { OrderToolContext, type PurchasedToolProductType } from "~/context/order-context";
 
 // import {
 //     // formAction$,
@@ -65,7 +64,7 @@ export const useProductDetail = routeLoader$(
 
         const result = await getToolsProductById({ event });
 
-        if (!result.data) {
+        if (!result.data.length) {
             throw redirect(302, "/products/coffee-tools");
         }
 
@@ -75,24 +74,30 @@ export const useProductDetail = routeLoader$(
 
 export default component$(() => {
     const product = useProductDetail();
-    
-    const loc = useLocation();
+
     const nav = useNavigate();
 
-    const order = useContext(OrderContext);
+    const order = useContext(OrderToolContext);
 
     const addToOrder = $(() => {
-        const newItem: PurchasedProductType = {
-            product_id: product.value.id,
-            name: product.value.name,
-            type: product.value.type,
-            price: product.value.price,
-            weight: product.value.weight,
-            quantity: 1
+        const newItem: PurchasedToolProductType = {
+            documentId: product.value[0].documentId,
+            nama_produk: product.value[0].informasi_produk.nama,
+            varian_harga: product.value[0].diskon ? product.value[0].harga_diskon : product.value[0].harga,
+            varian_kemasan: product.value[0].kemasan,
+            varian_berat: product.value[0].berat,
+            kuantitas: 1
         };
-
-        order.value = [...order.value, newItem];
+    
+        const updatedItems = order.value.filter(
+            (item) => item.documentId !== newItem.documentId
+        );
+    
+        updatedItems.push(newItem);
+    
+        order.value = updatedItems;
     });
+
 
     return (
         <>
@@ -102,40 +107,40 @@ export default component$(() => {
                     <section class="detail">
                         <article class="headline-and-supporting-headline grid grid-cols-1 items-center gap-4 lg:gap-6">
                             <h1>
-                                { product.value.name }
+                                { product.value[0].informasi_produk.nama }
                             </h1>
 
                             <p>
-                                { product.value.description.slice(0, 107) }
+                                { product.value[0].informasi_produk.deskripsi.slice(0, 107) }
                             </p>
                         </article>
 
                         <article class="price-stock">
                             <section class="price-weight-wrapper">
-                                { product.value.discount ? (
+                                { product.value[0].diskon ? (
                                     <section class="price-discount">
                                         <h1>
-                                            {formatRupiah(product.value.price)}
+                                            {formatRupiah(parseInt(product.value[0].harga))}
                                         </h1>
 
                                         <p>
-                                            {product.value.discount}%
+                                            {product.value[0].diskon}%
                                         </p>
                                     </section>
                                 ) : null}
                                 
                                 <h1 class="price-weight">
-                                    { product.value.discount_price ? (
-                                        `${formatRupiah(product.value.discount_price)}/${product.value.weight}gr`
+                                    { product.value[0].diskon ? (
+                                        `${formatRupiah(parseInt(product.value[0].harga_diskon))}`
                                     ) : (
-                                        `${formatRupiah(product.value.price)}/${product.value.weight}gr`
+                                        `${formatRupiah(parseInt(product.value[0].harga))}`
                                     )}
                                 </h1>
                             </section>
 
                             <section class="stock">
                                 <p>
-                                    SISA {product.value.stock} PCS
+                                    SISA {product.value[0].stok} PCS
                                 </p>
                             </section>
                         </article>
@@ -147,27 +152,11 @@ export default component$(() => {
                             variant="primary"
                             size="large"
                             onClick$={() => {
-                                // insert(form, 'purchasedProduct', {
-                                //     value: {
-                                //         name: product.value.name,
-                                //         type: product.value.type,
-                                //         price: product.value.price,
-                                //         weight: product.value.weight,
-                                //         quantity: 1
-                                //     }
-                                // })
                                 addToOrder();
-                                nav("/products/orders/create");
+                                nav("/products/coffee-tools/orders/create");
                             }}
                         >
                             Beli Sekarang
-                        </Button>
-
-                        <Button
-                            variant="secondary"
-                            size="large"
-                        >
-                            Beli di Tokopedia
                         </Button>
                     </section>
                 </figcaption>
@@ -175,22 +164,23 @@ export default component$(() => {
                 <section class="product-image max-h-[500px]">
                     <div class="hidden lg:block" />
                     <img 
-                        src={`${isLocalhost(loc.url) ? `http://127.0.0.1:8788/media/${product.value.photo}` : `https://vroom-coffee-roastery.pages.dev/media/${product.value.photo}`}`}
+                        src={`${isDev ? `http://localhost:1337${product.value[0].informasi_produk.foto.url}` : `${product.value[0].informasi_produk.foto.url}`}`}
                         alt="Product image"
                         height={500}
                         width={500}
                     />
 
-                    {product.value.highlight ? (
+                    {product.value[0].informasi_produk.highlight ? (
                         <article class="higlight">
                             <img
                                 src={InfoIcon}
                                 alt="Info Icon"
                                 height={100}
                                 width={100}
+                                class="min-h-[60px] min-w-[60px]"
                             />
                             <p>
-                                { product.value.highlight }
+                                { product.value[0].informasi_produk.highlight }
                             </p>
                         </article>
                     ) : (
@@ -221,7 +211,7 @@ export default component$(() => {
                         </h1>
 
                         <p class="font-work-sans text-body-small sm:text-body-medium text-neutral-custom-600 max-w-[800px]">
-                            { product.value.description }
+                            { product.value[0].informasi_produk.deskripsi }
                         </p>
                     </article>
                     
@@ -239,25 +229,25 @@ export default component$(() => {
                             <li>
                                 <p>Material</p>
                                 <p>:</p>
-                                <p>{ product.value.tools?.material || "-" }</p>
+                                <p>{ product.value[0].material || "-" }</p>
                             </li>
 
                             <li>
                                 <p>Kapasitas</p>
                                 <p>:</p>
-                                <p>{ product.value.tools?.capacity || "-" }</p>
+                                <p>{ product.value[0].kapasitas || "-" }</p>
                             </li>
 
                             <li>
                                 <p>Berat</p>
                                 <p>:</p>
-                                <p>{ product.value.weight }g</p>
+                                <p>{ product.value[0].berat }g</p>
                             </li>
 
                             <li>
                                 <p>Aksesori</p>
                                 <p>:</p>
-                                <p>{ product.value.tools?.accessories || '-' }</p>
+                                <p>{ product.value[0].aksesoris || '-' }</p>
                             </li>
                         </ul>
 
@@ -267,13 +257,13 @@ export default component$(() => {
                             <li>
                                 <p>Kemasan</p>
                                 <p>:</p>
-                                <p>{ product.value.tools?.packaging || '-' }</p>
+                                <p>{ product.value[0].kemasan || '-' }</p>
                             </li>
 
                             <li>
                                 <p>Stok Tersedia</p>
                                 <p>:</p>
-                                <p>{ product.value.stock }</p>
+                                <p>{ product.value[0].stok }</p>
                             </li>
                         </ul>
                     </section>

@@ -6,7 +6,7 @@ import type {
 	DocumentHead,
 	// RequestHandler
 } from "@builder.io/qwik-city";
-import { routeLoader$ } from '@builder.io/qwik-city';
+import { routeLoader$, useNavigate } from '@builder.io/qwik-city';
 
 import { Button } from "~/components/main/button";
 import { Gradient } from "~/components/main/gradient";
@@ -17,7 +17,7 @@ import HeroImage_1 from "~/assets/main/home/Hero image 1.avif";
 import ShortDescriptionImage_1 from "~/assets/main/home/Short Description image 1.avif";
 import MockupSocialMedia_Small from "~/assets/main/home/Mockup social media Small.avif"
 import MockupSocialMedia_Large from "~/assets/main/home/Mockup social media Large.avif"
-import { getHighlightedProduct } from "~/server/services/products";
+import { getGreenBeansProducts, getRoastedBeansProducts } from "~/server/services/products";
 import { Product } from "~/components/main/product";
 
 // export const onGet: RequestHandler = async ({ redirect }) => {
@@ -88,13 +88,26 @@ export const useTestimonial = routeLoader$(async () => {
 
 export const useProduct = routeLoader$(
 	async (event) => {
-		return await getHighlightedProduct({ event });
+		const greenBeansProducts = await getGreenBeansProducts({
+			is_active: true,
+			highlighted: true,
+			event
+		});
+
+		const roastedBeansProducts = await getRoastedBeansProducts({
+			is_active: true,
+			highlighted: true,
+			event
+		});
+
+		return { greenBeansProducts, roastedBeansProducts };
 	}
 )
 
 export default component$(() => {
 	const testimonial = useTestimonial();
 	const { value: products } = useProduct();
+	const navigate = useNavigate();
 
 	return (
 		<>			
@@ -138,17 +151,18 @@ export default component$(() => {
 					<figcaption class="content">
 						<article class="headline-and-supporting-headline">
 							<h1>
-								Lebih dari Sekadar Kopi - Itu adalah Cerita
+								Vroom Coffee Roastery - Supply Your Coffee Needs
 							</h1>
 
 							<p>
-								Sejak 2015, Vroom Coffee Roastery berkomitmen untuk mengolah biji kopi  dengan passion dan keahlian. Setiap batch roasting kami adalah perpaduan sains, seni, dan dedikasi untuk menghadirkan rasa yang konsisten dan  memukau.
+								Selamat datang di VROOM Coffee Roastery - supplier terpercaya roast bean dan green bean asal Tangerang yang telah melayani pecinta kopi selama 8 tahun. Kami hadir dengan komitmen untuk menyediakan kopi berkualitas premium dengan harga terjangkau.
 							</p>
 						</article>
 						
 						<section class="actions">
 							<Button
 								variant="primary"
+								onClick$={() => navigate('/about-us')}
 							>
 								Kenali Kami Lebih Dalam
 							</Button>
@@ -160,28 +174,43 @@ export default component$(() => {
 					<section class="content">
 						<article class="headline-and-supporting-headline flex-col lg:justify-between lg:flex-row lg:items-center gap-y-4">
 							<h1>
-								Rekomendasi <br />Spesial dari Roaster Kami
+								Produk<br />Unggulan Kami
 							</h1>
 
 							<p class="text-right lg:max-w-[500px] max-md:self-end">
-								Temukan karakter unik setiap asal-usul biji kopi, dari Aceh Gayo yang fruity hingga Java Bold yang earthy - semua disangrai sempurna untuk dieksplorasi.
+								Kami bangga mempersembahkan hampir 30 varian roast bean dengan produk unggulan
 							</p>
 						</article>
 
 						<section class="grid gap-9 overflow-scroll grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
-							{products.data.map((product) => {
+							{products.roastedBeansProducts.data.map((product) => {
 								return (
 									<Product
-										key={product.id}
-										id={product.id}
-										name={product.name}
-										description={product.description}
-										type={product.type}
-										price={product.price}
-										discount={product.discount}
-										discountPrice={product.discount_price}
-										photo={product.photo}
-										weight={product.weight}
+										key={product.documentId}
+										type="Roasted Coffee Beans"
+										slug={product.slug}
+										documentId={product.documentId}
+										nama={product.informasi_produk.nama}
+										deskripsi={product.informasi_produk.deskripsi}
+										foto={product.informasi_produk.foto}
+										harga={product.daftar_varian_kemasan[0].harga}
+										diskon={product.daftar_varian_kemasan[0].diskon}
+										harga_diskon={product.daftar_varian_kemasan[0].harga_diskon}
+										berat={product.daftar_varian_kemasan[0].berat}
+									/>
+								)
+							})}
+							
+							{products.greenBeansProducts.data.map((product) => {
+								return (
+									<Product
+										key={product.documentId}
+										slug={product.slug}
+										type="Green Coffee Beans"
+										documentId={product.documentId}
+										nama={product.informasi_produk.nama}
+										deskripsi={product.informasi_produk.deskripsi}
+										foto={product.informasi_produk.foto}
 									/>
 								)
 							})}
