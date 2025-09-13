@@ -2,7 +2,7 @@ import { RequestEventAction, RequestEventLoader } from "@builder.io/qwik-city";
 import { isDev } from '@builder.io/qwik';
 import { CreateRoastedBeanOrderForm, CreateToolOrderForm } from '~/schema/order';
 
-const API = `${isDev ? "http://localhost:1337/api/" : "https://cms.js-helmet.com/api/"}`;
+const API = `${isDev ? "http://localhost:1337/api/" : "https://tranquil-birds-0d2a5de0f5.strapiapp.com/api/"}`;
 
 export interface LoaderParams {
     event: RequestEventLoader<QwikCityPlatform>;
