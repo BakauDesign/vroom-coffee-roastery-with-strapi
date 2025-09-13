@@ -285,24 +285,32 @@ export default component$(() => {
                             </h1>
 
                             <section class="grid grid-cols-2 gap-4">
-                                {shippings.value.map((shipping) => {
-                                    return (
-                                        <Shipping.Root
-                                            key={shipping.documentId}
-                                            selected={selectedShipping.value === shipping.documentId}
-                                            onClick$={() => {
-                                                selectedShipping.value = shipping.documentId;
-                                            }}
-                                    >
-                                        <Shipping.Logo src={shipping.logo.url} />
+                                {Array.isArray(shippings.value) && shippings.value.length > 0 ? (
+                                    <>
+                                        {shippings.value.map((shipping) => {
+                                            return (
+                                                <Shipping.Root
+                                                    key={shipping.documentId}
+                                                    selected={selectedShipping.value === shipping.documentId}
+                                                    onClick$={() => {
+                                                        selectedShipping.value = shipping.documentId;
+                                                    }}
+                                                >
+                                                    <Shipping.Logo src={shipping.logo.url} />
 
-                                        <Shipping.Detail>
-                                            <Shipping.Name>{shipping.nama}</Shipping.Name>
-                                            <Shipping.Cost>{formatRupiah(parseInt(shipping.biaya || "0"))}</Shipping.Cost>
-                                        </Shipping.Detail>
-                                    </Shipping.Root>
-                                    );
-                                })}
+                                                    <Shipping.Detail>
+                                                        <Shipping.Name>{shipping.nama}</Shipping.Name>
+                                                        <Shipping.Cost>{formatRupiah(parseInt(shipping.biaya || "0"))}</Shipping.Cost>
+                                                    </Shipping.Detail>
+                                                </Shipping.Root>
+                                            );
+                                        })}
+                                    </>
+                                ) : (
+                                    <p class="col-span-2 text-neutral-custom-600">
+                                        Tidak ada layanan pengiriman tersedia
+                                    </p>
+                                )}
                             </section>
 
                             <Field name="nama_layanan_pengiriman">

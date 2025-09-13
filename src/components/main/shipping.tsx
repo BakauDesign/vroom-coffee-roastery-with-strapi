@@ -1,11 +1,10 @@
 import {
     component$,
+    isDev,
     Slot
 } from '@builder.io/qwik';
 
 import type { QRL, Component } from '@builder.io/qwik';
-import { useLocation } from '@builder.io/qwik-city';
-import { isLocalhost } from '~/lib/utils';
 
 interface ShippingProps {
     selected?: boolean;
@@ -39,8 +38,7 @@ Shipping.Root = component$((props) => {
 });
 
 Shipping.Logo = component$(({ src }) => {
-    const loc = useLocation();
-    return <img src={isLocalhost(loc.url) ? `http://localhost:1337${src}` : `https://vroom-coffee-roastery.pages.dev/media/${src}`} alt="Logo" height={60} width={60} class="h-[60px] w-[60px] object-contain" />;
+    return <img src={isDev ? `http://localhost:1337${src}` : `${src}`} alt="Logo" height={60} width={60} class="h-[60px] w-[60px] object-contain" />;
 });
 
 Shipping.Detail = component$(() => {

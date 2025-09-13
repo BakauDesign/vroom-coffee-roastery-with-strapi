@@ -21,23 +21,22 @@ type ShippingsQuery = {
     event: RequestEventLoader<QwikCityPlatform>;
 }
 
-type Meta = {
-    pagination: {
-        page: number,
-        pageSize: number,
-        pageCount: number,
-        total: number
-    }
-}
+// type Meta = {
+//     pagination: {
+//         page: number,
+//         pageSize: number,
+//         pageCount: number,
+//         total: number
+//     }
+// }
 
 export async function getShipping({
     is_active = true,
 }: ShippingsQuery) {
     try {
-        // const type_filter = `${type ? `&filters[jenis][$eq]=${type}` : ``}`;
-        const is_active_filter = `${is_active ? `&filters[informasi_produk][aktif][$eq]=${is_active || true}` : ``}`;
+        const is_active_filter = `${is_active ? `&filters[aktif][$eq]=${is_active || true}` : ``}`;
         const populate_field = `
-            &populate[0]=foto
+            &populate[0]=logo
         `.replace(/\s/g, '');
 
         const request = await fetch(`${API}layanan-pengirimans?${populate_field}${is_active_filter}`, {
