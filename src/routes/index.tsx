@@ -31,7 +31,7 @@ export const useTestimonial = routeLoader$(async () => {
 		{
 			id: 1,
 			name: "Andi Wijaya",
-			avatar: "https://i.pravatar.cc/150?img=1",
+			avatar: "https://avatar.iran.liara.run/public/33",
 			location: "Jakarta",
 			review: "Produknya sangat berkualitas, pengiriman cepat!",
 			purchasedProducts: [
@@ -42,7 +42,7 @@ export const useTestimonial = routeLoader$(async () => {
 		{
 			id: 2,
 			name: "Budi Santoso",
-			avatar: "https://i.pravatar.cc/150?img=5",
+			avatar: "https://avatar.iran.liara.run/public/21",
 			location: "Bandung",
 			review: "Pelayanannya ramah, packing aman sampai tujuan.",
 			purchasedProducts: [
@@ -53,7 +53,7 @@ export const useTestimonial = routeLoader$(async () => {
 		{
 			id: 3,
 			name: "Citra Dewi",
-			avatar: "https://i.pravatar.cc/150?img=11",
+			avatar: "https://avatar.iran.liara.run/public/59",
 			location: "Surabaya",
 			review: "Aromanya sangat harum, rasa kopinya smooth banget!",
 			purchasedProducts: [
@@ -65,7 +65,7 @@ export const useTestimonial = routeLoader$(async () => {
 		{
 			id: 4,
 			name: "Dian Permata",
-			avatar: "https://i.pravatar.cc/150?img=8",
+			avatar: "https://avatar.iran.liara.run/public/83",
 			location: "Yogyakarta",
 			review: "Ini kopi terenak yang pernah saya beli online!",
 			purchasedProducts: [
@@ -75,7 +75,7 @@ export const useTestimonial = routeLoader$(async () => {
 		{
 			id: 5,
 			name: "Eko Prasetyo",
-			avatar: "https://i.pravatar.cc/150?img=15",
+			avatar: "https://avatar.iran.liara.run/public/22",
 			location: "Bali",
 			review: "Worth the price! Akan beli lagi next time.",
 			purchasedProducts: [

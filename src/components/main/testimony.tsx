@@ -29,7 +29,7 @@ export const Testimony = component$<{ data: TestimonyProps }>(({
         >
             <section class="flex flex-col gap-y-4">
                 <figure class="flex flex-col gap-y-8">
-                    <img src={avatar} alt={`${name} avatar`} height={100} width={100} class="h-[100px] w-[100px] object-cover rounded-[4px] bg-primary-100" />
+                    <img src={avatar} alt={`${name} avatar`} height={100} width={100} class="h-[100px] w-[100px] object-cover rounded-full bg-primary-100" />
 
                     <figcaption class="font-lora font-semibold text-h2-small sm:text-h2-medium">
                         {name},&nbsp;{location}

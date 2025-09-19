@@ -5,7 +5,7 @@ import { Shipping } from '~/interfaces';
 import { RequestEventAction, RequestEventLoader } from "@builder.io/qwik-city";
 import { isDev } from '@builder.io/qwik';
 
-const API = `${isDev ? "http://localhost:1337/api/" : "https://tranquil-birds-0d2a5de0f5.strapiapp.com/api/"}`;
+const API = `${isDev ? "http://localhost:1337/api/" : "https://joyful-rainbow-219376c196.strapiapp.com/api/"}`;
 
 export interface LoaderParams {
     event: RequestEventLoader<QwikCityPlatform>;

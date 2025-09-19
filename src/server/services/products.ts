@@ -4,7 +4,7 @@ import { RequestEventAction, RequestEventLoader } from "@builder.io/qwik-city";
 import { isDev } from '@builder.io/qwik';
 import { GreenBeansProduct, GreenBeansProductWithReviews, Products, RoastedBeansProduct, RoastedBeansProductWithReviews, ToolsProduct, ToolsProductWithReviews } from '~/interfaces';
 
-const API = `${isDev ? "http://localhost:1337/api/" : "https://tranquil-birds-0d2a5de0f5.strapiapp.com/api/"}`;
+const API = `${isDev ? "http://localhost:1337/api/" : "https://joyful-rainbow-219376c196.strapiapp.com/api/"}`;
 
 export interface LoaderParams {
     event: RequestEventLoader<QwikCityPlatform>;
@@ -112,8 +112,11 @@ export async function getHighlightedProduct ({
 
 export async function getRoastedBeansProducts({
     is_active = true,
-    highlighted = false
+    highlighted = false,
+    event: { params }
 }: ProductsQuery) {
+    console.info(params)
+
     try {
         // const type_filter = `${type ? `&filters[jenis][$eq]=${type}` : ``}`;
         const is_active_filter = `${is_active ? `&filters[informasi_produk][aktif][$eq]=${is_active || true}` : ``}`;
