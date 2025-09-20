@@ -39,7 +39,7 @@ SearchBarFilterBlock.Root = component$(() => {
 
 SearchBarFilterBlock.SearchBar = component$((
     { ...props }) => {
-    return <SearchBar {...props} class="w-full" />
+    return <SearchBar {...props} class="w-full max-w-[400px]" />
 });
 
 SearchBarFilterBlock.Filter = component$((
