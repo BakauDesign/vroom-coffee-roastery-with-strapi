@@ -31,7 +31,7 @@ export const SearchBarFilterBlock = component$(() => {
 
 SearchBarFilterBlock.Root = component$(() => {
     return (
-        <section class="flex flex-row-reverse gap-6">
+        <section class="flex flex-col-reverse md:flex-row-reverse gap-6">
             <Slot />
         </section>
     );
@@ -39,7 +39,7 @@ SearchBarFilterBlock.Root = component$(() => {
 
 SearchBarFilterBlock.SearchBar = component$((
     { ...props }) => {
-    return <SearchBar {...props} />
+    return <SearchBar {...props} class="w-full" />
 });
 
 SearchBarFilterBlock.Filter = component$((
