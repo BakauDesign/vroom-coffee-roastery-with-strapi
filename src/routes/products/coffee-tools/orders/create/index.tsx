@@ -193,7 +193,7 @@ export default component$(() => {
                                     {(field: any, props: any) => (
                                         <Input.Root>
                                             <Input.Header>
-                                                <Input.Label>Nomor Whatsapp Aktif (Tanpa Nol)</Input.Label>
+                                                <Input.Label>Nomor Whatsapp Aktif</Input.Label>
                                             </Input.Header>
                                                             
                                             <Input.FieldText
@@ -201,7 +201,7 @@ export default component$(() => {
                                                 id={field.name}
                                                 name={field.name}
                                                 value={field.value}
-                                                placeholder="contoh: 81212345678"
+                                                placeholder="contoh: +6281212345678"
                                             />
 
                                             <Input.Message>
