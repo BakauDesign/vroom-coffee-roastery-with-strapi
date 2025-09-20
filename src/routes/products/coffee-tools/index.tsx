@@ -94,7 +94,7 @@ export default component$(() => {
                         </Button>
                     </figure>
                     <section class="grid gap-9 overflow-scroll grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
-                        {products.data.map((product) => {
+                        {products.data ? products.data.map((product) => {
                             return (
                                 <Product
                                     key={product.documentId}
@@ -110,7 +110,7 @@ export default component$(() => {
                                     berat={product.berat}
                                 />
                             )
-                        })}
+                        }) : null}
                     </section>
                 </section>
             </div>

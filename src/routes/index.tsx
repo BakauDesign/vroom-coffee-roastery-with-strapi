@@ -17,7 +17,7 @@ import HeroImage_1 from "~/assets/main/home/Hero image 1.avif";
 import ShortDescriptionImage_1 from "~/assets/main/home/Short Description image 1.avif";
 import MockupSocialMedia_Small from "~/assets/main/home/Mockup social media Small.avif"
 import MockupSocialMedia_Large from "~/assets/main/home/Mockup social media Large.avif"
-import { getGreenBeansProducts, getRoastedBeansProducts } from "~/server/services/products";
+import { getGreenBeansProducts, getRoastedBeansProducts, getToolsProducts } from "~/server/services/products";
 import { Product } from "~/components/main/product";
 
 // export const onGet: RequestHandler = async ({ redirect }) => {
@@ -100,7 +100,13 @@ export const useProduct = routeLoader$(
 			event
 		});
 
-		return { greenBeansProducts, roastedBeansProducts };
+		const toolsProducts = await getToolsProducts({
+			is_active: true,
+			highlighted: true,
+			event
+		});
+
+		return { greenBeansProducts, roastedBeansProducts, toolsProducts };
 	}
 )
 
@@ -183,7 +189,7 @@ export default component$(() => {
 						</article>
 
 						<section class="grid gap-9 overflow-scroll grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
-							{products.roastedBeansProducts.data.map((product) => {
+							{products.roastedBeansProducts.data ? products.roastedBeansProducts.data.map((product) => {
 								return (
 									<Product
 										key={product.documentId}
@@ -199,9 +205,9 @@ export default component$(() => {
 										berat={product.daftar_varian_kemasan[0].berat}
 									/>
 								)
-							})}
+							}) : null}
 							
-							{products.greenBeansProducts.data.map((product) => {
+							{products.greenBeansProducts.data ? products.greenBeansProducts.data.map((product) => {
 								return (
 									<Product
 										key={product.documentId}
@@ -213,7 +219,25 @@ export default component$(() => {
 										foto={product.informasi_produk.foto}
 									/>
 								)
-							})}
+							}) : null}
+							
+							{products.toolsProducts.data ? products.toolsProducts.data.map((product) => {
+								return (
+									<Product
+										key={product.documentId}
+										slug={product.slug}
+										type="Coffee Tools"
+										documentId={product.documentId}
+										nama={product.informasi_produk.nama}
+										deskripsi={product.informasi_produk.deskripsi}
+										foto={product.informasi_produk.foto}
+										harga={product.harga}
+										diskon={product.diskon}
+										harga_diskon={product.harga_diskon}
+										berat={product.berat}
+									/>
+								)
+							}) : null}
 						</section>
 					</section>
 				</section>

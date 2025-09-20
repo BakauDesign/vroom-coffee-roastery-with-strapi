@@ -69,7 +69,7 @@ export default component$(() => {
 
                 <section class="general-section gap-y-[60px] items-center">
                     <section class="grid gap-9 overflow-scroll grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
-                        {products.data.map((product) => {
+                        {products.data ? products.data.map((product) => {
                             return (
                                 <Product
                                     key={product.documentId}
@@ -81,7 +81,7 @@ export default component$(() => {
 									foto={product.informasi_produk.foto}
                                 />
                             )
-                        })}
+                        }) : null}
                     </section>
                 </section>
             </div>

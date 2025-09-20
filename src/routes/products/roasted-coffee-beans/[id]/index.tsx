@@ -76,7 +76,7 @@ export default component$(() => {
     return (
         <>
             {/* <Form> */}
-            <figure class="hero-product grid-cols-2">
+            <figure class="hero-product lg:grid-cols-2">
                 <figcaption class="content">
                     <section class="detail">
                         <article class="headline-and-supporting-headline grid grid-cols-1 items-center gap-4 lg:gap-6">
