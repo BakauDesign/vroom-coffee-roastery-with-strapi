@@ -113,21 +113,24 @@ export async function getHighlightedProduct ({
 export async function getRoastedBeansProducts({
     is_active = true,
     highlighted = false,
-    event: { params }
+    event: { query }
 }: ProductsQuery) {
-    console.info(params)
-
     try {
-        // const type_filter = `${type ? `&filters[jenis][$eq]=${type}` : ``}`;
+        const brewingMethod = query.get("brewingMethod");
+        const search = query.get("search");
+
         const is_active_filter = `${is_active ? `&filters[informasi_produk][aktif][$eq]=${is_active || true}` : ``}`;
         const highlighted_filter = `${highlighted ? `&filters[informasi_produk][highlighted][$eq]=${highlighted}`: ``}`;
+        const brewing_method_filter = `${brewingMethod ? `&filters[daftar_rekomendasi_penyajian][nama][$eqi]=${brewingMethod}` : ``}`;
+        const search_filter = `${search ? `&filters[informasi_produk][nama][$containsi]=${search}` : ``}`;
+
         const populate_field = `
             &populate[0]=informasi_produk.foto
             &populate[1]=daftar_varian_kemasan
             &populate[3]=daftar_rekomendasi_penyajian
         `.replace(/\s/g, '');
 
-        const request = await fetch(`${API}produk-roasted-beans?${populate_field}${is_active_filter}${highlighted_filter}`, {
+        const request = await fetch(`${API}produk-roasted-beans?${populate_field}${is_active_filter}${highlighted_filter}${brewing_method_filter}${search_filter}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

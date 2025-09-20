@@ -11,6 +11,7 @@ import Magnifier from "~/assets/Icons/Magnifer.svg";
 import { cn } from '~/lib/utils';
 
 export interface SearchBarProps {
+    currentValue?: string;
     class?: ClassList | Signal<ClassList>;
     delay?: number;
     placeholder?: string;
@@ -21,10 +22,11 @@ export const SearchBar = component$<SearchBarProps>(({
     class: className,
     delay = 300, 
     placeholder = 'Search...',
+    currentValue,
     onValueChange$
 }) => {
-    const inputValue = useSignal('');
-    const debouncedValue = useSignal('');
+    const inputValue = useSignal(currentValue || '');
+    const debouncedValue = useSignal(currentValue || '');
 
     useTask$(({ track, cleanup }) => {
         track(() => inputValue.value);

@@ -59,14 +59,18 @@ export function useRoastedProductsCMS() {
     const nav = useNavigate();
     const loc = useLocation();
 
-    const brewingMethod = useSignal(loc.url.searchParams.get('brewingMethod') || 'Semua Metode');
-    const searchKeyword = useSignal("");
-    const currentSearchParams = new URLSearchParams(loc.url.searchParams);
+    const brewingMethodParams = loc.url.searchParams.get('brewingMethod') || 'Semua Metode';
+    const searchKeywordParams = loc.url.searchParams.get('search') || '';
 
+    const brewingMethod = useSignal(brewingMethodParams);
+    const searchKeyword = useSignal(searchKeywordParams);
+    
     // eslint-disable-next-line qwik/no-use-visible-task
     useTask$(({ track }) => {
         track(() => brewingMethod.value);
         track(() => searchKeyword.value);
+        
+        const currentSearchParams = new URLSearchParams(loc.url.searchParams);
 
         if (searchKeyword.value) {
             currentSearchParams.set('search', searchKeyword.value);

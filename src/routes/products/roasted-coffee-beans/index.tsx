@@ -83,6 +83,7 @@ export default component$(() => {
                         class="w-full sm:max-w-[400px]"
                         placeholder="Cari Produk..."
                         onValueChange$={(value) => searchKeyword.value = value}
+                        currentValue={searchKeyword.value}
                     />
 
                     <section class="flex flex-col gap-6">
@@ -101,7 +102,7 @@ export default component$(() => {
 
                 <section class="general-section gap-y-[60px] items-center">
                     <section class="grid gap-9 overflow-scroll grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
-                        {products.data.map((product) => {
+                        {products.data ? products.data.map((product) => {
                             return (
                                 <Product
                                     type="Roasted Coffee Beans"
@@ -117,7 +118,7 @@ export default component$(() => {
                                     berat={product.daftar_varian_kemasan[0].berat}
                                 />
                             )
-                        })}
+                        }) : null}
                     </section>
                 </section>
             </div>
