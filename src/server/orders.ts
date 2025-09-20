@@ -66,8 +66,6 @@ export async function createToolsOrder({
             }),
         };
 
-        console.info(cleanedValues)
-
         const request = await fetch(`${API}pesanan-produk-tools`, {
             method: 'POST',
             headers: {
@@ -80,7 +78,6 @@ export async function createToolsOrder({
             const response = await request.json();
             console.info(response);
         }
-        console.info(request.ok, request.status)
 
         if (request.ok) {
             return redirect(301, '/products/coffee-tools/orders/success',);
