@@ -101,6 +101,12 @@ export default component$(() => {
                 </SearchBarFilterBlock.Root>
 
                 <section class="general-section gap-y-[60px] items-center">
+                    <section class="flex items-center gap-4 font-medium font-work-sans text-label-small sm:text-label-medium text-primary-800">
+                        <p>Menampilkan&nbsp;{products.data.length}&nbsp;produk</p>
+
+                        <span class="h-[1.5px] w-full bg-primary-100" />
+                    </section>
+
                     <section class="grid gap-9 overflow-scroll grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
                         {products.data ? products.data.map((product) => {
                             return (
