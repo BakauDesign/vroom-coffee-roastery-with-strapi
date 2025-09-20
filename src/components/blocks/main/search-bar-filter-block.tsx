@@ -31,7 +31,7 @@ export const SearchBarFilterBlock = component$(() => {
 
 SearchBarFilterBlock.Root = component$(() => {
     return (
-        <section class="flex flex-col-reverse md:flex-row-reverse gap-6">
+        <section class="flex justify-between flex-col-reverse md:flex-row-reverse gap-6">
             <Slot />
         </section>
     );
