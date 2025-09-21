@@ -54,41 +54,6 @@ export function useGreenProducts(initialProducts: Readonly<Signal<{
         }
         page.value = page.value + 1;
     });
-
-    // useTask$(({ track }) => {
-    //     track(() => page.value);
-    //     track(() => initialProducts.value.response?.data);
-
-    //     console.info(page.value)
-
-    //     if (initialProducts.value.response?.data) {
-    //         if (page.value === 1) {
-    //             productsData.value = initialProducts.value.response.data;
-
-    //             const currentSearchParams = new URLSearchParams(loc.url.searchParams);
-    //             currentSearchParams.set('page', page.value.toString());
-
-    //             const newUrl = `${loc.url.pathname}?${currentSearchParams.toString()}`;
-
-    //             if (loc.url.toString() !== newUrl) {
-    //                 // Simpan posisi scroll sebelum navigasi (akan dipulihkan oleh useTask$ lain)
-    //                 if (typeof window !== 'undefined' && window.scrollY > 0) {
-    //                     sessionStorage.setItem(SCROLL_POSITION_KEY, window.scrollY.toString());
-    //                 }
-    //                 nav(newUrl, { replaceState: true });
-    //             }
-    //         } else {
-    //             const newProducts = initialProducts.value.response.data.filter(
-    //                 (newProduct) => !productsData.value.some(
-    //                     (existingProduct) => existingProduct.documentId === newProduct.documentId
-    //                 )
-    //             );
-
-    //             productsData.value.push(...newProducts);
-    //         }
-    //         meta.value = initialProducts.value.response.meta;
-    //     }
-    // })
     
     // eslint-disable-next-line qwik/no-use-visible-task
     useTask$(({ track }) => {
