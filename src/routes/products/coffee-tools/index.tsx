@@ -67,9 +67,9 @@ export default component$(() => {
 
                 <section class="general-section gap-y-[60px] items-center">
                     <figure class="flex flex-col gap-y-4 max-w-[400px] self-center">
-                        <picture>
+                        {/* <picture>
                             <img src="" alt="" />
-                        </picture>
+                        </picture> */}
 
                         <figcaption class="flex flex-col gap-y-3">
                             <article class="flex flex-col gap-y-4">

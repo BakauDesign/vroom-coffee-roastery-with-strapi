@@ -22,7 +22,7 @@ type ProductsQuery = {
     event: RequestEventLoader<QwikCityPlatform>;
 }
 
-type Meta = {
+export type Meta = {
     pagination: {
         page: number,
         pageSize: number,
@@ -143,7 +143,7 @@ export async function getRoastedBeansProducts({
 
         return {
             ...response,
-            success: false,
+            success: true,
             message: "Success fetching products"
         };
     } catch (e) {
@@ -161,19 +161,23 @@ export async function getRoastedBeansProducts({
 export async function getGreenBeansProducts({
     is_active = true,
     highlighted = false,
-    // event
+    event: { query }
 }: ProductsQuery) {
-    // const productType = extractType(event.url.pathname);
-
-    // const keyword = event.url.searchParams.get("search");
-    // const brewingMethod = event.url.searchParams.get("brewingMethod");
+    const asal = query.get("asal");
+    const proses = query.get("proses");
+    const search = query.get("search");
+    const page = query.get("page");
 
     try {
-        // const type_filter = `${type ? `&filters[jenis][$eq]=${type}` : ``}`;
         const is_active_filter = `${is_active ? `&filters[informasi_produk][aktif][$eq]=${is_active || true}` : ``}`;
         const highlighted_filter = `${highlighted ? `&filters[informasi_produk][highlighted][$eq]=${highlighted}`: ``}`;
 
-        const request = await fetch(`${API}produk-green-beans?populate=all${is_active_filter}${highlighted_filter}`, {
+        const page_filter = `${page ? `&pagination[page]=${page}`: ``}`;
+        const asal_filter = `${asal ? `&filters[asal][$eqi]=${asal}` : ``}`;
+        const proses_filter = `${proses ? `&filters[proses][$eqi]=${proses}` : ``}`;
+        const search_filter = `${search ? `&filters[informasi_produk][nama][$containsi]=${search}` : ``}`;
+        
+        const request = await fetch(`${API}produk-green-beans?populate=all&pagination[pageSize]=2${is_active_filter}${highlighted_filter}${search_filter}${asal_filter}${proses_filter}${page_filter}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -182,11 +186,12 @@ export async function getGreenBeansProducts({
 
         const response: {
             data: Array<GreenBeansProduct>;
+            meta: Meta;
         } = await request.json();
 
         return {
-            ...response,
-            success: false,
+            response,
+            success: true,
             message: "Success fetching products"
         };
     } catch (e) {
@@ -196,7 +201,7 @@ export async function getGreenBeansProducts({
         return {
             success: false,
             message: "Error fetching products",
-            data: []
+            response: null
         };
     }
 }

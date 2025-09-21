@@ -21,14 +21,17 @@ export const greenFilterOption = {
     process: [
         { id: 1, label: "Natural" },
         { id: 2, label: "Washed" },
-        { id: 3, label: "Honey" },
-        { id: 4, label: "Semua Proses" }
-    ],
-    grade: [
-        { id: 1, label: "80+" },
-        { id: 2, label: "90+" },
-        { id: 3, label: "Semua Grade" }
+        { id: 3, label: "Semi-Washed" },
+        { id: 4, label: "Full-Washed" },
+        { id: 5, label: "Wet-Hulled" },
+        { id: 6, label: "Honey" },
+        { id: 7, label: "Semua Proses" }
     ]
+    // grade: [
+    //     { id: 1, label: "80+" },
+    //     { id: 2, label: "90+" },
+    //     { id: 3, label: "Semua Grade" }
+    // ]
 };
 
 export const toolsFilterOption = {

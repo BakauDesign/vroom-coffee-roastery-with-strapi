@@ -20,11 +20,17 @@ import { routeLoader$ } from "@builder.io/qwik-city";
 import { getGreenBeansProducts } from "~/server/services/products";
 import { Product } from "~/components/main/product";
 
+import { greenFilterOption as filterOption } from "~/lib/filter-option";
+import { SearchBarFilterBlock } from "~/components/blocks/main/search-bar-filter-block";
+import { useGreenProducts } from "~/hooks/useGreenProducts";
+import { Button } from "~/components/main/button";
+
 // export const onGet: RequestHandler = async ({ redirect }) => {
 // 	if (!isDev) {
 // 		throw redirect(302, "/coming-soon");		
 // 	}
 // };
+
 
 export const useProducts = routeLoader$(
     async ( event ) => {
@@ -33,10 +39,24 @@ export const useProducts = routeLoader$(
 			event
         });
     }
-)
+);
+
+export const useFilter = routeLoader$(async () => {
+    return filterOption;        
+});
 
 export default component$(() => {
-    const { value: products } = useProducts();
+    const products = useProducts();
+
+    const { origin: asalFilter, process: processFilter } = useFilter().value;
+    
+    const {
+        asal,
+        proses,
+        searchKeyword,
+        productsData,
+        loadMore
+    } = useGreenProducts(products);
 
     return (
         <>
@@ -67,9 +87,44 @@ export default component$(() => {
                 <Gradient position="top" />
                 <Gradient position="bottom" />
 
+                <SearchBarFilterBlock.Root>
+                    <SearchBarFilterBlock.SearchBar
+                        class="w-full sm:max-w-[400px]"
+                        placeholder="Cari Produk..."
+                        onValueChange$={(value) => searchKeyword.value = value}
+                        currentValue={searchKeyword.value}
+                    />
+
+                    <section class="flex flex-col gap-6">
+                        <p class="font-lora text-h3-small sm:text-h3-medium lg:text-h3-large font-medium text-neutral-custom-950">
+                            Filter sesuai kebutuhan Anda:
+                        </p>
+
+                        <SearchBarFilterBlock.Filter
+                            label="Asal:"
+                            currentValue={asal}
+                            values={asalFilter}
+                            onClickOption$={(value) => asal.value = value}
+                        />
+
+                        <SearchBarFilterBlock.Filter
+                            label="Proses:"
+                            currentValue={proses}
+                            values={processFilter}
+                            onClickOption$={(value) => proses.value = value}
+                        />
+                    </section>
+                </SearchBarFilterBlock.Root>
+
                 <section class="general-section gap-y-[60px] items-center">
+                    <section class="flex items-center gap-4 font-medium font-work-sans text-label-small sm:text-label-medium text-primary-800">
+                        <p>Menampilkan&nbsp;{productsData.value.length}&nbsp;produk</p>
+
+                        <span class="h-[1.5px] w-full bg-primary-100" />
+                    </section>
+
                     <section class="grid gap-9 overflow-scroll grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
-                        {products.data ? products.data.map((product) => {
+                        {productsData.value.length > 0 ? productsData.value.map((product) => {
                             return (
                                 <Product
                                     key={product.documentId}
@@ -83,6 +138,17 @@ export default component$(() => {
                             )
                         }) : null}
                     </section>
+
+                    {products.value.response && products.value.response.meta.pagination.page < products.value.response.meta.pagination.pageCount ? (
+                        <Button
+                            class="justify-self-center"
+                            variant="primary"
+                            size="large"
+                            onClick$={() => loadMore()}
+                        >
+                            Muat Lebih Banyak
+                        </Button>
+                    ) : null}
                 </section>
             </div>
 

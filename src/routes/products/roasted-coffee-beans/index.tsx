@@ -108,7 +108,7 @@ export default component$(() => {
                     </section>
 
                     <section class="grid gap-9 overflow-scroll grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
-                        {products.data ? products.data.map((product) => {
+                        {products.success ? products.data.map((product) => {
                             return (
                                 <Product
                                     type="Roasted Coffee Beans"
