@@ -139,10 +139,11 @@ export async function getRoastedBeansProducts({
 
         const response: {
             data: Array<RoastedBeansProduct>;
+            meta: Meta;
         } = await request.json();
 
         return {
-            ...response,
+            response,
             success: true,
             message: "Success fetching products"
         };
@@ -153,7 +154,7 @@ export async function getRoastedBeansProducts({
         return {
             success: false,
             message: "Error fetching products",
-            data: []
+            response: null
         };
     }
 }

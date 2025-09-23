@@ -189,7 +189,7 @@ export default component$(() => {
 						</article>
 
 						<section class="grid gap-9 overflow-scroll grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
-							{products.roastedBeansProducts.success ? products.roastedBeansProducts.data.map((product) => {
+							{products.roastedBeansProducts.success ? products.roastedBeansProducts.response?.data.map((product) => {
 								return (
 									<Product
 										key={product.documentId}

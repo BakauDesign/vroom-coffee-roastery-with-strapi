@@ -1,87 +1,164 @@
 import * as v from 'valibot';
-import { $, useSignal, useTask$, useVisibleTask$ } from "@builder.io/qwik";
+import { $, useSignal, useTask$, useVisibleTask$, type Signal } from "@builder.io/qwik";
 import { useLocation, useNavigate } from "@builder.io/qwik-city";
 import type { RoastedBeansProduct } from "~/interfaces";
 import { ServingRecomendationSchema } from "~/schema/product";
+import type { Meta } from "~/server/services/products";
 
-type roastedProducts = {
-    totalItems: number;
-    initialPerPage: number;
-    products: Array<RoastedBeansProduct>;
-}
+// type roastedProducts = {
+//     totalItems: number;
+//     initialPerPage: number;
+//     products: Array<RoastedBeansProduct>;
+// }
 
 const SCROLL_POSITION_KEY = 'qwik_scroll_pos';
 
-export function useRoastedProducts({
-    totalItems,
-    initialPerPage,
-    products
-}: roastedProducts) {
-    const displayedProducts = useSignal<Array<RoastedBeansProduct>>([]);
+// export function useRoastedProducts({
+//     totalItems,
+//     initialPerPage,
+//     products
+// }: roastedProducts) {
+//     const displayedProducts = useSignal<Array<RoastedBeansProduct>>([]);
 
-    const brewingMethod = useSignal("Pour Over");
-    const searchKeyword = useSignal("");
+//     const brewingMethod = useSignal("Pour Over");
+//     const searchKeyword = useSignal("");
 
-    const currentPage = useSignal(1);
-    const TOTALITEMS = useSignal(totalItems);
-    const PERPAGE = useSignal(initialPerPage);
+//     const currentPage = useSignal(1);
+//     const TOTALITEMS = useSignal(totalItems);
+//     const PERPAGE = useSignal(initialPerPage);
 
-    const totalPages = Math.ceil(TOTALITEMS.value / PERPAGE.value);
+//     const totalPages = Math.ceil(TOTALITEMS.value / PERPAGE.value);
 
-    useTask$(() => {
-        const start = 0;
-        const end = PERPAGE.value;
-        displayedProducts.value = products.slice(start, end);
-    });
+//     useTask$(() => {
+//         const start = 0;
+//         const end = PERPAGE.value;
+//         displayedProducts.value = products.slice(start, end);
+//     });
 
-    const loadMore = $(() => {
-        const nextPage = currentPage.value + 1;
-        const start = (nextPage - 1) * PERPAGE.value;
-        const end = nextPage * PERPAGE.value;
+//     const loadMore = $(() => {
+//         const nextPage = currentPage.value + 1;
+//         const start = (nextPage - 1) * PERPAGE.value;
+//         const end = nextPage * PERPAGE.value;
 
-        const moreProducts = products.slice(start, end);
-        displayedProducts.value = [...displayedProducts.value, ...moreProducts];
-        currentPage.value = nextPage;
-    });
+//         const moreProducts = products.slice(start, end);
+//         displayedProducts.value = [...displayedProducts.value, ...moreProducts];
+//         currentPage.value = nextPage;
+//     });
 
-    return {
-        brewingMethod,
-        searchKeyword,
-        currentPage,
-        totalItems,
-        totalPages,
-        loadMore,
-        displayedProducts
+//     return {
+//         brewingMethod,
+//         searchKeyword,
+//         currentPage,
+//         totalItems,
+//         totalPages,
+//         loadMore,
+//         displayedProducts
+//     };
+// }
+
+export function useRoastedProducts(initialProducts: Readonly<Signal<{
+    response: {
+        data: Array<RoastedBeansProduct>;
+        meta: Meta;
     };
-}
-
-export function useRoastedProductsCMS() {
+    success: boolean;
+    message: string;
+}>> | Readonly<Signal<{
+    success: boolean;
+    message: string;
+    response: null;
+}>>) {
     const nav = useNavigate();
     const loc = useLocation();
 
+    if (!loc.url.searchParams.get('page')) {
+        const currentSearchParams = new URLSearchParams(loc.url.searchParams);
+        const newUrl = `${loc.url.pathname}?${currentSearchParams.toString()}`;
+        
+        currentSearchParams.set('page', '1');
+
+        if (loc.url.toString() !== newUrl) {
+            // Simpan posisi scroll sebelum navigasi (akan dipulihkan oleh useTask$ lain)
+            // if (typeof window !== 'undefined' && window.scrollY > 0) {
+            //     sessionStorage.setItem(SCROLL_POSITION_KEY, window.scrollY.toString());
+            // }
+            nav(newUrl, { replaceState: true });
+        }
+    }
+
     const brewingMethodParams = loc.url.searchParams.get('brewingMethod') || 'Semua Metode';
     const searchKeywordParams = loc.url.searchParams.get('search') || '';
+    const pageParams = Number(loc.url.searchParams.get('page')) || 1;
+    
+    const productsData = useSignal<Array<RoastedBeansProduct>>([]);
+    const meta = useSignal(initialProducts.value.response?.meta);
+    const page = useSignal(pageParams);
 
     const brewingMethod = useSignal(brewingMethodParams);
     const searchKeyword = useSignal(searchKeywordParams);
+
+    if (!loc.url.searchParams.get('page')) {
+        nav('/products/roasted-coffee-beans/?page=1', { replaceState: true });
+    }
+
+    const loadMore = $(function loadMore() {
+        if (
+            meta.value && 
+            meta.value.pagination.page >= meta.value.pagination.pageCount
+        ) {
+            return;
+        }
+        // const currentSearchParams = new URLSearchParams(loc.url.searchParams);
+        // currentSearchParams.set('page', (page.value + 1).toString());
+    
+        // const newUrl = `${loc.url.pathname}?${currentSearchParams.toString()}`;
+    
+        // if (loc.url.toString() !== newUrl) {
+        //     // Simpan posisi scroll sebelum navigasi (akan dipulihkan oleh useTask$ lain)
+        //     if (typeof window !== 'undefined' && window.scrollY > 0) {
+        //         sessionStorage.setItem(SCROLL_POSITION_KEY, window.scrollY.toString());
+        //     }
+        //     nav(newUrl, { replaceState: true });
+        // }
+        page.value++;
+    });
     
     // eslint-disable-next-line qwik/no-use-visible-task
     useTask$(({ track }) => {
         track(() => brewingMethod.value);
         track(() => searchKeyword.value);
+        track(() => page.value);
+        track(() => initialProducts.value.response?.data);
         
         const currentSearchParams = new URLSearchParams(loc.url.searchParams);
 
         if (searchKeyword.value) {
             currentSearchParams.set('search', searchKeyword.value);
+            currentSearchParams.set('page', '1');
+            page.value = 1;
         } else {
             currentSearchParams.delete('search');
         }
 
         if (brewingMethod.value !== "Semua Metode") {
             currentSearchParams.set('brewingMethod', brewingMethod.value);
+            currentSearchParams.set('page', '1');
+            page.value = 1;
         } else {
             currentSearchParams.delete('brewingMethod');
+        }
+
+        currentSearchParams.set('page', page.value.toString());
+
+        if (initialProducts.value.response?.data) {
+            const newProducts = initialProducts.value.response.data.filter(
+                (newProduct) => !productsData.value.some(
+                    (existingProduct) => existingProduct.documentId === newProduct.documentId
+                )
+            );
+
+            productsData.value.push(...newProducts);
+            meta.value = initialProducts.value.response.meta;
         }
 
         const newUrl = `${loc.url.pathname}?${currentSearchParams.toString()}`;
@@ -120,7 +197,9 @@ export function useRoastedProductsCMS() {
 
     return {
         brewingMethod,
-        searchKeyword
+        searchKeyword,
+        loadMore,
+        productsData
     };
 }
 

@@ -57,7 +57,7 @@ export default component$(() => {
         productsData,
         loadMore
     } = useGreenProducts(products);
-
+    
     return (
         <>
             <figure class="hero-section ">
@@ -124,7 +124,7 @@ export default component$(() => {
                     </section>
 
                     <section class="grid gap-9 overflow-scroll grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
-                        {productsData.value.length > 0 ? productsData.value.map((product) => {
+                        {productsData.value.map((product) => {
                             return (
                                 <Product
                                     key={product.documentId}
@@ -136,7 +136,7 @@ export default component$(() => {
 									foto={product.informasi_produk.foto}
                                 />
                             )
-                        }) : null}
+                        })}
                     </section>
 
                     {products.value.response && products.value.response.meta.pagination.page < products.value.response.meta.pagination.pageCount ? (

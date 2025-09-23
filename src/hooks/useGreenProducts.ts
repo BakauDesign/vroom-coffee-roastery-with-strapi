@@ -33,26 +33,18 @@ export function useGreenProducts(initialProducts: Readonly<Signal<{
     const proses = useSignal(prosesParams);
     const searchKeyword = useSignal(searchKeywordParams);
 
-    const loadMore = $(function loadMore() {
+    if (!loc.url.searchParams.get('page')) {
+        nav('/products/green-coffee-beans/?page=1', { replaceState: true });
+    }
+    
+    const loadMore = $(() => {
         if (
             meta.value && 
             meta.value.pagination.page >= meta.value.pagination.pageCount
         ) {
             return;
         }
-        const currentSearchParams = new URLSearchParams(loc.url.searchParams);
-        currentSearchParams.set('page', (page.value + 1).toString());
-
-        const newUrl = `${loc.url.pathname}?${currentSearchParams.toString()}`;
-
-        if (loc.url.toString() !== newUrl) {
-            // Simpan posisi scroll sebelum navigasi (akan dipulihkan oleh useTask$ lain)
-            if (typeof window !== 'undefined' && window.scrollY > 0) {
-                sessionStorage.setItem(SCROLL_POSITION_KEY, window.scrollY.toString());
-            }
-            nav(newUrl, { replaceState: true });
-        }
-        page.value = page.value + 1;
+        page.value++;
     });
     
     // eslint-disable-next-line qwik/no-use-visible-task
@@ -89,31 +81,16 @@ export function useGreenProducts(initialProducts: Readonly<Signal<{
             currentSearchParams.delete('proses');
         }
 
+        currentSearchParams.set('page', page.value.toString());
+
         if (initialProducts.value.response?.data) {
-            if (page.value === 1) {
-                productsData.value = initialProducts.value.response.data;
+            const newProducts = initialProducts.value.response.data.filter(
+                (newProduct) => !productsData.value.some(
+                    (existingProduct) => existingProduct.documentId === newProduct.documentId
+                )
+            );
 
-                const currentSearchParams = new URLSearchParams(loc.url.searchParams);
-                currentSearchParams.set('page', page.value.toString());
-
-                const newUrl = `${loc.url.pathname}?${currentSearchParams.toString()}`;
-
-                if (loc.url.toString() !== newUrl) {
-                    // Simpan posisi scroll sebelum navigasi (akan dipulihkan oleh useTask$ lain)
-                    if (typeof window !== 'undefined' && window.scrollY > 0) {
-                        sessionStorage.setItem(SCROLL_POSITION_KEY, window.scrollY.toString());
-                    }
-                    nav(newUrl, { replaceState: true });
-                }
-            } else {
-                const newProducts = initialProducts.value.response.data.filter(
-                    (newProduct) => !productsData.value.some(
-                        (existingProduct) => existingProduct.documentId === newProduct.documentId
-                    )
-                );
-
-                productsData.value.push(...newProducts);
-            }
+            productsData.value.push(...newProducts);
             meta.value = initialProducts.value.response.meta;
         }
 

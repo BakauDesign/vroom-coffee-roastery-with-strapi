@@ -12,12 +12,13 @@ import HeroImage_1 from "~/assets/main/products/roasted-coffee-beans/Hero image 
 import HeroImage_2 from "~/assets/main/products/roasted-coffee-beans/Hero image 2.avif";
 import HeroImage_3 from "~/assets/main/products/roasted-coffee-beans/Hero image 3.avif";
 
-import { useRoastedProductsCMS } from "~/hooks/useRoastedProducts";
+import { useRoastedProducts } from "~/hooks/useRoastedProducts";
 import { roastedFilterOption as filterOption } from "~/lib/filter-option";
 
 import { routeLoader$ } from "@builder.io/qwik-city";
 import { getRoastedBeansProducts } from "~/server/services/products";
 import { Product } from "~/components/main/product";
+import { Button } from "~/components/main/button";
 
 // export const onGet: RequestHandler = async ({ redirect }) => {
 // 	if (!isDev) {
@@ -40,14 +41,16 @@ export const useFilter = routeLoader$(async () => {
 });
 
 export default component$(() => {
-    const { value: products } = useProducts();
+    const products = useProducts();
 
     const { brewingMethod: brewingMethodFilter } = useFilter().value;
 
     const {
         brewingMethod,
-        searchKeyword
-    } = useRoastedProductsCMS();
+        searchKeyword,
+        loadMore,
+        productsData
+    } = useRoastedProducts(products);
 
     return (
         <>
@@ -102,13 +105,13 @@ export default component$(() => {
 
                 <section class="general-section gap-y-[60px] items-center">
                     <section class="flex items-center gap-4 font-medium font-work-sans text-label-small sm:text-label-medium text-primary-800">
-                        <p>Menampilkan&nbsp;{products.data.length}&nbsp;produk</p>
+                        <p>Menampilkan&nbsp;{productsData.value.length}&nbsp;produk</p>
 
                         <span class="h-[1.5px] w-full bg-primary-100" />
                     </section>
 
                     <section class="grid gap-9 overflow-scroll grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
-                        {products.success ? products.data.map((product) => {
+                        {productsData.value ? productsData.value.map((product) => {
                             return (
                                 <Product
                                     type="Roasted Coffee Beans"
@@ -126,6 +129,17 @@ export default component$(() => {
                             )
                         }) : null}
                     </section>
+
+                    {products.value.response && products.value.response.meta.pagination.page < products.value.response.meta.pagination.pageCount ? (
+                        <Button
+                            class="justify-self-center"
+                            variant="primary"
+                            size="large"
+                            onClick$={() => loadMore()}
+                        >
+                            Muat Lebih Banyak
+                        </Button>
+                    ) : null}
                 </section>
             </div>
 
