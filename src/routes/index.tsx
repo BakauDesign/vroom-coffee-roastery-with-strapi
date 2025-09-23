@@ -31,7 +31,7 @@ export const useTestimonial = routeLoader$(async () => {
 		{
 			id: 1,
 			name: "Andi Wijaya",
-			avatar: "https://avatar.iran.liara.run/public/33",
+			avatar: "https://api.dicebear.com/9.x/open-peeps/svg?seed=Andrea",
 			location: "Jakarta",
 			review: "Produknya sangat berkualitas, pengiriman cepat!",
 			purchasedProducts: [
@@ -42,7 +42,7 @@ export const useTestimonial = routeLoader$(async () => {
 		{
 			id: 2,
 			name: "Budi Santoso",
-			avatar: "https://avatar.iran.liara.run/public/21",
+			avatar: "https://api.dicebear.com/9.x/open-peeps/svg?seed=Alexander",
 			location: "Bandung",
 			review: "Pelayanannya ramah, packing aman sampai tujuan.",
 			purchasedProducts: [
@@ -53,7 +53,7 @@ export const useTestimonial = routeLoader$(async () => {
 		{
 			id: 3,
 			name: "Citra Dewi",
-			avatar: "https://avatar.iran.liara.run/public/59",
+			avatar: "https://api.dicebear.com/9.x/open-peeps/svg?seed=Kingston",
 			location: "Surabaya",
 			review: "Aromanya sangat harum, rasa kopinya smooth banget!",
 			purchasedProducts: [
@@ -65,7 +65,7 @@ export const useTestimonial = routeLoader$(async () => {
 		{
 			id: 4,
 			name: "Dian Permata",
-			avatar: "https://avatar.iran.liara.run/public/83",
+			avatar: "https://api.dicebear.com/9.x/open-peeps/svg?seed=Aidan",
 			location: "Yogyakarta",
 			review: "Ini kopi terenak yang pernah saya beli online!",
 			purchasedProducts: [
@@ -75,7 +75,7 @@ export const useTestimonial = routeLoader$(async () => {
 		{
 			id: 5,
 			name: "Eko Prasetyo",
-			avatar: "https://avatar.iran.liara.run/public/22",
+			avatar: "https://api.dicebear.com/9.x/open-peeps/svg?seed=Jude",
 			location: "Bali",
 			review: "Worth the price! Akan beli lagi next time.",
 			purchasedProducts: [

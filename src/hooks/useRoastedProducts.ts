@@ -71,21 +71,6 @@ export function useRoastedProducts(initialProducts: Readonly<Signal<{
     const nav = useNavigate();
     const loc = useLocation();
 
-    if (!loc.url.searchParams.get('page')) {
-        const currentSearchParams = new URLSearchParams(loc.url.searchParams);
-        const newUrl = `${loc.url.pathname}?${currentSearchParams.toString()}`;
-        
-        currentSearchParams.set('page', '1');
-
-        if (loc.url.toString() !== newUrl) {
-            // Simpan posisi scroll sebelum navigasi (akan dipulihkan oleh useTask$ lain)
-            // if (typeof window !== 'undefined' && window.scrollY > 0) {
-            //     sessionStorage.setItem(SCROLL_POSITION_KEY, window.scrollY.toString());
-            // }
-            nav(newUrl, { replaceState: true });
-        }
-    }
-
     const brewingMethodParams = loc.url.searchParams.get('brewingMethod') || 'Semua Metode';
     const searchKeywordParams = loc.url.searchParams.get('search') || '';
     const pageParams = Number(loc.url.searchParams.get('page')) || 1;
@@ -97,10 +82,6 @@ export function useRoastedProducts(initialProducts: Readonly<Signal<{
     const brewingMethod = useSignal(brewingMethodParams);
     const searchKeyword = useSignal(searchKeywordParams);
 
-    if (!loc.url.searchParams.get('page')) {
-        nav('/products/roasted-coffee-beans/?page=1', { replaceState: true });
-    }
-
     const loadMore = $(function loadMore() {
         if (
             meta.value && 
@@ -108,18 +89,6 @@ export function useRoastedProducts(initialProducts: Readonly<Signal<{
         ) {
             return;
         }
-        // const currentSearchParams = new URLSearchParams(loc.url.searchParams);
-        // currentSearchParams.set('page', (page.value + 1).toString());
-    
-        // const newUrl = `${loc.url.pathname}?${currentSearchParams.toString()}`;
-    
-        // if (loc.url.toString() !== newUrl) {
-        //     // Simpan posisi scroll sebelum navigasi (akan dipulihkan oleh useTask$ lain)
-        //     if (typeof window !== 'undefined' && window.scrollY > 0) {
-        //         sessionStorage.setItem(SCROLL_POSITION_KEY, window.scrollY.toString());
-        //     }
-        //     nav(newUrl, { replaceState: true });
-        // }
         page.value++;
     });
     

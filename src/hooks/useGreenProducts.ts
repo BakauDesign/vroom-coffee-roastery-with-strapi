@@ -32,10 +32,6 @@ export function useGreenProducts(initialProducts: Readonly<Signal<{
     const asal = useSignal(asalParams);
     const proses = useSignal(prosesParams);
     const searchKeyword = useSignal(searchKeywordParams);
-
-    if (!loc.url.searchParams.get('page')) {
-        nav('/products/green-coffee-beans/?page=1', { replaceState: true });
-    }
     
     const loadMore = $(() => {
         if (

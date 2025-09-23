@@ -111,7 +111,7 @@ export default component$(() => {
                     </section>
 
                     <section class="grid gap-9 overflow-scroll grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
-                        {productsData.value ? productsData.value.map((product) => {
+                        {productsData.value.map((product) => {
                             return (
                                 <Product
                                     type="Roasted Coffee Beans"
@@ -127,7 +127,7 @@ export default component$(() => {
                                     berat={product.daftar_varian_kemasan[0].berat}
                                 />
                             )
-                        }) : null}
+                        })}
                     </section>
 
                     {products.value.response && products.value.response.meta.pagination.page < products.value.response.meta.pagination.pageCount ? (
