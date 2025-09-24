@@ -77,6 +77,7 @@ export function useRoastedProducts(initialProducts: Readonly<Signal<{
     
     const productsData = useSignal<Array<RoastedBeansProduct>>([]);
     const meta = useSignal(initialProducts.value.response?.meta);
+    const totalResult = useSignal(0);
     const page = useSignal(pageParams);
 
     const brewingMethod = useSignal(brewingMethodParams);
@@ -91,6 +92,15 @@ export function useRoastedProducts(initialProducts: Readonly<Signal<{
         }
         page.value++;
     });
+
+    // const reset = (includeFilter: boolean, currentSearchParams: URLSearchParams) => {
+    //     currentSearchParams.set('page', '1');
+    //     productsData.value = [];
+        
+    //     if (includeFilter) {
+    //         currentSearchParams.delete('search');
+    //     }
+    // }
     
     // eslint-disable-next-line qwik/no-use-visible-task
     useTask$(({ track }) => {
@@ -102,18 +112,22 @@ export function useRoastedProducts(initialProducts: Readonly<Signal<{
         const currentSearchParams = new URLSearchParams(loc.url.searchParams);
 
         if (searchKeyword.value) {
+            productsData.value = [];
             currentSearchParams.set('search', searchKeyword.value);
             currentSearchParams.set('page', '1');
             page.value = 1;
         } else {
+            productsData.value = [];
             currentSearchParams.delete('search');
         }
 
         if (brewingMethod.value !== "Semua Metode") {
+            productsData.value = [];
             currentSearchParams.set('brewingMethod', brewingMethod.value);
             currentSearchParams.set('page', '1');
             page.value = 1;
         } else {
+            productsData.value = [];
             currentSearchParams.delete('brewingMethod');
         }
 
@@ -129,6 +143,8 @@ export function useRoastedProducts(initialProducts: Readonly<Signal<{
             productsData.value.push(...newProducts);
             meta.value = initialProducts.value.response.meta;
         }
+
+        totalResult.value = productsData.value.length;
 
         const newUrl = `${loc.url.pathname}?${currentSearchParams.toString()}`;
         // nav(newUrl, { replaceState: true });
@@ -168,7 +184,8 @@ export function useRoastedProducts(initialProducts: Readonly<Signal<{
         brewingMethod,
         searchKeyword,
         loadMore,
-        productsData
+        productsData,
+        totalResult
     };
 }
 

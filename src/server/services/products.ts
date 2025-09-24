@@ -130,7 +130,7 @@ export async function getRoastedBeansProducts({
             &populate[3]=daftar_rekomendasi_penyajian
         `.replace(/\s/g, '');
 
-        const request = await fetch(`${API}produk-roasted-beans?${populate_field}${is_active_filter}${highlighted_filter}${brewing_method_filter}${search_filter}`, {
+        const request = await fetch(`${API}produk-roasted-beans?${populate_field}&pagination[pageSize]=6${is_active_filter}${highlighted_filter}${brewing_method_filter}${search_filter}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -174,11 +174,11 @@ export async function getGreenBeansProducts({
         const highlighted_filter = `${highlighted ? `&filters[informasi_produk][highlighted][$eq]=${highlighted}`: ``}`;
 
         const page_filter = `${page ? `&pagination[page]=${page}`: ``}`;
-        const asal_filter = `${asal ? `&filters[asal][$eqi]=${asal}` : ``}`;
+        const asal_filter = `${asal ? `&filters[asal][$containsi]=${asal}` : ``}`;
         const proses_filter = `${proses ? `&filters[proses][$eqi]=${proses}` : ``}`;
         const search_filter = `${search ? `&filters[informasi_produk][nama][$containsi]=${search}` : ``}`;
         
-        const request = await fetch(`${API}produk-green-beans?populate=all&pagination[pageSize]=2${is_active_filter}${highlighted_filter}${search_filter}${asal_filter}${proses_filter}${page_filter}`, {
+        const request = await fetch(`${API}produk-green-beans?populate=all&pagination[pageSize]=6${is_active_filter}${highlighted_filter}${search_filter}${asal_filter}${proses_filter}${page_filter}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -229,7 +229,7 @@ export async function getToolsProducts({
             &populate[1]=daftar_fitur_utama
         `.replace(/\s/g, '');
 
-        const request = await fetch(`${API}produk-tools?${populate_field}${is_active_filter}${highlighted_filter}${page_filter}${material_filter}${search_filter}`, {
+        const request = await fetch(`${API}produk-tools?${populate_field}&pagination[pageSize]=6${is_active_filter}${highlighted_filter}${page_filter}${material_filter}${search_filter}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

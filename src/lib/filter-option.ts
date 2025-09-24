@@ -16,7 +16,11 @@ export const greenFilterOption = {
         { id: 1, label: "Aceh" },
         { id: 2, label: "Toraja" },
         { id: 3, label: "Flores" },
-        { id: 4, label: "Semua Daerah" }
+        { id: 4, label: "Bali" },
+        { id: 5, label: "Bengkulu" },
+        { id: 6, label: "Sumatra Utara" },
+        { id: 7, label: "Wamena" },
+        { id: 8, label: "Semua Daerah" }
     ],
     process: [
         { id: 1, label: "Natural" },

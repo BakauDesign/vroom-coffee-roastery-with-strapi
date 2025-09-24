@@ -27,6 +27,7 @@ export function useGreenProducts(initialProducts: Readonly<Signal<{
 
     const productsData = useSignal<Array<GreenBeansProduct>>([]);
     const meta = useSignal(initialProducts.value.response?.meta);
+    const totalResult = useSignal(0);
     const page = useSignal(pageParams);
 
     const asal = useSignal(asalParams);
@@ -54,6 +55,7 @@ export function useGreenProducts(initialProducts: Readonly<Signal<{
         const currentSearchParams = new URLSearchParams(loc.url.searchParams);
 
         if (searchKeyword.value) {
+            productsData.value = [];
             currentSearchParams.set('search', searchKeyword.value);
             currentSearchParams.set('page', '1');
             page.value = 1;
@@ -62,6 +64,7 @@ export function useGreenProducts(initialProducts: Readonly<Signal<{
         }
 
         if (asal.value !== "Semua Daerah") {
+            productsData.value = [];
             currentSearchParams.set('asal', asal.value);
             currentSearchParams.set('page', '1');
             page.value = 1;
@@ -70,6 +73,7 @@ export function useGreenProducts(initialProducts: Readonly<Signal<{
         }
 
         if (proses.value !== "Semua Proses") {
+            productsData.value = [];
             currentSearchParams.set('proses', proses.value);
             currentSearchParams.set('page', '1');
             page.value = 1;
@@ -89,6 +93,8 @@ export function useGreenProducts(initialProducts: Readonly<Signal<{
             productsData.value.push(...newProducts);
             meta.value = initialProducts.value.response.meta;
         }
+
+        totalResult.value = productsData.value.length;
 
         const newUrl = `${loc.url.pathname}?${currentSearchParams.toString()}`;
 
@@ -126,8 +132,10 @@ export function useGreenProducts(initialProducts: Readonly<Signal<{
     return {
         asal,
         proses,
+        page,
         searchKeyword,
         loadMore,
-        productsData
+        productsData,
+        totalResult
     };
 }

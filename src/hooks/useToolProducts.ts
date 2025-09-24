@@ -26,6 +26,7 @@ export function useToolProducts(initialProducts: Readonly<Signal<{
 
     const productsData = useSignal<Array<ToolsProduct>>([]);
     const meta = useSignal(initialProducts.value.response?.meta);
+    const totalResult = useSignal(0);
     const page = useSignal(pageParams);
 
     // const typeFilter = useSignal("Semua Jenis Alat");
@@ -42,7 +43,7 @@ export function useToolProducts(initialProducts: Readonly<Signal<{
         }
         page.value++;
     });
-
+    
     // eslint-disable-next-line qwik/no-use-visible-task
     useTask$(({ track }) => {
         // track(() => typeFilter.value);
@@ -50,13 +51,17 @@ export function useToolProducts(initialProducts: Readonly<Signal<{
         // track(() => compatibilityFilter.value);
         track(() => searchKeyword.value);
         track(() => page.value);
-        track(() => initialProducts.value.response?.data);
+        track(() => initialProducts.value);
 
         const currentSearchParams = new URLSearchParams(loc.url.searchParams);
 
         if (searchKeyword.value) {
+            productsData.value = [];
             currentSearchParams.set('search', searchKeyword.value);
+            currentSearchParams.set('page', '1');
+            page.value = 1;
         } else {
+            productsData.value = [];
             currentSearchParams.delete('search');
         }
 
@@ -67,8 +72,12 @@ export function useToolProducts(initialProducts: Readonly<Signal<{
         // }
 
         if (material.value !== "Semua Material") {
+            productsData.value = [];
             currentSearchParams.set('material', material.value);
+            currentSearchParams.set('page', '1');
+            page.value = 1;
         } else {
+            productsData.value = [];
             currentSearchParams.delete('material');
         }
 
@@ -81,15 +90,20 @@ export function useToolProducts(initialProducts: Readonly<Signal<{
         currentSearchParams.set('page', page.value.toString());
 
         if (initialProducts.value.response?.data) {
-            const newProducts = initialProducts.value.response.data.filter(
+            const newProducts = initialProducts.value.response?.data.filter(
                 (newProduct) => !productsData.value.some(
                     (existingProduct) => existingProduct.documentId === newProduct.documentId
                 )
             );
 
             productsData.value.push(...newProducts);
-            meta.value = initialProducts.value.response.meta;
+            meta.value = initialProducts.value.response?.meta;
         }
+        
+        // console.info(material.value, initialProducts.value.response?.data[0]);
+        // console.info(material.value, productsData.value[0]);
+
+        totalResult.value = productsData.value.length;
 
         const newUrl = `${loc.url.pathname}?${currentSearchParams.toString()}`;
 
@@ -102,6 +116,32 @@ export function useToolProducts(initialProducts: Readonly<Signal<{
         }
     });
 
+    // useTask$(({ track }) => {
+    //     const trackedProductsData = track(() => initialProducts.value.response);
+
+    //     const newProducts = trackedProductsData?.data.filter(
+    //         (newProduct) => !productsData.value.some(
+    //             (existingProduct) => existingProduct.documentId === newProduct.documentId
+    //         )
+    //     );
+
+        
+    //     console.info(material.value, trackedProductsData?.data?.[0]);
+    //     console.info(material.value, newProducts);
+
+    //     productsData.value.push(...newProducts || []);
+    //     meta.value = trackedProductsData?.meta;
+
+    //     const newUrl = `${loc.url}`;
+
+    //     // if (loc.url.toString() !== newUrl) {
+    //     //     // Simpan posisi scroll sebelum navigasi (akan dipulihkan oleh useTask$ lain)
+    //     //     if (typeof window !== 'undefined' && window.scrollY > 0) {
+    //     //         sessionStorage.setItem(SCROLL_POSITION_KEY, window.scrollY.toString());
+    //     //     }
+    //         nav(loc.url, { replaceState: true });
+    //     // }
+    // })
 
     useVisibleTask$(({ track }) => {
         // Track perubahan URL secara keseluruhan atau filter, untuk memastikan ini berjalan
@@ -129,6 +169,7 @@ export function useToolProducts(initialProducts: Readonly<Signal<{
         material,
         searchKeyword,
         loadMore,
-        productsData
+        productsData,
+        totalResult
     };
 }
