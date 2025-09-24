@@ -21,6 +21,10 @@ import { getToolsProducts } from "~/server/services/products";
 import { Product } from "~/components/main/product";
 import { Button } from "~/components/main/button";
 
+import { toolsFilterOption as filterOption } from "~/lib/filter-option";
+import { useToolProducts } from "~/hooks/useToolProducts";
+import { SearchBarFilterBlock } from "~/components/blocks/main/search-bar-filter-block";
+
 // export const onGet: RequestHandler = async ({ redirect }) => {
 // 	if (!isDev) {
 // 		throw redirect(302, "/coming-soon");		
@@ -31,10 +35,24 @@ export const useProducts = routeLoader$(
     async ( event ) => {
         return await getToolsProducts({ event });
     }
-)
+);
+
+
+export const useFilter = routeLoader$(async () => {
+    return filterOption;        
+});
 
 export default component$(() => {
-    const { value: products } = useProducts();
+    const products = useProducts();
+
+    const { material: materialFilter } = useFilter().value;
+
+    const {
+        material,
+        searchKeyword,
+        loadMore,
+        productsData
+    } = useToolProducts(products);
 
     return (
         <>
@@ -65,6 +83,28 @@ export default component$(() => {
                 <Gradient position="top" />
                 <Gradient position="bottom" />
 
+                <SearchBarFilterBlock.Root>
+                    <SearchBarFilterBlock.SearchBar
+                        class="w-full sm:max-w-[400px]"
+                        placeholder="Cari Produk..."
+                        onValueChange$={(value) => searchKeyword.value = value}
+                        currentValue={searchKeyword.value}
+                    />
+                
+                    <section class="flex flex-col gap-6">
+                        <p class="font-lora text-h3-small sm:text-h3-medium lg:text-h3-large font-medium text-neutral-custom-950">
+                            Filter sesuai kebutuhan Anda:
+                        </p>
+                
+                        <SearchBarFilterBlock.Filter
+                            label="Metode Brewing:"
+                            currentValue={material}
+                            values={materialFilter}
+                            onClickOption$={(value) => material.value = value}
+                        />
+                    </section>
+                </SearchBarFilterBlock.Root>
+
                 <section class="general-section gap-y-[60px] items-center">
                     <figure class="flex flex-col gap-y-4 max-w-[400px] self-center">
                         {/* <picture>
@@ -94,7 +134,7 @@ export default component$(() => {
                         </Button>
                     </figure>
                     <section class="grid gap-9 overflow-scroll grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
-                        {products.data ? products.data.map((product) => {
+                        {productsData.value.map((product) => {
                             return (
                                 <Product
                                     key={product.documentId}
@@ -110,8 +150,19 @@ export default component$(() => {
                                     berat={product.berat}
                                 />
                             )
-                        }) : null}
+                        })}
                     </section>
+
+                    {products.value.response && products.value.response.meta.pagination.page < products.value.response.meta.pagination.pageCount ? (
+                        <Button
+                            class="justify-self-center"
+                            variant="primary"
+                            size="large"
+                            onClick$={() => loadMore()}
+                        >
+                            Muat Lebih Banyak
+                        </Button>
+                    ) : null}
                 </section>
             </div>
 

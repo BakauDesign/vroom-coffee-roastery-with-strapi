@@ -1,22 +1,58 @@
-import { useSignal, useVisibleTask$ } from "@builder.io/qwik";
+import { useSignal, useVisibleTask$, useTask$, $, type Signal } from "@builder.io/qwik";
 import { useLocation, useNavigate } from "@builder.io/qwik-city";
+import { ToolsProduct } from "~/interfaces";
+import type { Meta } from "~/server/services/products";
 
-export function useToolProductsCMS() {
-    const typeFilter = useSignal("Semua Jenis Alat");
-    const materialFilter = useSignal("Semua Material");
-    const compatibilityFilter = useSignal("Semua Kompatibilitas");
-    const searchKeyword = useSignal("");
+const SCROLL_POSITION_KEY = 'qwik_scroll_pos';
 
+export function useToolProducts(initialProducts: Readonly<Signal<{
+    response: {
+        data: Array<ToolsProduct>;
+        meta: Meta;
+    };
+    success: boolean;
+    message: string;
+}>> | Readonly<Signal<{
+    success: boolean;
+    message: string;
+    response: null;
+}>>) {
     const nav = useNavigate();
     const loc = useLocation();
-    const currentSearchParams = new URLSearchParams(loc.url.searchParams);
+
+    const searchKeywordParams = loc.url.searchParams.get('search') || '';
+    const materialParams = loc.url.searchParams.get('material') || 'Semua Material';
+    const pageParams = Number(loc.url.searchParams.get('page')) || 1;
+
+    const productsData = useSignal<Array<ToolsProduct>>([]);
+    const meta = useSignal(initialProducts.value.response?.meta);
+    const page = useSignal(pageParams);
+
+    // const typeFilter = useSignal("Semua Jenis Alat");
+    const material = useSignal(materialParams);
+    // const compatibilityFilter = useSignal("Semua Kompatibilitas");
+    const searchKeyword = useSignal(searchKeywordParams);
+
+    const loadMore = $(() => {
+        if (
+            meta.value && 
+            meta.value.pagination.page >= meta.value.pagination.pageCount
+        ) {
+            return;
+        }
+        page.value++;
+    });
 
     // eslint-disable-next-line qwik/no-use-visible-task
-    useVisibleTask$(({ track }) => {
-        track(() => typeFilter.value);
-        track(() => materialFilter.value);
-        track(() => compatibilityFilter.value);
+    useTask$(({ track }) => {
+        // track(() => typeFilter.value);
+        track(() => material.value);
+        // track(() => compatibilityFilter.value);
         track(() => searchKeyword.value);
+        track(() => page.value);
+        track(() => initialProducts.value.response?.data);
+
+        const currentSearchParams = new URLSearchParams(loc.url.searchParams);
 
         if (searchKeyword.value) {
             currentSearchParams.set('search', searchKeyword.value);
@@ -24,32 +60,75 @@ export function useToolProductsCMS() {
             currentSearchParams.delete('search');
         }
 
-        if (typeFilter.value && typeFilter.value !== "Semua Jenis Alat") {
-            currentSearchParams.set('type', typeFilter.value);
-        } else {
-            currentSearchParams.delete('type');
-        }
+        // if (typeFilter.value && typeFilter.value !== "Semua Jenis Alat") {
+        //     currentSearchParams.set('type', typeFilter.value);
+        // } else {
+        //     currentSearchParams.delete('type');
+        // }
 
-        if (materialFilter.value && materialFilter.value !== "Semua Material") {
-            currentSearchParams.set('material', materialFilter.value);
+        if (material.value !== "Semua Material") {
+            currentSearchParams.set('material', material.value);
         } else {
             currentSearchParams.delete('material');
         }
 
-        if (compatibilityFilter.value && compatibilityFilter.value !== "Semua Kompatibilitas") {
-            currentSearchParams.set('compatibility', compatibilityFilter.value);
-        } else {
-            currentSearchParams.delete('compatibility');
+        // if (compatibilityFilter.value && compatibilityFilter.value !== "Semua Kompatibilitas") {
+        //     currentSearchParams.set('compatibility', compatibilityFilter.value);
+        // } else {
+        //     currentSearchParams.delete('compatibility');
+        // }
+
+        currentSearchParams.set('page', page.value.toString());
+
+        if (initialProducts.value.response?.data) {
+            const newProducts = initialProducts.value.response.data.filter(
+                (newProduct) => !productsData.value.some(
+                    (existingProduct) => existingProduct.documentId === newProduct.documentId
+                )
+            );
+
+            productsData.value.push(...newProducts);
+            meta.value = initialProducts.value.response.meta;
         }
 
         const newUrl = `${loc.url.pathname}?${currentSearchParams.toString()}`;
-        nav(newUrl, { replaceState: true });
+
+        if (loc.url.toString() !== newUrl) {
+            // Simpan posisi scroll sebelum navigasi (akan dipulihkan oleh useTask$ lain)
+            if (typeof window !== 'undefined' && window.scrollY > 0) {
+                sessionStorage.setItem(SCROLL_POSITION_KEY, window.scrollY.toString());
+            }
+            nav(newUrl, { replaceState: true });
+        }
+    });
+
+
+    useVisibleTask$(({ track }) => {
+        // Track perubahan URL secara keseluruhan atau filter, untuk memastikan ini berjalan
+        track(() => loc.url.searchParams.toString());
+
+        // Pastikan ini hanya berjalan di browser
+        if (typeof window !== 'undefined') {
+            const storedScrollY = sessionStorage.getItem(SCROLL_POSITION_KEY);
+            if (storedScrollY) {
+                const scrollY = parseInt(storedScrollY, 10);
+                // Gunakan setTimeout kecil untuk memberi waktu DOM diperbarui
+                // atau tunggu sampai Qwik selesai me-render
+                requestAnimationFrame(() => {
+                    window.scrollTo({
+                        top: scrollY,
+                        behavior: 'instant' // Hindari animasi scroll yang terlihat
+                    });
+                    sessionStorage.removeItem(SCROLL_POSITION_KEY); // Hapus setelah digunakan
+                });
+            }
+        }
     });
 
     return {
-        typeFilter,
-        materialFilter,
-        compatibilityFilter,
-        searchKeyword
+        material,
+        searchKeyword,
+        loadMore,
+        productsData
     };
 }

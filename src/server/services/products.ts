@@ -209,17 +209,27 @@ export async function getGreenBeansProducts({
 
 export async function getToolsProducts({
     is_active = true,
-    highlighted = false
+    highlighted = false,
+    event: { query }
 }: ProductsQuery) {
+    const material = query.get("material");
+    const search = query.get("search");
+    const page = query.get("page");
+
     try {
         const is_active_filter = `${is_active ? `&filters[informasi_produk][aktif][$eq]=${is_active || true}` : ``}`;
         const highlighted_filter = `${highlighted ? `&filters[informasi_produk][highlighted][$eq]=${highlighted}`: ``}`;
+
+        const page_filter = `${page ? `&pagination[page]=${page}`: ``}`;
+        const material_filter = `${material ? `&filters[material][$eqi]=${material}` : ``}`;
+        const search_filter = `${search ? `&filters[informasi_produk][nama][$containsi]=${search}` : ``}`;
+        
         const populate_field = `
             &populate[0]=informasi_produk.foto
             &populate[1]=daftar_fitur_utama
         `.replace(/\s/g, '');
 
-        const request = await fetch(`${API}produk-tools?${populate_field}${is_active_filter}${highlighted_filter}`, {
+        const request = await fetch(`${API}produk-tools?${populate_field}${is_active_filter}${highlighted_filter}${page_filter}${material_filter}${search_filter}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -232,8 +242,8 @@ export async function getToolsProducts({
         } = await request.json();
 
         return {
-            ...response,
-            success: false,
+            response,
+            success: true,
             message: "Success fetching products"
         };
     } catch (e) {
@@ -243,7 +253,7 @@ export async function getToolsProducts({
         return {
             success: false,
             message: "Error fetching products",
-            data: []
+            response: null
         };
     }
 }
