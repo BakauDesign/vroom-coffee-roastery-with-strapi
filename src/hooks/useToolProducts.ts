@@ -1,6 +1,6 @@
 import { useSignal, useVisibleTask$, useTask$, $, type Signal } from "@builder.io/qwik";
 import { useLocation, useNavigate } from "@builder.io/qwik-city";
-import { ToolsProduct } from "~/interfaces";
+import type { ToolsProduct } from "~/interfaces";
 import type { Meta } from "~/server/services/products";
 
 const SCROLL_POSITION_KEY = 'qwik_scroll_pos';
@@ -44,7 +44,6 @@ export function useToolProducts(initialProducts: Readonly<Signal<{
         page.value++;
     });
     
-    // eslint-disable-next-line qwik/no-use-visible-task
     useTask$(({ track }) => {
         // track(() => typeFilter.value);
         track(() => material.value);
@@ -90,14 +89,14 @@ export function useToolProducts(initialProducts: Readonly<Signal<{
         currentSearchParams.set('page', page.value.toString());
 
         if (initialProducts.value.response?.data) {
-            const newProducts = initialProducts.value.response?.data.filter(
+            const newProducts = initialProducts.value.response.data.filter(
                 (newProduct) => !productsData.value.some(
                     (existingProduct) => existingProduct.documentId === newProduct.documentId
                 )
             );
 
             productsData.value.push(...newProducts);
-            meta.value = initialProducts.value.response?.meta;
+            meta.value = initialProducts.value.response.meta;
         }
         
         // console.info(material.value, initialProducts.value.response?.data[0]);
@@ -143,6 +142,7 @@ export function useToolProducts(initialProducts: Readonly<Signal<{
     //     // }
     // })
 
+    // eslint-disable-next-line qwik/no-use-visible-task
     useVisibleTask$(({ track }) => {
         // Track perubahan URL secara keseluruhan atau filter, untuk memastikan ini berjalan
         track(() => loc.url.searchParams.toString());

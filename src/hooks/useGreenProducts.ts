@@ -1,6 +1,6 @@
 import { useSignal, useVisibleTask$, useTask$, $, type Signal } from "@builder.io/qwik";
 import { useLocation, useNavigate } from "@builder.io/qwik-city";
-import { GreenBeansProduct } from "~/interfaces";
+import type { GreenBeansProduct } from "~/interfaces";
 import type { Meta } from "~/server/services/products";
 
 const SCROLL_POSITION_KEY = 'qwik_scroll_pos';
@@ -44,7 +44,6 @@ export function useGreenProducts(initialProducts: Readonly<Signal<{
         page.value++;
     });
     
-    // eslint-disable-next-line qwik/no-use-visible-task
     useTask$(({ track }) => {
         track(() => asal.value);
         track(() => proses.value);
@@ -107,6 +106,7 @@ export function useGreenProducts(initialProducts: Readonly<Signal<{
         }
     });
 
+    // eslint-disable-next-line qwik/no-use-visible-task
     useVisibleTask$(({ track }) => {
         // Track perubahan URL secara keseluruhan atau filter, untuk memastikan ini berjalan
         track(() => loc.url.searchParams.toString());

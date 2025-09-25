@@ -221,7 +221,7 @@ export default component$(() => {
 								)
 							}) : null}
 							
-							{products.toolsProducts.data ? products.toolsProducts.data.map((product) => {
+							{products.toolsProducts.response ? products.toolsProducts.response.data.map((product) => {
 								return (
 									<Product
 										key={product.documentId}

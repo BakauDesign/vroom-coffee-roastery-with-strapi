@@ -102,7 +102,6 @@ export function useRoastedProducts(initialProducts: Readonly<Signal<{
     //     }
     // }
     
-    // eslint-disable-next-line qwik/no-use-visible-task
     useTask$(({ track }) => {
         track(() => brewingMethod.value);
         track(() => searchKeyword.value);
@@ -158,6 +157,7 @@ export function useRoastedProducts(initialProducts: Readonly<Signal<{
         }
     });
 
+    // eslint-disable-next-line qwik/no-use-visible-task
     useVisibleTask$(({ track }) => {
         // Track perubahan URL secara keseluruhan atau filter, untuk memastikan ini berjalan
         track(() => loc.url.searchParams.toString());
