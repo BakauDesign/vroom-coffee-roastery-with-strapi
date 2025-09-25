@@ -218,7 +218,7 @@ export default component$(() => {
                     <div class="bg-neutral-custom-200 h-[1.5px] w-full" />
 
                         <section class={`
-                            grid gap-8 grid-cols-3
+                            grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3
                             *:*:first:font-lora  *:*:first:text-h3-small *:*:first:font-medium *:*:first:text-neutral-custom-950
                             *:*:font-work-sans  *:*:text-label-small *:*:sm:text-label-medium *:*:text-neutral-custom-600 *:*:*:first:min-w-[100px] *:*:*:first:sm:min-w-[150px]
                             *:flex *:flex-col *:gap-4 *:*:flex *:*:gap-4
@@ -277,7 +277,7 @@ export default component$(() => {
 
                             <ul 
                                 class={`
-                                    grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8
+                                    grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8
                                     *:p-6 *:bg-primary-base *:border-[3px] *:border-solid *:border-primary-50 *:rounded-[12px]
                                     *:flex *:flex-col *:gap-y-6 *:*:flex *:*:flex-col *:*:gap-y-4 *:*:*:flex *:*:*:flex-col *:*:*:gap-y-2 *:*:*:*:flex *:*:*:*:gap-2
                                 `}
