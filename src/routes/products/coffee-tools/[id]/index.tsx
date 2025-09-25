@@ -268,6 +268,8 @@ export default component$(() => {
                             </ul>
                         </section>
 
+                        <div class="bg-primary-100 h-[1.5px] w-full" />
+                        
                         <section class="flex flex-col gap-y-6">
                             {product.value[0].ulasan_produk_tools.length ? (
                                 <h1 class="font-lora font-medium text-h3-small sm:text-h3-medium lg:text-h3-large text-neutral-custom-950">
@@ -314,7 +316,6 @@ export default component$(() => {
                                 ))}
                             </ul>
                         </section>
-                    <div class="bg-primary-100 h-[1.5px] w-full" />
                 </section>
             </div>
 
