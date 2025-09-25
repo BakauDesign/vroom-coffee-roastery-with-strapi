@@ -12,7 +12,6 @@ import { Faq } from "~/components/main/faq";
 
 import HeroImage_1 from "~/assets/main/contact-us/Hero image 1.avif";
 import HeroImage_2 from "~/assets/main/contact-us/Hero image 2.avif";
-import Satelite from "~/assets/main/contact-us/Satelite.avif";
 
 import Whatsapp from "~/assets/main/contact-us/icons/Whatsapp.avif";
 import Email from "~/assets/main/contact-us/icons/Email.avif";
@@ -125,7 +124,7 @@ export default component$(() => {
                                     </p>
                                 </article>
 
-                                <a href="/">+62 812 3456 7890</a>
+                                <a href="/">+62-812-9333-1050</a>
                             </section>
                         </li>
 
@@ -154,7 +153,7 @@ export default component$(() => {
                                     </p>
                                 </article>
 
-                                <a href="/">hello@vroomcoffee.id</a>
+                                <a href="/">indoskopi@gmail.com</a>
                             </section>
                         </li>
 
@@ -183,7 +182,7 @@ export default component$(() => {
                                     </p>
                                 </article>
 
-                                <a href="/">+62 812 1234 5678 (Jam kerja saja)</a>
+                                <a href="/">+62-812-9333-1050 (Jam kerja saja)</a>
                             </section>
                         </li>
 
@@ -205,13 +204,7 @@ export default component$(() => {
                     </section>
 
                     <section class="relative flex flex-col gap-12 w-full justify-self-center">
-                        <img 
-                            src={Satelite} 
-                            alt=""
-                            class="w-full object-cover rounded-[6px]"
-                            height={1000}
-                            width={1000}
-                        />
+                        <iframe class="w-full h-[500px] rounded-[6px]" src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d1815.4434725327533!2d106.6319293!3d-6.1839933!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f94d95a30c81%3A0x7a5b819889cd8920!2sVROOM%20COFFEE%20ROASTERY%20%26%20KEDAI%20KOPI!5e1!3m2!1sen!2sid!4v1758760250992!5m2!1sen!2sid" width="600" height="450" style="border:0;" loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
 
                         <ul class="flex flex-col gap-8 items-center font-work-sans *:pt-5 *:px-4 *:pb-4 *:flex *:gap-x-4 *:bg-primary-base *:border-[1.5px] *:border-solid *:border-primary-100 *:rounded-[12px] *:max-w-[360px] *:min-[500px]:absolute">
                             <li class="rotate-[4deg] bottom-0 left-0">
@@ -227,9 +220,8 @@ export default component$(() => {
                                     <h1 class="text-label-small sm:text-label-medium text-neutral-950 font-medium">Jam Operasional</h1>
 
                                     <ul class="flex flex-col gap-y-2 *:text-label-small *:sm:text-label-medium *:text-neutral-custom-700">
-                                        <li>Senin-Kamis: 11.30-23.00 WIB</li>
-                                        <li>Jumat-Sabtu: 12.00-22.00 WIB</li>
-                                        <li>Minggu: 13.30-22.00 WIB</li>
+                                        <li>Minggu-Jumat: 12.00-23.00 WIB</li>
+                                        <li>Sabtu: 12.00-23.30 WIB</li>
                                     </ul>
                                 </article>
                             </li>
@@ -247,7 +239,7 @@ export default component$(() => {
                                     <h1 class="text-label-small sm:text-label-medium text-neutral-950 font-medium">Vroom Coffee & Roastery</h1>
 
                                     <ul class="flex flex-col gap-y-2 *:text-label-small *:sm:text-label-medium *:text-neutral-custom-700">
-                                        <li>Jl. Roasting No. 123, Bandung 40123</li>
+                                        <li>Jl. Kisamaun No.77, Sukasari, Kec. Tangerang, Kota Tangerang, Banten 15116</li>
                                     </ul>
                                 </article>
                             </li>

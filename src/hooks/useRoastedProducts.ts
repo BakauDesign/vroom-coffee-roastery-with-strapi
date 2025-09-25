@@ -75,7 +75,7 @@ export function useRoastedProducts(initialProducts: Readonly<Signal<{
     const searchKeywordParams = loc.url.searchParams.get('search') || '';
     const pageParams = Number(loc.url.searchParams.get('page')) || 1;
     
-    const productsData = useSignal<Array<RoastedBeansProduct>>([]);
+    const productsData = useSignal<Array<RoastedBeansProduct>>(initialProducts.value.response?.data || []);
     const meta = useSignal(initialProducts.value.response?.meta);
     const totalResult = useSignal(0);
     const page = useSignal(pageParams);

@@ -24,7 +24,7 @@ export function useToolProducts(initialProducts: Readonly<Signal<{
     const materialParams = loc.url.searchParams.get('material') || 'Semua Material';
     const pageParams = Number(loc.url.searchParams.get('page')) || 1;
 
-    const productsData = useSignal<Array<ToolsProduct>>([]);
+    const productsData = useSignal<Array<ToolsProduct>>(initialProducts.value.response?.data || []);
     const meta = useSignal(initialProducts.value.response?.meta);
     const totalResult = useSignal(0);
     const page = useSignal(pageParams);

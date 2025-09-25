@@ -98,7 +98,7 @@ export default component$(() => {
                         </p>
                 
                         <SearchBarFilterBlock.Filter
-                            label="Metode Brewing:"
+                            label="Material:"
                             currentValue={material}
                             values={materialFilter}
                             onClickOption$={(value) => material.value = value}

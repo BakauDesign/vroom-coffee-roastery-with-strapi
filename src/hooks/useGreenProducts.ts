@@ -25,7 +25,7 @@ export function useGreenProducts(initialProducts: Readonly<Signal<{
     const searchKeywordParams = loc.url.searchParams.get('search') || '';
     const pageParams = Number(loc.url.searchParams.get('page')) || 1;
 
-    const productsData = useSignal<Array<GreenBeansProduct>>([]);
+    const productsData = useSignal<Array<GreenBeansProduct>>(initialProducts.value.response?.data || []);
     const meta = useSignal(initialProducts.value.response?.meta);
     const totalResult = useSignal(0);
     const page = useSignal(pageParams);
@@ -98,12 +98,12 @@ export function useGreenProducts(initialProducts: Readonly<Signal<{
 
         const newUrl = `${loc.url.pathname}?${currentSearchParams.toString()}`;
 
-        if (loc.url.toString() !== newUrl) {
+        if (loc.url.pathname + loc.url.search.toString() !== newUrl) {
             // Simpan posisi scroll sebelum navigasi (akan dipulihkan oleh useTask$ lain)
             if (typeof window !== 'undefined' && window.scrollY > 0) {
                 sessionStorage.setItem(SCROLL_POSITION_KEY, window.scrollY.toString());
             }
-            nav(newUrl, { replaceState: true });
+            nav(newUrl);
         }
     });
 
