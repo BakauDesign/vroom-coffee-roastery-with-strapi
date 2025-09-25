@@ -80,7 +80,7 @@ export interface GreenBeansProductWithReviews extends GreenBeansProduct {
 }
 
 export interface ToolsProductWithReviews extends ToolsProduct {
-    ulasan_produk_green_beans: Array<Review>;
+    ulasan_produk_tools: Array<Review>;
 }
 
 export interface GreenBeansProduct {

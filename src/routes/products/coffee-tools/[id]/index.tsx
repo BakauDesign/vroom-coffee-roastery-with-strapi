@@ -18,9 +18,10 @@ import {
     routeLoader$,
     useNavigate
 } from "@builder.io/qwik-city";
-import { formatRupiah } from "~/lib/utils";
+import { formatDateTime, formatRupiah } from "~/lib/utils";
 import { getToolsProductById } from "~/server/services/products";
 import { OrderToolContext, type PurchasedToolProductType } from "~/context/order-context";
+import { Star } from "~/assets/Icons/Star";
 
 // import {
 //     // formAction$,
@@ -64,11 +65,11 @@ export const useProductDetail = routeLoader$(
 
         const result = await getToolsProductById({ event });
 
-        if (!result.data.length) {
+        if (!result.response?.data) {
             throw redirect(302, "/products/coffee-tools");
         }
 
-        return result.data;
+        return result.response.data;
     }
 );
 
@@ -97,7 +98,6 @@ export default component$(() => {
     
         order.value = updatedItems;
     });
-
 
     return (
         <>
@@ -217,57 +217,103 @@ export default component$(() => {
                     
                     <div class="bg-neutral-custom-200 h-[1.5px] w-full" />
 
-                    <section class={`
-                        grid gap-8 grid-cols-3
-                        *:*:first:font-lora  *:*:first:text-h3-small *:*:first:font-medium *:*:first:text-neutral-custom-950
-                        *:*:font-work-sans  *:*:text-label-small *:*:sm:text-label-medium *:*:text-neutral-custom-600 *:*:*:first:min-w-[100px] *:*:*:first:sm:min-w-[150px]
-                        *:flex *:flex-col *:gap-4 *:*:flex *:*:gap-4
-                    `}>
-                        <ul>
-                            <li>🔧 Spesifikasi Teknis</li>
-                            
-                            <li>
-                                <p>Material</p>
-                                <p>:</p>
-                                <p>{ product.value[0].material || "-" }</p>
-                            </li>
+                        <section class={`
+                            grid gap-8 grid-cols-3
+                            *:*:first:font-lora  *:*:first:text-h3-small *:*:first:font-medium *:*:first:text-neutral-custom-950
+                            *:*:font-work-sans  *:*:text-label-small *:*:sm:text-label-medium *:*:text-neutral-custom-600 *:*:*:first:min-w-[100px] *:*:*:first:sm:min-w-[150px]
+                            *:flex *:flex-col *:gap-4 *:*:flex *:*:gap-4
+                        `}>
+                            <ul>
+                                <li>🔧 Spesifikasi Teknis</li>
+                                
+                                <li>
+                                    <p>Material</p>
+                                    <p>:</p>
+                                    <p>{ product.value[0].material || "-" }</p>
+                                </li>
 
-                            <li>
-                                <p>Kapasitas</p>
-                                <p>:</p>
-                                <p>{ product.value[0].kapasitas || "-" }</p>
-                            </li>
+                                <li>
+                                    <p>Kapasitas</p>
+                                    <p>:</p>
+                                    <p>{ product.value[0].kapasitas || "-" }</p>
+                                </li>
 
-                            <li>
-                                <p>Berat</p>
-                                <p>:</p>
-                                <p>{ product.value[0].berat }g</p>
-                            </li>
+                                <li>
+                                    <p>Berat</p>
+                                    <p>:</p>
+                                    <p>{ product.value[0].berat }g</p>
+                                </li>
 
-                            <li>
-                                <p>Aksesori</p>
-                                <p>:</p>
-                                <p>{ product.value[0].aksesoris || '-' }</p>
-                            </li>
-                        </ul>
+                                <li>
+                                    <p>Aksesori</p>
+                                    <p>:</p>
+                                    <p>{ product.value[0].aksesoris || '-' }</p>
+                                </li>
+                            </ul>
 
-                        <ul>
-                            <li>📦 Packaging</li>
-                            
-                            <li>
-                                <p>Kemasan</p>
-                                <p>:</p>
-                                <p>{ product.value[0].kemasan || '-' }</p>
-                            </li>
+                            <ul>
+                                <li>📦 Packaging</li>
+                                
+                                <li>
+                                    <p>Kemasan</p>
+                                    <p>:</p>
+                                    <p>{ product.value[0].kemasan || '-' }</p>
+                                </li>
 
-                            <li>
-                                <p>Stok Tersedia</p>
-                                <p>:</p>
-                                <p>{ product.value[0].stok }</p>
-                            </li>
-                        </ul>
-                    </section>
+                                <li>
+                                    <p>Stok Tersedia</p>
+                                    <p>:</p>
+                                    <p>{ product.value[0].stok }</p>
+                                </li>
+                            </ul>
+                        </section>
 
+                        <section class="flex flex-col gap-y-6">
+                            {product.value[0].ulasan_produk_tools.length ? (
+                                <h1 class="font-lora font-medium text-h3-small sm:text-h3-medium lg:text-h3-large text-neutral-custom-950">
+                                    Ulasan Pelanggan
+                                </h1>
+                            ) : null}
+
+                            <ul 
+                                class={`
+                                    grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8
+                                    *:p-6 *:bg-primary-base *:border-[3px] *:border-solid *:border-primary-50 *:rounded-[12px]
+                                    *:flex *:flex-col *:gap-y-6 *:*:flex *:*:flex-col *:*:gap-y-4 *:*:*:flex *:*:*:flex-col *:*:*:gap-y-2 *:*:*:*:flex *:*:*:*:gap-2
+                                `}
+                            >
+                                {product.value[0].ulasan_produk_tools.map((review) => (
+                                    <li key={review.informasi_ulasan.id}>
+                                        <article>
+                                            <section>
+                                                <h1 class="font-lora text-h3-small text-neutral-custom-900">
+                                                    {review.informasi_ulasan.nama} {review.informasi_ulasan.lokasi !== "-" && ", " + review.informasi_ulasan.lokasi}
+                                                </h1>
+                        
+                                                <section>
+                                                    {[...Array(review.informasi_ulasan.rating)].map((_, index) => (
+                                                        <Star
+                                                            key={index + 1}
+                                                            height={16}
+                                                            width={16}
+                                                            class="text-yellow-400"
+                                                        />
+                                                    ))}
+                                                </section>
+                                            </section>
+                        
+                                            <p class="font-work-sans text-body-small sm:text-body-medium text-neutral-custom-700">
+                                                {review.informasi_ulasan.konten}
+                                            </p>
+                                        </article>
+                        
+                                        <p class="font-work-sans font-medium text-right text-label-small sm:text-label-medium text-neutral-custom-600">
+                                            {formatDateTime(review.createdAt)}
+                                        </p>
+                                    </li>
+                                ))}
+                            </ul>
+                        </section>
                     <div class="bg-primary-100 h-[1.5px] w-full" />
                 </section>
             </div>

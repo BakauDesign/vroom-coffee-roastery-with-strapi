@@ -400,6 +400,7 @@ export async function getToolsProductById({
         const populate_field = `
             &populate[0]=informasi_produk.foto
             &populate[1]=daftar_fitur_utama
+            &populate[2]=ulasan_produk_tools.informasi_ulasan
         `.replace(/\s/g, '');
 
         const request = await fetch(`${API}produk-tools?${populate_field}${slug_filter}${is_active_filter}${highlighted_filter}`, {
@@ -414,8 +415,8 @@ export async function getToolsProductById({
         } = await request.json();
 
         return {
-            ...response,
-            success: false,
+            response,
+            success: true,
             message: "Success fetching products"
         };
     } catch (e) {
@@ -425,7 +426,7 @@ export async function getToolsProductById({
         return {
             success: false,
             message: "Error fetching products",
-            data: []
+            response: null
         };
     }
 }
