@@ -30,7 +30,6 @@ export const useProducts = routeLoader$(
     async ( event ) => {
         return await getRoastedBeansProducts({
 			is_active: true,
-			highlighted: true,
             event
         });
     }
